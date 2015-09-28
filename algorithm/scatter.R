@@ -26,13 +26,14 @@ traverse <- function(df) {
 
     # Assume last column is class label column
     ncols <- ncol(df) - 1
+    df[, "Visited"] <- F
 
     # TODO: is there a way to extend dist function to handle other methods too?
     # TODO: find out how to remove arbitary row from data frame or if using some
     #       other data structure would be more useful or easier?
     dist <- dist(df[, 1:ncols], method = "euclidean")
 
-    while(nrows(df) > 0) {
+    while(nrows(df[df$Visited == F]) > 0) {
 
     }
 
