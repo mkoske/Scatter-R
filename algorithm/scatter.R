@@ -14,6 +14,16 @@ scatter <- function(df, distmethod) {
         # Some error trigger; how?
     }
 
+    lbls <- traverse(df)
+}
+
+# Traverse the dataset using nearest neighbour method, recording label changes
+# as we go.
+#
+# Returns the vector of labels
+# ##
+traverse <- function(df) {
+
     # Assume last column is class label column
     ncols <- ncol(df) - 1
 
@@ -25,15 +35,6 @@ scatter <- function(df, distmethod) {
     while(nrows(df) > 0) {
 
     }
-
-}
-
-# Traverse the dataset using nearest neighbour method, recording label changes
-# as we go.
-#
-# Returns the vector of labels
-# ##
-traverse <- function(df) {
 
 }
 
