@@ -29,10 +29,9 @@ traverse <- function(df) {
     df[, "Visited"] <- F
 
     # TODO: is there a way to extend dist function to handle other methods too?
-    # TODO: find out how to remove arbitary row from data frame or if using some
-    #       other data structure would be more useful or easier?
     dist <- dist(df[, 1:ncols], method = "euclidean")
 
+    # TODO: Pick randomly a starting point
     while(nrows(df[df$Visited == F]) > 0) {
 
     }
