@@ -62,6 +62,34 @@ lblchanges <- function(lbls) {
 }
 
 # ##
+# Calculates the theoretical maximum of changes
+#
+# TODO: better variable naming; classes is not number of classes, but all class
+#       labels from the data, e.g. there might be many instances of "class 1"
+# ##
+maxchanges <- function(classes) {
+
+    # `w` is the theoretical maxima; initialize it as zero
+    w <- 0
+
+    # Sizes of classes
+    sizes <- table(classes)
+
+    # Maxima; this returns only one result, even if there are multiple
+    maxima <- max(sizes);
+
+    # This is a special case, where there are multiple maximas; in that case,
+    # the theoretical maxima is number of classes minus one.
+    if(length(as.vector(which(sizes == maxima))) > 1) {
+        w <- length(classes) - 1
+    }
+
+    # TODO: Handle other situations as well
+
+    w
+}
+
+# ##
 # ##
 # Computes a statistical baseline running the algorithm multiple times and
 # calculating the mean of those runs.
