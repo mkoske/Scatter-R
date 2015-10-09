@@ -45,9 +45,20 @@ traverse <- function(df) {
 # ##
 lblchanges <- function(lbls) {
 
-    if(!is.data.frame(lbls)) {
-        # Trigger some error; how?
+    if(!is.vector(lbls)) {
+        stop("Not a vector.")
     }
+
+    changes <- 0
+
+    len <- length(labs)
+    for(idx in 1:len) {
+        if((idx < len) && (labs[idx] != labs[idx + 1]))
+            changes <- changes + 1
+    }
+
+    changes
+
 }
 
 # ##
