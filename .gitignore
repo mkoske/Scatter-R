@@ -45,3 +45,5 @@ Temporary Items
 # R-Studio-related files
 *.Rproj
 .Rproj.user
+.RData
+.Rhistory
