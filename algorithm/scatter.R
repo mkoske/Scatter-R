@@ -24,18 +24,33 @@ scatter <- function(df, distmethod) {
 # ##
 traverse <- function(df) {
 
+    labels <- vector()
     # Assume last column is class label column
     ncols <- ncol(df) - 1
-    df[, "Visited"] <- F
+    
+    # Create new column to keep track, which rows are not yet visited
+    df$Visited <- F
 
     # TODO: is there a way to extend dist function to handle other methods too?
-    dist <- dist(df[, 1:ncols], method = "euclidean")
+    distances <- as.matrix(dist(df[, 1:ncols], method = "euclidean"))
 
-    # TODO: Pick randomly a starting point
+    # Choose a random index for starting point
+    currentIdx <- sample(1:nrow(df), 1)
     while(nrows(df[df$Visited == F]) > 0) {
 
+	current <- df[currentIdx, ]
+	df[currentIdx, ]$Visited <- T
+
+	# TODO: Is there a better way? Is this just an ugly hack? This works as
+	#       follows. It takes number of columns, removes current from among
+	#       those and then takes the minima. This way the distance between
+	#       itself - which is zero - is not taken into account.
+	idx <- 1:ncol(distances)
+	closest <- min(dist[currentIdx, idx[-currentIdx]])
+	labels <- c(labels, closest[ncols - 1]) 
     }
 
+    labels
 }
 
 # ##
