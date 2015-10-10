@@ -10,10 +10,13 @@ library('RUnit')
 tests <- defineTestSuite(
 	'scatter',
 	dirs = 'algorithm',
-	testFileRegexp = '^test\\-(.*)\\.R$'
+	testFileRegexp = '^test\\-(.*)\\.R$',
+	testFuncRegexp = '^test(.*)$'
     )
 
+isValidTestSuite(tests)
 results <- runTestSuite(tests)
+
 printTextProtocol(results)
 
 
