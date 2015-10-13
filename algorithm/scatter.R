@@ -45,9 +45,48 @@ traverse <- function(df) {
 # ##
 lblchanges <- function(lbls) {
 
-    if(!is.data.frame(lbls)) {
-        # Trigger some error; how?
+    if(!is.vector(lbls)) {
+        stop("Not a vector.")
     }
+
+    changes <- 0
+
+    len <- length(labs)
+    for(idx in 1:len) {
+        if((idx < len) && (labs[idx] != labs[idx + 1]))
+            changes <- changes + 1
+    }
+
+    changes
+
+}
+
+# ##
+# Calculates the theoretical maximum of changes
+#
+# TODO: better variable naming; classes is not number of classes, but all class
+#       labels from the data, e.g. there might be many instances of "class 1"
+# ##
+maxchanges <- function(classes) {
+
+    # `w` is the theoretical maxima; initialize it as zero
+    w <- 0
+
+    # Sizes of classes
+    sizes <- table(classes)
+
+    # Maxima; this returns only one result, even if there are multiple
+    maxima <- max(sizes);
+
+    # This is a special case, where there are multiple maximas; in that case,
+    # the theoretical maxima is number of classes minus one.
+    if(length(as.vector(which(sizes == maxima))) > 1) {
+        w <- length(classes) - 1
+    }
+
+    # TODO: Handle other situations as well
+
+    w
 }
 
 # ##
