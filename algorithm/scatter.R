@@ -78,9 +78,9 @@ lblchanges <- function(lbls) {
 
     changes <- 0
 
-    len <- length(labs)
+    len <- length(lbls)
     for(idx in 1:len) {
-        if((idx < len) && (labs[idx] != labs[idx + 1]))
+        if((idx < len) && (lbls[idx] != lbls[idx + 1]))
             changes <- changes + 1
     }
 
