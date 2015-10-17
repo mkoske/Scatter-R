@@ -24,33 +24,43 @@ scatter <- function(df, distmethod) {
 # ##
 traverse <- function(df) {
 
-    labels <- vector()
-    # Assume last column is class label column
+    # Assume last column is class label column, so ignore it. That's why - 1.
     ncols <- ncol(df) - 1
-    
-    # Create new column to keep track, which rows are not yet visited
-    df$Visited <- F
+    nrows <- nrow(df)
+
+    # labels
+    lbls <- vector(mode = "character")
+
+    # Add column to track visited; important to do it here, NOT before counting
+    # the number of columns (see above).
+    df$Visited = F
 
     # TODO: is there a way to extend dist function to handle other methods too?
-    distances <- as.matrix(dist(df[, 1:ncols], method = "euclidean"))
+    distm <- as.matrix(dist(df[, 1:ncols], method = "euclidean"))
+    diag(distm) <- NA
 
-    # Choose a random index for starting point
-    currentIdx <- sample(1:nrow(df), 1)
-    while(nrows(df[df$Visited == F]) > 0) {
+    # Pick randomly a starting point
+    currentIdx <- sample(1:nrows, size = 1)
+    while(nrow(df[df$Visited == F, ]) > 0) {
 
-	current <- df[currentIdx, ]
-	df[currentIdx, ]$Visited <- T
+        # Save the label of the current index
+        lbls <- c(lbls, df[currentIdx, (ncols + 1)])
 
-	# TODO: Is there a better way? Is this just an ugly hack? This works as
-	#       follows. It takes number of columns, removes current from among
-	#       those and then takes the minima. This way the distance between
-	#       itself - which is zero - is not taken into account.
-	idx <- 1:ncol(distances)
-	closest <- min(dist[currentIdx, idx[-currentIdx]])
-	labels <- c(labels, closest[ncols - 1]) 
+        # Also, set the current index visited
+        df[currentIdx, "Visited"] <- T
+
+        ## TODO: Problem here is that it stays bouncing between the first two or
+        ##       so. If the 24. is first, 27 is closest to that, and then, 24 is
+        ##       closest to that so it keeps bouncing back and forth. Fix this!
+        minima <- min(distm[currentIdx, ], na.rm = T)
+        nearest <- which(distm[currentIdx, ] == minima)
+        if(df[nearest, "Visited"] == F)
+            currentIdx <- nearest
+
+        # print(nrow(df[df$Visited == F, ]))
     }
 
-    labels
+    lbls
 }
 
 # ##
@@ -84,8 +94,11 @@ lblchanges <- function(lbls) {
 # ##
 maxchanges <- function(classes) {
 
-    # `w` is the theoretical maxima; initialize it as zero
-    w <- 0
+    if(!is.vector(classes)) {
+        stop("Not a vector.")
+    }
+
+    n <- length(classes)
 
     # Sizes of classes
     sizes <- table(classes)
@@ -96,12 +109,13 @@ maxchanges <- function(classes) {
     # This is a special case, where there are multiple maximas; in that case,
     # the theoretical maxima is number of classes minus one.
     if(length(as.vector(which(sizes == maxima))) > 1) {
-        w <- length(classes) - 1
+        return(n - 1)
     }
 
-    # TODO: Handle other situations as well
+    if(maxima > (n - maxima)) {
+        return(2 * (n - maxima))
+    }
 
-    w
 }
 
 # ##
