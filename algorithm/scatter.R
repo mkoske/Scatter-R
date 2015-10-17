@@ -41,6 +41,10 @@ traverse <- function(df) {
 
     # Pick randomly a starting point
     currentIdx <- sample(1:nrows, size = 1)
+
+    # This seems to work now; but find out if this could be done just using
+    # apply and its friends. Also, when all is done, this generates warning:
+    # 'no non-missing arguments to min; returning Inf', so fix this.
     while(nrow(df[df$Visited == F, ]) > 0) {
 
         # Save the label of the current index
@@ -49,15 +53,13 @@ traverse <- function(df) {
         # Also, set the current index visited
         df[currentIdx, "Visited"] <- T
 
-        ## TODO: Problem here is that it stays bouncing between the first two or
-        ##       so. If the 24. is first, 27 is closest to that, and then, 24 is
-        ##       closest to that so it keeps bouncing back and forth. Fix this!
         minima <- min(distm[currentIdx, ], na.rm = T)
         nearest <- which(distm[currentIdx, ] == minima)
-        if(df[nearest, "Visited"] == F)
-            currentIdx <- nearest
 
-        # print(nrow(df[df$Visited == F, ]))
+        distm[currentIdx, ] <- NA
+        distm[, currentIdx] <- NA
+
+        currentIdx <- nearest[1]
     }
 
     lbls
