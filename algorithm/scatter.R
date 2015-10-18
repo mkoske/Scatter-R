@@ -24,18 +24,45 @@ scatter <- function(df, distmethod) {
 # ##
 traverse <- function(df) {
 
-    # Assume last column is class label column
+    # Assume last column is class label column, so ignore it. That's why - 1.
     ncols <- ncol(df) - 1
-    df[, "Visited"] <- F
+    nrows <- nrow(df)
+
+    # labels
+    lbls <- vector(mode = "character")
+
+    # Add column to track visited; important to do it here, NOT before counting
+    # the number of columns (see above).
+    df$Visited = F
 
     # TODO: is there a way to extend dist function to handle other methods too?
-    dist <- dist(df[, 1:ncols], method = "euclidean")
+    distm <- as.matrix(dist(df[, 1:ncols], method = "euclidean"))
+    diag(distm) <- NA
 
-    # TODO: Pick randomly a starting point
-    while(nrows(df[df$Visited == F]) > 0) {
+    # Pick randomly a starting point
+    currentIdx <- sample(1:nrows, size = 1)
 
+    # This seems to work now; but find out if this could be done just using
+    # apply and its friends. Also, when all is done, this generates warning:
+    # 'no non-missing arguments to min; returning Inf', so fix this.
+    while(nrow(df[df$Visited == F, ]) > 0) {
+
+        # Save the label of the current index
+        lbls <- c(lbls, df[currentIdx, (ncols + 1)])
+
+        # Also, set the current index visited
+        df[currentIdx, "Visited"] <- T
+
+        minima <- min(distm[currentIdx, ], na.rm = T)
+        nearest <- which(distm[currentIdx, ] == minima)
+
+        distm[currentIdx, ] <- NA
+        distm[, currentIdx] <- NA
+
+        currentIdx <- nearest[1]
     }
 
+    lbls
 }
 
 # ##
@@ -51,9 +78,9 @@ lblchanges <- function(lbls) {
 
     changes <- 0
 
-    len <- length(labs)
+    len <- length(lbls)
     for(idx in 1:len) {
-        if((idx < len) && (labs[idx] != labs[idx + 1]))
+        if((idx < len) && (lbls[idx] != lbls[idx + 1]))
             changes <- changes + 1
     }
 
@@ -69,8 +96,11 @@ lblchanges <- function(lbls) {
 # ##
 maxchanges <- function(classes) {
 
-    # `w` is the theoretical maxima; initialize it as zero
-    w <- 0
+    if(!is.vector(classes)) {
+        stop("Not a vector.")
+    }
+
+    n <- length(classes)
 
     # Sizes of classes
     sizes <- table(classes)
@@ -81,12 +111,13 @@ maxchanges <- function(classes) {
     # This is a special case, where there are multiple maximas; in that case,
     # the theoretical maxima is number of classes minus one.
     if(length(as.vector(which(sizes == maxima))) > 1) {
-        w <- length(classes) - 1
+        return(n - 1)
     }
 
-    # TODO: Handle other situations as well
+    if(maxima > (n - maxima)) {
+        return(2 * (n - maxima))
+    }
 
-    w
 }
 
 # ##
