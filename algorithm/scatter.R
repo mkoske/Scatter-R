@@ -136,8 +136,15 @@ maxchanges <- function(classes) {
 #
 # Returns mean scatter value
 # ##
-baseline <- function() {
+baseline <- function(lbls, rounds = 30) {
 
+    sscatter <- 0
+    for(i in 1:rounds) {
+
+        smpl <- sample(as.vector(lbls), size = length(lbls))
+        sscatter <- sscatter + scatter(smpl)
+
+    }
+
+    return(sscatter / rounds)
 }
-
-
