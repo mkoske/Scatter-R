@@ -11,10 +11,15 @@
 scatter <- function(df, distmethod) {
 
     if(!is.data.frame(df)) {
-        # Some error trigger; how?
+        stop("df should be data frame")
     }
 
     lbls <- traverse(df)
+    nchanges <- lblchanges(lbls)
+    thmax <- maxchanges(lbls)
+
+    s <- nchanges / thmax
+
 }
 
 # Traverse the dataset using nearest neighbour method, recording label changes
