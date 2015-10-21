@@ -8,18 +8,25 @@
 # range [0, 1] and the last column contains the class label and thus ignored
 # when calculating distances etc.
 # ##
-scatter <- function(df, distmethod) {
+run <- function(df, distmethod) {
 
     if(!is.data.frame(df)) {
         stop("df should be data frame")
     }
 
     lbls <- traverse(df)
+
+    s <- scatter(lbls)
+    return(s)
+}
+
+scatter <- function(lbls) {
+
     nchanges <- lblchanges(lbls)
     thmax <- maxchanges(lbls)
 
     s <- nchanges / thmax
-
+    return(s)
 }
 
 # Traverse the dataset using nearest neighbour method, recording label changes
