@@ -148,3 +148,8 @@ baseline <- function(lbls, rounds = 30) {
 
     return(sscatter / rounds)
 }
+
+# Not really needed?
+spower <- function(z, s) {
+    return(z - s)
+}
