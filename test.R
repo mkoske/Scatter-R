@@ -1,12 +1,12 @@
 require(clusterSim)
 source("./algorithm/scatter.R")
-sum <- 0
-rounds <- 30
 
-df <- data.Normalization(iris, type = "n4")
+# Testruns for BUBA-data
 
-for(i in 1:rounds) {
-    sum <- sum + scatter(df)
-}
+raw <- read.csv('./data/buba_for_matlab.dat', sep="\t")
+buba <- raw[, 3:8]
+buba$class <- raw[, 2]
 
-print(sum / rounds)
+s <- run(buba)
+z <- baseline(buba$class)
+F <- spower(z, s)
