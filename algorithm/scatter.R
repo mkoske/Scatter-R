@@ -145,15 +145,21 @@ maxchanges <- function(classes) {
 # ##
 baseline <- function(lbls, rounds = 30) {
 
-    sscatter <- 0
+    if(!is.vector(lbls)) {
+        stop("baseline: lbls should be vector")
+    }
+
+    scatters <- list(values = c(), mean = c()) 
     for(i in 1:rounds) {
 
-        smpl <- sample(as.vector(lbls), size = length(lbls))
-        sscatter <- sscatter + scatter(smpl)
+        smpl <- sample(lbls, size = length(lbls))
+        scatters$values <- c(scatters$values, scatter(smpl))
 
     }
 
-    return(sscatter / rounds)
+    scatters$mean <- sum(scatters$values) / rounds
+
+    return(scatters)
 }
 
 # Not really needed?
