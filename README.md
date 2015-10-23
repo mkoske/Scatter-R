@@ -6,4 +6,6 @@ Scatter-method implementation in R.
 
 ## Testing
 
+Running tests on Iris [1] dataset.
 
+[1]: 
