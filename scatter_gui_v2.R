@@ -1,5 +1,3 @@
-rm(list=ls())
-
 require(tcltk)
 require(gWidgets)
 require(gWidgetstcltk)
@@ -14,12 +12,14 @@ sgui$callingEnvironment <- environment()
 
 ## TODO Pass data to scatter function 
 sgui$hand.calculate <- function(h) {
+	
 	# str(svalue(sgui$tblNominal))
 	# str(svalue(sgui$tblClass))
 	# str(svalue(sgui$cbxOptions))
 	# str(svalue(sgui$rdoDistance))
-	# str(sgui$sdata)
-	data_pp <- scatpp$preprocess(sgui$data, svalue(sgui$tblClass))
+	classVar <- as.character(svalue(sgui$tblClass))
+	sgui$sdata_pp <- scatpp$preprocess(sgui$sdata, classVar)
+	str(sgui$sdata_pp)
 	# TODO call scatter calculation
 }
 
