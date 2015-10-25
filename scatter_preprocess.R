@@ -1,15 +1,93 @@
-#
-# Data preprocessing functions for Scatter-R project
-#
+# Scatter-R data preprocessing functions
 
-# Dependency: DiscriMiner package
-#~ install.package("DiscriMiner")
-#~ require(DiscriMiner)
+require(DiscriMiner)
+scatpp <- new.env(parent=.GlobalEnv)
 
 
+scatpp$preprocess  <- function(df, classVar, nominalVars=NULL, remove_NA=TRUE)
+{
+	if(!is.element(classVar, colnames(df))) stop
+	classVarData <- df[classVar]
+	df[classVar] <- NULL
+	sca_df <- scatpp$scaled.df(df, nominalVars)  # Select numeric columns and unitmap
+	bin_df <- scatpp$binary.df(df, nominalVars)  # Select nominal columns and binarize
+	mrg_df <- scatpp$appendMerge(sca_df, bin_df)  # Merge unitmapped and binarized columns
+	ord_df <- mrg_df[,order(names(mrg_df))]  # Order columns by name
+	ord_df[classVar] <- classVarData
+	return(ord_df)
+}
+
+scatpp$appendMerge <- function(df1, df2)
+{
+	df_new <- df1
+	for(ci in 1:ncol(df2)) {
+		df_new[,ncol(df_new)+1] <- df2[,ci]
+		colnames(df_new)[ncol(df_new)] <- colnames(df2)[ci]
+	}
+	return(df_new)
+}
+
+
+scatpp$scaled.df  <- function(df, excluded=NULL)
+{
+	df <- scatpp$numeric.df(df, excluded=excluded)
+	return(scatpp$unit_map(df))
+}
+
+scatpp$binary.df  <- function(df, additional=NULL)
+{
+	
+	ndf <- scatpp$nominal.df(df, additional=additional)
+	bdf <- binarize(ndf)
+	colnames(bdf) <- scatpp$binNames(ndf)
+	return(as.data.frame(bdf))
+}
+
+scatpp$nominal.df <- function(df, additional=NULL)
+{
+	return(df[,which(scatpp$nominalCols(df, additional=additional))])
+}
+
+scatpp$numeric.df <- function(df, excluded=NULL)
+{
+	return(df[,which(scatpp$numericCols(df, excluded=excluded))])
+}
+
+
+scatpp$nominalCols  <- function(df, additional=NULL) 
+{
+	c <- sapply(df, is.factor)
+	if(!is.null(additional)) c[additional] <- TRUE
+	return(c)
+}
+
+scatpp$numericCols <- function(df, excluded=NULL)
+{
+	f = sapply(df, is.factor)
+	n = !f
+	if(!is.null(excluded)) n[excluded] <- FALSE
+	return(n)
+}
+
+
+# In:  A dataframe with nominal attributes only
+# Out: A vector with column names for binarized variable columns
+scatpp$binNames <- function(fdf) 
+{
+	vv = NULL
+	for(ci in 1:ncol(fdf)) 
+	{
+		vv = append(vv, paste(colnames(fdf[ci]), levels(fdf[,ci]), sep=":"))
+	}
+	return(vv)
+}
 
 # Scale data frame to range 0..1
-	unit_map <- function(x) { return(as.data.frame(lapply(x, function(x) { (x - min (x, na.rm = TRUE)) / (max(x,na.rm=TRUE) - min(x, na.rm=TRUE))} ))) }
-
-# Binarize variables with Discriminer/Binarize
-	
+scatpp$unit_map <- function(data) 
+{
+	return(as.data.frame(
+		lapply(data, function(x) { 
+			(x - min (x, na.rm = TRUE)) / (max(x,na.rm=TRUE) - min(x, na.rm=TRUE))
+		})
+	)) 
+}
