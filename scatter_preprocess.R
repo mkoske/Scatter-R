@@ -3,9 +3,11 @@
 require(DiscriMiner)
 scatpp <- new.env(parent=.GlobalEnv)
 
-
+# Preprocesses df to correct format for Scatter function
+#  classVar will not be processed at all
 scatpp$preprocess  <- function(df, classVar, nominalVars=NULL, remove_NA=TRUE)
 {
+	# TODO test if column names are unique
 	if(!is.element(classVar, colnames(df))) stop # FIXME throw exception
 	classVarData <- df[classVar]
 	df[classVar] <- NULL
@@ -17,6 +19,7 @@ scatpp$preprocess  <- function(df, classVar, nominalVars=NULL, remove_NA=TRUE)
 	return(ord_df)
 }
 
+# Merges two dataframes, column by column, df2 coming after df1
 scatpp$appendMerge <- function(df1, df2)
 {
 
@@ -32,7 +35,7 @@ scatpp$appendMerge <- function(df1, df2)
 	return(df_new)
 }
 
-
+# Return a subset of df, numeric columns only, linearly scaled to range 0..1
 scatpp$scaled.df  <- function(df)
 {
 	df <- scatpp$numeric.df(df)
@@ -40,6 +43,7 @@ scatpp$scaled.df  <- function(df)
 	return(scatpp$unit_map(df))
 }
 
+# Return a subset of df, nominal columns only, values and colnames binarized 
 scatpp$binary.df  <- function(df)
 {
 	ndf <- scatpp$nominal.df(df)
@@ -49,19 +53,25 @@ scatpp$binary.df  <- function(df)
 	return(as.data.frame(bdf))
 }
 
+# Return a dataframe containing nominal columns only
+# In:  A dataframe
+# Out: A subset of original dataframe with nominal columns only
 scatpp$nominal.df <- function(df)
 {
 	nominalCols <- scatpp$nominalCols(df)
 	return(df[,which(nominalCols)])
 }
 
+# Return a dataframe containing numeric columns only
+# In:  A dataframe
+# Out: A subset of original dataframe with numeric columns only
 scatpp$numeric.df <- function(df)
 {
 	numericCols <- scatpp$numericCols(df)
 	return(df[,which(numericCols)])
 }
 
-
+# Return a logical vector indicating if a column is nominal or not
 scatpp$nominalCols  <- function(df) 
 {
 	c <- sapply(df, is.factor)
@@ -69,6 +79,7 @@ scatpp$nominalCols  <- function(df)
 	return(c)
 }
 
+# Return a logical vector indicating if a column is numeric or not
 scatpp$numericCols <- function(df, excluded=NULL)
 {
 	f = sapply(df, is.factor)
@@ -77,7 +88,7 @@ scatpp$numericCols <- function(df, excluded=NULL)
 	return(n)
 }
 
-
+# Return the names for binarized attributes
 # In:  A dataframe with nominal attributes only
 # Out: A vector with column names for binarized variable columns
 scatpp$binNames <- function(fdf) 
@@ -91,6 +102,8 @@ scatpp$binNames <- function(fdf)
 }
 
 # Scale data frame to range 0..1
+# In:  A dataframe with numeric attributes only
+# Out: A dataframe with each column linearly scaled to range 0..1
 scatpp$unit_map <- function(data) 
 {
 	return(as.data.frame(
