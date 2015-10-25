@@ -6,11 +6,11 @@ scatpp <- new.env(parent=.GlobalEnv)
 
 scatpp$preprocess  <- function(df, classVar, nominalVars=NULL, remove_NA=TRUE)
 {
-	if(!is.element(classVar, colnames(df))) stop
+	if(!is.element(classVar, colnames(df))) stop # FIXME throw exception
 	classVarData <- df[classVar]
 	df[classVar] <- NULL
-	sca_df <- scatpp$scaled.df(df, nominalVars)  # Select numeric columns and unitmap
-	bin_df <- scatpp$binary.df(df, nominalVars)  # Select nominal columns and binarize
+	sca_df <- scatpp$scaled.df(df)  # Select numeric columns and unitmap
+	bin_df <- scatpp$binary.df(df)  # Select nominal columns and binarize
 	mrg_df <- scatpp$appendMerge(sca_df, bin_df)  # Merge unitmapped and binarized columns
 	ord_df <- mrg_df[,order(names(mrg_df))]  # Order columns by name
 	ord_df[classVar] <- classVarData
@@ -19,6 +19,11 @@ scatpp$preprocess  <- function(df, classVar, nominalVars=NULL, remove_NA=TRUE)
 
 scatpp$appendMerge <- function(df1, df2)
 {
+
+	if(ncol(df1)==0 && ncol(df2)==0) stop # FIXME throw exception
+	if(ncol(df1)==0) return(df2)
+	if(ncol(df2)==0) return(df1)
+
 	df_new <- df1
 	for(ci in 1:ncol(df2)) {
 		df_new[,ncol(df_new)+1] <- df2[,ci]
@@ -28,36 +33,39 @@ scatpp$appendMerge <- function(df1, df2)
 }
 
 
-scatpp$scaled.df  <- function(df, excluded=NULL)
+scatpp$scaled.df  <- function(df)
 {
-	df <- scatpp$numeric.df(df, excluded=excluded)
+	df <- scatpp$numeric.df(df)
+	if(ncol(df)==0) return(df)  # If processed dataset has 0 numeric columns don't try to unitmap
 	return(scatpp$unit_map(df))
 }
 
-scatpp$binary.df  <- function(df, additional=NULL)
+scatpp$binary.df  <- function(df)
 {
-	
-	ndf <- scatpp$nominal.df(df, additional=additional)
+	ndf <- scatpp$nominal.df(df)
+	if(ncol(ndf)==0) return(ndf) # If processed dataset has 0 nominal columns don't try to binarize
 	bdf <- binarize(ndf)
 	colnames(bdf) <- scatpp$binNames(ndf)
 	return(as.data.frame(bdf))
 }
 
-scatpp$nominal.df <- function(df, additional=NULL)
+scatpp$nominal.df <- function(df)
 {
-	return(df[,which(scatpp$nominalCols(df, additional=additional))])
+	nominalCols <- scatpp$nominalCols(df)
+	return(df[,which(nominalCols)])
 }
 
-scatpp$numeric.df <- function(df, excluded=NULL)
+scatpp$numeric.df <- function(df)
 {
-	return(df[,which(scatpp$numericCols(df, excluded=excluded))])
+	numericCols <- scatpp$numericCols(df)
+	return(df[,which(numericCols)])
 }
 
 
-scatpp$nominalCols  <- function(df, additional=NULL) 
+scatpp$nominalCols  <- function(df) 
 {
 	c <- sapply(df, is.factor)
-	if(!is.null(additional)) c[additional] <- TRUE
+	# if(!is.null(additional)) c[additional] <- TRUE
 	return(c)
 }
 
@@ -65,7 +73,7 @@ scatpp$numericCols <- function(df, excluded=NULL)
 {
 	f = sapply(df, is.factor)
 	n = !f
-	if(!is.null(excluded)) n[excluded] <- FALSE
+	# if(!is.null(excluded)) n[excluded] <- FALSE
 	return(n)
 }
 
