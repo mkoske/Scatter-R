@@ -8,7 +8,7 @@
 # range [0, 1] and the last column contains the class label and thus ignored
 # when calculating distances etc.
 # ##
-scatter <- function(data, distmethod = "euclidean", rounds = 10) {
+run <- function(data, distmethod = "euclidean", rounds = 10) {
 
     if(!is.data.frame(data))
         stop("df should be data frame")
@@ -18,14 +18,19 @@ scatter <- function(data, distmethod = "euclidean", rounds = 10) {
     for(i in 1:rounds) {
 
         lbls <- traverse(data)
-        nchanges <- lblchanges(lbls)
-        thmax <- maxchanges(lbls)
-
-        sval <- nchanges / thmax
-        scatters <- c(scatters, sval)
+        scatters <- c(scatters, scatter(lbls))
     }
 
     return(sum(scatters) / rounds)
+}
+
+scatter <- function(lbls) {
+
+    nchanges <- lblchanges(lbls)
+    thmax <- maxchanges(lbls)
+
+    sval <- nchanges / thmax
+    return(sval)
 }
 
 # Traverse the dataset using nearest neighbour method, recording label changes
