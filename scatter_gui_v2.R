@@ -1,9 +1,10 @@
-rm(list=ls())
-
 require(tcltk)
 require(gWidgets)
 require(gWidgetstcltk)
 options("guiToolkit"="tcltk")
+source("scatter_preprocess.R")  # Preprocessing functions FIXME
+source("algorithm/scatter.R")
+
 
 sgui <- new.env()
 sgui$callingEnvironment <- environment()
@@ -12,11 +13,16 @@ sgui$callingEnvironment <- environment()
 
 ## TODO Pass data to scatter function 
 sgui$hand.calculate <- function(h) {
-	str(svalue(sgui$tblNominal))
-	str(svalue(sgui$tblClass))
-	str(svalue(sgui$cbxOptions))
-	str(svalue(sgui$rdoDistance))
-	str(sgui$sdata)
+	
+	# str(svalue(sgui$tblNominal))
+	# str(svalue(sgui$tblClass))
+	# str(svalue(sgui$cbxOptions))
+	# str(svalue(sgui$rdoDistance))
+	classVar <- as.character(svalue(sgui$tblClass))
+	sgui$sdata_pp <- scatpp$preprocess(sgui$sdata, classVar)
+	str(sgui$sdata_pp)
+	# TODO call scatter calculation
+	str(run(sgui$sdata_pp))
 }
 
 sgui$hand.fileOpen <- function(h) {
