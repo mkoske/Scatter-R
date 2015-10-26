@@ -3,6 +3,7 @@ require(gWidgets)
 require(gWidgetstcltk)
 options("guiToolkit"="tcltk")
 source("scatter_preprocess.R")  # Preprocessing functions FIXME
+source("algorithm/scatter.R")
 
 
 sgui <- new.env()
@@ -21,6 +22,7 @@ sgui$hand.calculate <- function(h) {
 	sgui$sdata_pp <- scatpp$preprocess(sgui$sdata, classVar)
 	str(sgui$sdata_pp)
 	# TODO call scatter calculation
+	str(run(sgui$sdata_pp))
 }
 
 sgui$hand.fileOpen <- function(h) {
