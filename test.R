@@ -1,12 +1,30 @@
 require(clusterSim)
 source("./algorithm/scatter.R")
 
-# Testruns for BUBA-data
+files <- c(
+    "data/bupa.csv", # 1 = id, 2 = class
+    "data/ecoli.csv", # 1 = id, 2 = class
+    "data/haberman.csv", # 1 = id, 2 = class
+    "data/new-thyroid.csv", # 1 = id, 2 = class
+    "data/pima.csv" # 1 = id, 2 = class
+)
 
-#raw <- read.csv('./data/buba_for_matlab.dat', sep="\t")
-#buba <- raw[, 3:8]
-#buba$class <- raw[, 2]
+for(f in files) {
 
-s <- run(iris)
-z <- baseline(as.vector(iris[, 5]))
-sF <- spower(z$mean, s)
+    raw <- read.csv(f, sep = "\t")
+
+    data <- raw[, 3:ncol(raw)]
+    data <- data.Normalization(data, type = "n4")
+    data$class = raw[, 2]
+
+    print(f)
+    print("----------------")
+    print("s: ")
+    print(run(data))
+    print("z")
+    base <- baseline(as.vector(data[, 2]), rounds = 50)
+    print(base$mean)
+}
+
+
+
