@@ -8,7 +8,7 @@
 # range [0, 1] and the last column contains the class label and thus ignored
 # when calculating distances etc.
 # ##
-run <- function(data, distmethod = "euclidean", rounds = 10, classes = C(), columns = C()) {
+run <- function(data, distmethod = "euclidean", rounds = 10, classes = c(), columns = c()) {
 
     if(!is.data.frame(data))
         stop("df should be data frame")
