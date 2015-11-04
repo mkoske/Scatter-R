@@ -64,8 +64,10 @@ traverse <- function(df) {
 
         # In the end of this function, the distance matrix is full of NAs, so it
         # generates a warning. This is to prevent the warning.
-        if(all(is.na(distm[currentIdx, ])))
+        if(all(is.na(distm[currentIdx, ]))) {
+            lbls <- c(lbls, df[currentIdx, (ncols + 1)])
             break
+        }
 
         # Save the label of the current index
         lbls <- c(lbls, df[currentIdx, (ncols + 1)])
