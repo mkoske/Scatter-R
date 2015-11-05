@@ -132,12 +132,12 @@ maxchanges <- function(classes) {
 
     # This is a special case, where there are multiple maximas; in that case,
     # the theoretical maxima is number of classes minus one.
-    if(length(as.vector(which(sizes == maxima))) > 1) {
-        return(n - 1)
-    }
+    maximas <- length(as.vector(which(sizes == maxima)))
 
-    if(maxima > (n - maxima)) {
+    if((maximas == 1) && (maxima > (n - maxima))) {
         return(2 * (n - maxima))
+    } else {
+        return(n - 1)
     }
 
 }
