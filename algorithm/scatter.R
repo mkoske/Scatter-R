@@ -16,7 +16,7 @@ run <- function(data, distmethod = "euclidean", rounds = 10, classes = c(), colu
     scatters <- vector()
 
     for(i in 1:rounds) {
-        lbls <- traverse(data)
+        lbls <- traverse(data, distmethod)
         scatters <- c(scatters, scatter(lbls))
     }
 
@@ -38,7 +38,7 @@ scatter <- function(lbls) {
 #
 # Returns the vector of labels
 # ##
-traverse <- function(df) {
+traverse <- function(df, distmethod = "euclidean") {
 
     # Assume last column is class label column, so ignore it. That's why - 1.
     ncols <- ncol(df) - 1
@@ -52,7 +52,7 @@ traverse <- function(df) {
     df$Visited = F
 
     # TODO: is there a way to extend dist function to handle other methods too?
-    distm <- as.matrix(dist(df[, 1:ncols], method = "euclidean"))
+    distm <- as.matrix(dist(df[, 1:ncols], method = distmethod))
     diag(distm) <- NA
 
     # Pick randomly a starting point
