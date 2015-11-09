@@ -11,7 +11,6 @@ files <- c(
 
 for(f in files) {
 
-    print(f)
     raw <- read.csv(f, sep = "\t")
 
     # 3 to ncol(data) are data columns, 1 and 2 are id and class, respectively
@@ -23,10 +22,10 @@ for(f in files) {
     # Attach class column to normalized data frame
     data$class = raw[, 2]
 
-    s <- run(data, rounds = 15)
-    base <- baseline(as.vector(data[, 2]), rounds = 50)
+    s <- run(data, rounds = 10)
+    base <- baseline(as.vector(data$class), rounds = 50)
 
-    print(sprintf("| %s | %f | %f ", f, s, base$mean))
+    print(sprintf("| %s | %f | %f ", f, s$s, base$mean))
 }
 
 
