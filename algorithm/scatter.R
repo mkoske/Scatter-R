@@ -8,20 +8,20 @@
 # range [0, 1] and the last column contains the class label and thus ignored
 # when calculating distances etc.
 # ##
-run <- function(data, distmethod = "euclidean", rounds = 10, classes = c(), columns = c()) {
+run <- function(data, distmethod = "euclidean", iterations = 10, classes = c(), columns = c()) {
 
     if(!is.data.frame(data))
         stop("df should be data frame")
 
     scatters <- vector()
 
-    for(i in 1:rounds) {
+    for(i in 1:iterations) {
         lbls <- traverse(data, distmethod)
         scatters <- c(scatters, scatter(lbls))
     }
 
     # v = values, s = scatter
-    return(list(v = scatters, s = c(sum(scatters) / rounds)))
+    return(list(iterationvalues = scatters, iterationmean = c(sum(scatters) / rounds)))
 }
 
 scatter <- function(lbls) {
