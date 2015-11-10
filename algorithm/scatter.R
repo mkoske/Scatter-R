@@ -38,7 +38,7 @@ scatter <- function(lbls) {
 #
 # Returns the vector of labels
 # ##
-traverse <- function(df, distmethod = "euclidean") {
+traverse <- function(df, distmethod = "euclidean", seed = F) {
 
     # Assume last column is class label column, so ignore it. That's why - 1.
     ncols <- ncol(df) - 1
@@ -54,6 +54,10 @@ traverse <- function(df, distmethod = "euclidean") {
     # TODO: is there a way to extend dist function to handle other methods too?
     distm <- as.matrix(dist(df[, 1:ncols], method = distmethod))
     diag(distm) <- NA
+
+    # For testing purposes, set always same seed for RNG
+    if(seed == T)
+        set.seed(123)
 
     # Pick randomly a starting point
     currentIdx <- sample(1:nrows, size = 1)
