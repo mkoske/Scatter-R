@@ -21,7 +21,7 @@ run <- function(data, distmethod = "euclidean", iterations = 10, classes = c(), 
     }
 
     # v = values, s = scatter
-    return(list(iterationvalues = scatters, iterationmean = c(sum(scatters) / rounds)))
+    return(list(iterationvalues = scatters, iterationmean = c(sum(scatters) / iterations ), sd = sd(scatters)))
 }
 
 scatter <- function(lbls) {
