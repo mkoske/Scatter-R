@@ -14,14 +14,20 @@ run <- function(data, distmethod = "euclidean", iterations = 10, classes = c(), 
         stop("df should be data frame")
 
     scatters <- vector()
-
+    collectionvector = c()
     for(i in 1:iterations) {
         lbls <- traverse(data, distmethod)
         scatters <- c(scatters, scatter(lbls))
+        collectionvector <- lbls
     }
 
     # v = values, s = scatter
-    return(list(iterationvalues = scatters, iterationmean = c(sum(scatters) / iterations ), sd = sd(scatters)))
+    return(list(
+        iterationvalues = scatters,
+        iterationmean = c(sum(scatters) / iterations ),
+        sd = sd(scatters),
+        collectionvector = collectionvector
+        ))
 }
 
 scatter <- function(lbls) {
