@@ -116,7 +116,7 @@ lblchanges <- function(lbls) {
             changes <- changes + 1
     }
 
-    changes
+    return(changes)
 
 }
 
