@@ -58,7 +58,7 @@ traverse <- function(df, distmethod = "euclidean", seed = F) {
     df$Visited = F
 
     # TODO: is there a way to extend dist function to handle other methods too?
-    distm <- as.matrix(dist(df[, 1:ncols], method = distmethod))
+    distm <- as.matrix(distf(df, distmethod))
     diag(distm) <- NA
 
     # For testing purposes, set always same seed for RNG
@@ -95,6 +95,32 @@ traverse <- function(df, distmethod = "euclidean", seed = F) {
     }
 
     lbls
+}
+
+distf <- function(df, distmethod) {
+
+    ncols <- ncol(df) - 1
+    ret <- switch(
+        distmethod,
+        euclidean = dist(df[, 1:ncols], method = "euclidean"),
+        manhattan = dist(df[, 1:ncols], method = "manhattan"),
+        heom      = heom(df[, 1:ncols]),
+        hvdm      = hvdm(df[, 1:ncols])
+    )
+
+    return(as.matrix(ret))
+}
+
+heom <- function(df) {
+    ncols <- ncol(df) - 1
+    warning("HEOM: Not implemented yet. Defaulting to `euclidean`", immediate. = T)
+    return(dist(df[, 1:ncols], method = "euclidean"))
+}
+
+hvdm <- function(df) {
+    ncols <- ncol(df) - 1
+    warning("HVDM: Not implemented yet. Defaulting to `euclidean`", immediate. = T)
+    return(dist(df[, 1:ncols], method = "euclidean"))
 }
 
 # ##
