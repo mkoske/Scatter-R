@@ -8,6 +8,8 @@ sgui       <- new.env()
 # AVAILABLE OPTIONS
 ## Distance measures
 sgui$opt.distmethod <- c("Euclidean", "Manhattan", "Heom")
+## Treatment of missing values
+sgui$opt.missing    <- c("Remove rows", "Remove columns", "Replace with class median/mode", "Replace with column median/mode")
 
 
 # OTHER FILES
@@ -20,7 +22,7 @@ source("algorithm/scatter.R")
 # MAIN WINDOW AND CONTAINER
 sgui$winMain <- gwindow(title="Scatter GUI")
 sgui$cont <- ggroup(container=sgui$winMain, horizontal=FALSE, spacing=10)
-size(sgui$winMain) <- c(600, 600)
+size(sgui$winMain) <- c(600, 700)
 
 
 # CONTAINERS
@@ -56,24 +58,33 @@ sgui$cont.cb  <- ggroup(horizontal=TRUE, cont=sgui$cont.c)
 sgui$cont.cba <- ggroup(cont=sgui$cont.cb)
 sgui$cont.cbb <- ggroup(cont=sgui$cont.cb, use.scrollwindow=TRUE, fill=TRUE, expand=TRUE)
 
+sgui$cont.cc   <- ggroup(horizontal=TRUE,  cont=sgui$cont.c)
+sgui$cont.cca  <- ggroup(horizontal=FALSE, cont=sgui$cont.cc)
+sgui$cont.ccb  <- ggroup(horizontal=FALSE, cont=sgui$cont.cc)
 
 sgui$cont.d   <- ggroup(horizontal=FALSE, cont=sgui$cont)
 sgui$lbl_sectOtherOptions <- glabel("Other options", cont=sgui$cont.d)
 
 sgui$cont.da  <- ggroup(horizontal=TRUE, cont=sgui$cont.d)
-sgui$cont.db  <- ggroup(horizontal=TRUE, cont=sgui$cont.d)
+
+sgui$cont.db  <- ggroup(horizontal=TRUE,  cont=sgui$cont.d)
+sgui$cont.dba <- ggroup(horizontal=FALSE, cont=sgui$cont.db)
+sgui$cont.dbb <- ggroup(horizontal=FALSE, cont=sgui$cont.db)
+sgui$cont.dbc <- ggroup(horizontal=FALSE, cont=sgui$cont.db)
+sgui$cont.dbd <- ggroup(horizontal=FALSE, cont=sgui$cont.db)
+
 sgui$cont.dc  <- ggroup(horizontal=TRUE, cont=sgui$cont.d)
 
 
 
 
 # MAIN WINDOW CONTROLS
-sgui$btn_readfile     <- gbutton("Read CSV datafile...",cont=sgui$cont.aaa, handler=sgui$hand.fileOpen)
-sgui$btn_sepBtn_1     <- gbutton(";", cont=sgui$cont.aab)
-sgui$btn_sepBtn_1     <- gbutton(",", cont=sgui$cont.aab)
-sgui$btn_sepBtn_1     <- gbutton(".", cont=sgui$cont.aab)
-sgui$btn_sepBtn_1     <- gbutton("[tab]", cont=sgui$cont.aab)
-sgui$btn_sepBtn_1     <- gbutton("[space]", cont=sgui$cont.aab)
+sgui$btn_readfile     <- gbutton("Read CSV datafile...",cont=sgui$cont.aaa, handler=sgui$hand.fileOpen, expand=TRUE)
+sgui$btn_sepBtn_1     <- gbutton(";",       cont=sgui$cont.aab, handler=sgui$hand.useSeparator.colon)
+sgui$btn_sepBtn_1     <- gbutton(",",       cont=sgui$cont.aab, handler=sgui$hand.useSeparator.comma)
+sgui$btn_sepBtn_1     <- gbutton(".",       cont=sgui$cont.aab, handler=sgui$hand.useSeparator.dot)
+sgui$btn_sepBtn_1     <- gbutton("[tab]",   cont=sgui$cont.aab, handler=sgui$hand.useSeparator.tab)
+sgui$btn_sepBtn_1     <- gbutton("[space]", cont=sgui$cont.aab, handler=sgui$hand.useSeparator.space)
 sgui$lbl_datainfo     <- glabel("No file selected", cont=sgui$cont.ab)
 
 sgui$btn_selClassVar  <- gbutton("Select class variable...         ", cont=sgui$cont.baa, handler=sgui$hand.select.classvar)
@@ -92,12 +103,18 @@ sgui$lbl_ppScaled     <- glabel("No data", cont=sgui$cont.cab)
 sgui$btn_ppBinarized  <- gbutton("Select variables to binarize...", cont=sgui$cont.cba, handler=sgui$hand.select.binarized)
 sgui$lbl_ppBinarized  <- glabel("No data", cont=sgui$cont.cbb)
 
+sgui$lbl_ppMissing    <- glabel("Handling of missing values", cont=sgui$cont.cca)
+sgui$rdo_ppMissing    <- gradio(sgui$opt.missing, cont=sgui$cont.ccb)
+
+
 sgui$btn_printSelections  <- gbutton("Print selections", cont=sgui$cont.da, handler=sgui$hand.printSelections)
 
-sgui$rdo_selectMethod      <- gradio(sgui$opt.distmethod, cont=sgui$cont.db)
-sgui$lbl_emptySpace1       <- glabel("          ", cont=sgui$cont.db)
-sgui$spn_selectIterations  <- gspinbutton(from=1, to=500, by=1, value=30, cont=sgui$cont.db)
-sgui$lbl_emptySpace2       <- glabel("          ", cont=sgui$cont.db)
+sgui$lbl_selectMethod      <- glabel("Select distance measure", cont=sgui$cont.dba)
+sgui$rdo_selectMethod      <- gradio(sgui$opt.distmethod, cont=sgui$cont.dba)
+
+sgui$lbl_selectIterations  <- glabel("Select number of iterations", cont=sgui$cont.dbb)
+sgui$spn_selectIterations  <- gspinbutton(from=1, to=500, by=1, value=30, cont=sgui$cont.dbb)
+
 
 sgui$btn_calculate         <- gbutton("Calculate", cont=sgui$cont.dc, handler=sgui$hand.calculate)
 
