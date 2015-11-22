@@ -8,41 +8,40 @@
 # ##
 heom <- function(a, b, data, nominal = c()) {
 
-    if(!is.vector(a) && !is.vector(b))
-        stop("a and b, both, must be vectors")
-
-
     if(length(a) != length(b))
         stop("Lengths of vectors a and b must be equal")
 
 
     len <- length(a)
-    distances <- c() 
+    distances <- c()     
     for(i in 1:len) {
 
+        value_of_a <- a[[i]][[1]]
+        value_of_b <- b[[i]][[1]]
+                
         # Contains missing values
-        if(is.na(a[i]) || is.na(b[i])) {
+        if(is.na(value_of_a) || is.na(value_of_b)) {
             distances <- c(distances, 1)
             next
         }
 
         ## Nominal (and ordinal) attributes
-        if(any(i %in% nominal)) {
-
-            if(a[i] == b[i])
+        if(any(i %in% nominal) == T) {
+            if(value_of_a == value_of_b)
                 distances <- c(distances, 0)
             else
                 distances <- c(distances, 1)
-
+            
             next
         }
 
         # In all other cases, the distance is the ratio of difference and range 
-        diff <- abs(a[i] - b[i])
-        range <- max(data[, i]) - min(data[, i])
-
+        diff <- abs(value_of_a - value_of_b)
+        
+        
+        column <- as.vector(data[, i], mode = "double")
+        range <- max(column) - min(column)
         distances <- c(distances, diff / range)
-
     }
 
     # sos = sum of squares; note, that distances is a vector and this ^2
