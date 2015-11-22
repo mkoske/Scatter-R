@@ -11,7 +11,6 @@ heom <- function(a, b, data, nominal = c()) {
     if(length(a) != length(b))
         stop("Lengths of vectors a and b must be equal")
 
-
     len <- length(a)
     distances <- c()     
     for(i in 1:len) {
@@ -27,6 +26,7 @@ heom <- function(a, b, data, nominal = c()) {
 
         ## Nominal (and ordinal) attributes
         if(any(i %in% nominal) == T) {
+
             if(value_of_a == value_of_b)
                 distances <- c(distances, 0)
             else
@@ -37,10 +37,16 @@ heom <- function(a, b, data, nominal = c()) {
 
         # In all other cases, the distance is the ratio of difference and range 
         diff <- abs(value_of_a - value_of_b)
-        
-        
+
         column <- as.vector(data[, i], mode = "double")
         range <- max(column) - min(column)
+        
+        # Temporary hack to prevent dividing with zero
+        if(range == 0) {
+            print(sprintf("diff is %s and range is %s", diff, range))
+            range <- 0.0000001
+        }
+        
         distances <- c(distances, diff / range)
     }
 
