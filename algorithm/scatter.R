@@ -67,7 +67,12 @@ distance <- function(data, distmethod = "euclidean", nominals = c()) {
             for(row2 in data) {
             }
         }        
+    } 
+    
+    if(any(is.na(distances)) == T) {
+        stop("There were NA's in distance matrix.")
     }
+    
     
     return(distances)
 }
