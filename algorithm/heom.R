@@ -45,7 +45,8 @@ heom <- function(a, b, data, nominal = c()) {
 
     }
 
-    # sos = sum of squares
+    # sos = sum of squares; note, that distances is a vector and this ^2
+    # operation squares every element in the distances vector before summing it.
     sos <- sum(distances^2)
     return(sqrt(sos))
 }
