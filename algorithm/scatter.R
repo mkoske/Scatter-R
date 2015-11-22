@@ -8,15 +8,19 @@
 # range [0, 1] and the last column contains the class label and thus ignored
 # when calculating distances etc.
 # ##
-run <- function(data, distmethod = "euclidean", iterations = 10, classes = c(), columns = c()) {
+run <- function(data, classlabel = NA, distmethod = "euclidean", iterations = 10, classes = c(), columns = c(), nominals = c()) {
 
     if(!is.data.frame(data))
         stop("df should be data frame")
 
+    # TODO: Switch class to last column
     scatters <- vector()
     collectionvector = c()
+    
+    distance_matrix <- distance(data, distmethod, nominals)
     for(i in 1:iterations) {
-        lbls <- traverse(data, distmethod)
+        print(sprintf("Running iteration %s...", i))
+        lbls <- traverse(data, distance_matrix)
         scatters <- c(scatters, scatter(lbls))
         collectionvector <- lbls
     }
@@ -30,6 +34,47 @@ run <- function(data, distmethod = "euclidean", iterations = 10, classes = c(), 
         ))
 }
 
+# ##
+#
+# ##
+distance <- function(data, distmethod = "euclidean", nominals = c()) {
+
+    n <- nrow(data)
+    ncols = ncol(data) - 1
+    
+    distances = matrix(nrow = n, ncol = n)
+
+    if(distmethod == "euclidean") {
+        distances <- as.matrix(dist(data[, 1:ncols], method = "euclidean"))
+    }
+    
+    if(distmethod == "manhattan") {
+        distances <- as.matrix(dist(data[, 1:ncols], method = "manhattan"))
+    }
+    
+    if(distmethod == "heom") {
+        source('./algorithm/heom.R')
+        for(i in 1:n) {
+            for(j in 1:n) {
+                distances[i, j] <- heom(data[i, ], data[j, ], data, nominals)
+            }
+        }    
+    }
+    
+    if(distmethod == "hvdm") {
+        stop("Error: HVDM not implemented yet.")
+        for(row1 in data) {
+            for(row2 in data) {
+            }
+        }        
+    }
+    
+    return(distances)
+}
+
+# ##
+# Calculate raw Scatter value
+# ##
 scatter <- function(lbls) {
 
     nchanges <- lblchanges(lbls)
@@ -44,7 +89,7 @@ scatter <- function(lbls) {
 #
 # Returns the vector of labels
 # ##
-traverse <- function(df, distmethod = "euclidean", seed = F) {
+traverse <- function(df, distm, seed = F) {
 
     # Assume last column is class label column, so ignore it. That's why - 1.
     ncols <- ncol(df) - 1
@@ -58,7 +103,6 @@ traverse <- function(df, distmethod = "euclidean", seed = F) {
     df$Visited = F
 
     # TODO: is there a way to extend dist function to handle other methods too?
-    distm <- as.matrix(distf(df, distmethod))
     diag(distm) <- NA
 
     # For testing purposes, set always same seed for RNG
