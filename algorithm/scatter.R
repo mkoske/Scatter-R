@@ -147,32 +147,6 @@ traverse <- function(df, distm, seed = F) {
     lbls
 }
 
-distf <- function(df, distmethod) {
-
-    ncols <- ncol(df) - 1
-    ret <- switch(
-        distmethod,
-        euclidean = dist(df[, 1:ncols], method = "euclidean"),
-        manhattan = dist(df[, 1:ncols], method = "manhattan"),
-        heom      = heom(df[, 1:ncols]),
-        hvdm      = hvdm(df[, 1:ncols])
-    )
-
-    return(as.matrix(ret))
-}
-
-heom <- function(df) {
-    ncols <- ncol(df) - 1
-    warning("HEOM: Not implemented yet. Defaulting to `euclidean`", immediate. = T)
-    return(dist(df[, 1:ncols], method = "euclidean"))
-}
-
-hvdm <- function(df) {
-    ncols <- ncol(df) - 1
-    warning("HVDM: Not implemented yet. Defaulting to `euclidean`", immediate. = T)
-    return(dist(df[, 1:ncols], method = "euclidean"))
-}
-
 # ##
 # Compute the number of label changes
 #
