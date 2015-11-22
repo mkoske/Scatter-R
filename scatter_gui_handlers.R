@@ -230,7 +230,7 @@ sgui$hand.calculate <- function(h, ...) {
 
 	result <- run ( 
 		data       = sgui$ppdata, 
-		distmethod = svalue(sgui$rdo_selectMethod),
+		distmethod = tolower(svalue(sgui$rdo_selectMethod)),
 		iterations = svalue(sgui$spn_selectIterations),
 		classes    = sgui$var.selected.classes,
 		columns    = sgui$var.selected.attributes
