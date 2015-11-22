@@ -56,7 +56,7 @@ distance <- function(data, distmethod = "euclidean", nominals = c()) {
         source('./algorithm/heom.R')
         for(i in 1:n) {
             for(j in 1:n) {
-                distances[i, j] <- heom(data[i, ], data[j, ], data, nominals)
+                distances[i, j] <- heom(a = data[i, 1:ncols], b = data[j, 1:ncols], data = data, nominal = nominals)
             }
         }    
     }
