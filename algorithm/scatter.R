@@ -53,6 +53,7 @@ distance <- function(data, distmethod = "euclidean", nominals = c()) {
     }
     
     if(distmethod == "heom") {
+        print("You selected HEOM. This is currently *very* slow. So you must wait.")
         source('./algorithm/heom.R')
         for(i in 1:n) {
             for(j in 1:n) {
