@@ -15,6 +15,36 @@ sgui$hand.fileOpen <- function(h, ...) {
 	sgui$sub.updateWithData()
 }
 
+sgui$hand.useSeparator.colon <- function(h, ...) {
+	if(is.null(sgui$sfile)) return()
+	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep=";"))
+	sgui$sub.updateWithData()
+}
+
+sgui$hand.useSeparator.comma <- function(h, ...) {
+	if(is.null(sgui$sfile)) return()
+	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep=","))
+	sgui$sub.updateWithData()
+}
+
+sgui$hand.useSeparator.dot <- function(h, ...) {
+	if(is.null(sgui$sfile)) return()
+	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep="."))
+	sgui$sub.updateWithData()
+}
+
+sgui$hand.useSeparator.tab <- function(h, ...) {
+	if(is.null(sgui$sfile)) return()
+	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep="\t"))
+	sgui$sub.updateWithData()
+}
+
+sgui$hand.useSeparator.space <- function(h, ...) {
+	if(is.null(sgui$sfile)) return()
+	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep=""))
+	sgui$sub.updateWithData()
+}
+
 # Call this function after changing classvar or included_variables selections
 sgui$sub.selectionVectorUpdate_class <- function() {
 
@@ -192,17 +222,19 @@ sgui$hand.printSelections <- function(h, ...) {
 }
 
 sgui$hand.calculate <- function(h, ...) {
-	sgui$ppdata <- scatpp$preprocess(
+	sgui$ppdata <- scatpp$preprocess (
 		df         = sgui$sdata, 
 		binarized  = sgui$var.selected.binarized, 
-		scaled     = sgui$var.selected.scaled)
-					
-	result <- run( 
+		scaled     = sgui$var.selected.scaled
+	)
+
+	result <- run ( 
 		data       = sgui$ppdata, 
 		distmethod = svalue(sgui$rdo_selectMethod),
 		iterations = svalue(sgui$spn_selectIterations),
 		classes    = sgui$var.selected.classes,
-		columns    = sgui$var.selected.attributes)
+		columns    = sgui$var.selected.attributes
+	)
 		
 	print(result)
 						 
