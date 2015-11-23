@@ -8,7 +8,15 @@
 # range [0, 1] and the last column contains the class label and thus ignored
 # when calculating distances etc.
 # ##
-run <- function(data, classlabel = NA, distmethod = "euclidean", iterations = 10, classes = c(), columns = c(), nominals = c()) {
+run <- function(
+    data,
+    classlabel = c(),
+    distmethod = "euclidean",
+    iterations = 10,
+    baseline_iterations = 50,
+    classes    = c(),
+    columns    = c(),
+    nominals   = c()) {
 
     if(!is.data.frame(data))
         stop("df should be data frame")
@@ -16,6 +24,7 @@ run <- function(data, classlabel = NA, distmethod = "euclidean", iterations = 10
     # TODO: Switch class to last column
     scatters <- vector()
     collectionvector = c()
+    lbls <- c()
     
     distance_matrix <- distance(data, distmethod, nominals)
     for(i in 1:iterations) {
@@ -24,13 +33,20 @@ run <- function(data, classlabel = NA, distmethod = "euclidean", iterations = 10
         scatters <- c(scatters, scatter(lbls))
         collectionvector <- lbls
     }
+    
+    if(length(lbls) < 1) {
+        stop("No class labels available, cannot continue.")
+    }
+    
+    baseline <- baseline(lbls, baseline_iterations)
 
     # v = values, s = scatter
     return(list(
         iterationvalues = scatters,
         iterationmean = c(sum(scatters) / iterations ),
         sd = sd(scatters),
-        collectionvector = collectionvector
+        collectionvector = collectionvector,
+        baseline = baseline
         ))
 }
 
