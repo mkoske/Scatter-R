@@ -222,11 +222,17 @@ sgui$hand.printSelections <- function(h, ...) {
 }
 
 sgui$hand.calculate <- function(h, ...) {
+
+    classColumnIndex <- which(names(sgui$sdata) == sgui$var.classvar)
+    classes <- sgui$sdata[, classColumnIndex]
+    tmpdf <- sgui$sdata[, -classColumnIndex]
 	sgui$ppdata <- scatpp$preprocess (
-		df         = sgui$sdata, 
+		df         = tmpdf, 
 		binarized  = sgui$var.selected.binarized, 
 		scaled     = sgui$var.selected.scaled
 	)
+	
+	sgui$ppdata$class <- classes
 
 	result <- run ( 
 		data       = sgui$ppdata, 
