@@ -21,8 +21,8 @@ source("algorithm/scatter.R")
 
 # MAIN WINDOW AND CONTAINER
 sgui$winMain <- gwindow(title="Scatter GUI")
-sgui$cont <- ggroup(container=sgui$winMain, horizontal=FALSE, spacing=10)
-size(sgui$winMain) <- c(600, 700)
+sgui$cont <- ggroup(container=sgui$winMain, horizontal=FALSE, spacing=10, use.scrollwindow=TRUE)
+size(sgui$winMain) <- c(600, 500)
 
 
 # CONTAINERS
