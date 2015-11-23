@@ -3,20 +3,28 @@ require(DiscriMiner)
 scatpp <- new.env(parent=.GlobalEnv)
 
 # Binarize *binarized columns of *df and scale to range 0..1 *scaled columns of *df
-scatpp$preprocess  <- function(df, binarized=NULL, scaled=NULL) {
-
+scatpp$preprocess  <- function(df, binarized=NULL, scaled=NULL, na.action=NULL) {
+	
+	# Test the df argument
 	if(is.null(df)) return(df)
 	if(is.null(binarized) && is.null(scaled)) return(df)
 
+	# TODO Handle missing values
+	## Remove rows where classvar is missing
+	## Perform selected handling on missing values
+
+	# Subset df for different types of preprocessing
 	bin.df <- df[binarized]  # Data frame with columns to be binarized
 	sca.df <- df[scaled]     # Data frame with columns to be scaled
 	binarized <- colnames(bin.df) # To make sure vectors contain colnames instead of indexes
 	scaled    <- colnames(sca.df) # To make sure vectors contain colnames instead of indexes
 	nop.df <- df[setdiff(colnames(df),union(binarized,scaled))] # Data frame with columns not preprocessed
 
+	# Preprocess df subsets
 	bin.df <- scatpp$binarize.df(bin.df)  # Binarize cols selected for binarization
 	sca.df <- scatpp$unitmap.df(sca.df)   # Scale cols selected for scaling
 
+	# Combine subsets, order by column names and return dataframe preprocessed for Scatter algorithm
 	mrg.df <- scatpp$appendMerge(scatpp$appendMerge(nop.df, sca.df), bin.df) # Combine three dataframes
 	ord.df <- mrg.df[,order(names(mrg.df))]  # Order columns by name
 	return(ord.df)

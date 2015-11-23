@@ -1,5 +1,6 @@
+# HANDLERS AND FUNCTIONS FOR SCATTER GUI
 
-# Show file dialog, read data from file, update main window based on data
+# GUI Handler: Show file dialog, read data from file, update main window based on data
 sgui$hand.fileOpen <- function(h, ...) {
 	sgui$sfile <- gfile(
 		type="open", 
@@ -15,30 +16,35 @@ sgui$hand.fileOpen <- function(h, ...) {
 	sgui$sub.updateWithData()
 }
 
+# GUI Handler: Reread selected file with colon as separator 
 sgui$hand.useSeparator.colon <- function(h, ...) {
 	if(is.null(sgui$sfile)) return()
 	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep=";"))
 	sgui$sub.updateWithData()
 }
 
+# GUI Handler: Reread selected file with comma as separator
 sgui$hand.useSeparator.comma <- function(h, ...) {
 	if(is.null(sgui$sfile)) return()
 	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep=","))
 	sgui$sub.updateWithData()
 }
 
+# GUI Handler: Reread selected file with dot as separator
 sgui$hand.useSeparator.dot <- function(h, ...) {
 	if(is.null(sgui$sfile)) return()
 	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep="."))
 	sgui$sub.updateWithData()
 }
 
+# GUI Handler: Reread selected file with tab as separator
 sgui$hand.useSeparator.tab <- function(h, ...) {
 	if(is.null(sgui$sfile)) return()
 	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep="\t"))
 	sgui$sub.updateWithData()
 }
 
+# GUI Handler: Reread selected file with space as separator
 sgui$hand.useSeparator.space <- function(h, ...) {
 	if(is.null(sgui$sfile)) return()
 	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep=""))
@@ -126,7 +132,7 @@ sgui$guessClassvar <- function(df) {
 	for(i in length(numerics):1) if(numerics[i]) return(i)
 }
 
-
+# GUI handler: Show form for selection of variable containing class label
 sgui$hand.select.classvar  <- function(h, ...) {
 	if(is.null(sgui$sdata)) return()
 	selWindow <- gwindow(title="Select class variable")
@@ -145,6 +151,7 @@ sgui$hand.select.classvar  <- function(h, ...) {
 	radio <- gradio(sgui$var.allvariables, selected=match(sgui$var.classvar, sgui$var.allvariables), cont=cont.b)
 }
 
+# GUI handler: Show form for selection of variables included in scatter calculation
 sgui$hand.select.attributes <- function(h, ...) {
 	if(is.null(sgui$sdata)) return()
 	selWindow <- gwindow(title="Select attributes included in the calculation")
@@ -161,6 +168,7 @@ sgui$hand.select.attributes <- function(h, ...) {
 
 }
 
+# GUI handler: Show form for selection of classes included in scatter calculation
 sgui$hand.select.classes    <- function(h, ...) {
 	if(is.null(sgui$sdata)) return()
 	selWindow <- gwindow(title="Select classes included in the calculation")
@@ -175,9 +183,7 @@ sgui$hand.select.classes    <- function(h, ...) {
 	cbx <- gcheckboxgroup(sgui$var.classes, checked=(sgui$var.classes %in% sgui$var.selected.classes), cont=cont.b)
 }
 
-
-
-
+# GUI handler: Show form for selection of variables to be binarized in preprocessing
 sgui$hand.select.binarized     <- function(h, ...) {
 	if(is.null(sgui$sdata)) return()
 	selWindow <- gwindow(title="Select attributes to be binarized")
@@ -193,8 +199,7 @@ sgui$hand.select.binarized     <- function(h, ...) {
 	cbx <- gcheckboxgroup(sgui$var.attributes_flv, checked=(sgui$var.attributes_flv %in% sgui$var.selected.binarized), cont=cont.b)
 }
 
-
-
+# GUI handler: Show form for selection of variables to be scaled to range 0..1 in preprocessing
 sgui$hand.select.scaled    <- function(h, ...) {
 	if(is.null(sgui$sdata)) return()
 	selWindow <- gwindow(title="Select numerical attributes for scaling to range 0..1")
@@ -211,16 +216,19 @@ sgui$hand.select.scaled    <- function(h, ...) {
 
 }
 
+# GUI handler: Print GUI selections in R console
 sgui$hand.printSelections <- function(h, ...) {
 	print("==================================================")
-	sgui$func.printVector("Classvar: ",   sgui$var.classvar)
-	sgui$func.printVector("Classes: ",    sgui$var.selected.classes)
+	sgui$func.printVector("Classvar:   ", sgui$var.classvar)
+	sgui$func.printVector("Classes:    ", sgui$var.selected.classes)
 	sgui$func.printVector("Attributes: ", sgui$var.selected.attributes)
-	sgui$func.printVector("Binarized: ",  sgui$var.selected.binarized)
-	sgui$func.printVector("Scaled: ",     sgui$var.selected.scaled)
+	sgui$func.printVector("Binarized:  ", sgui$var.selected.binarized)
+	sgui$func.printVector("Scaled:     ", sgui$var.selected.scaled)
+	sgui$func.printVector("NA handing: ", svalue(sgui$rdo_ppMissing, index=TRUE))
 	print("--------------------------------------------------")
 }
 
+# GUI handler: Pass data and selections to scatter algorithm; do something with result
 sgui$hand.calculate <- function(h, ...) {
 
 	sgui$ppdata <- scatpp$preprocess (
@@ -237,11 +245,13 @@ sgui$hand.calculate <- function(h, ...) {
 		classes    = sgui$var.selected.classes,
 		columns    = sgui$var.selected.attributes
 	)
-		
+	
+	# TODO do something with result
 	print(result)
 						 
 }
 
+# Print a vector with label/explanation in front of it
 sgui$func.printVector <- function(heading, vec) {
 	print(paste(heading, paste(vec, collapse=", ")))
 } 

@@ -9,7 +9,7 @@ sgui       <- new.env()
 ## Distance measures
 sgui$opt.distmethod <- c("Euclidean", "Manhattan", "Heom")
 ## Treatment of missing values
-sgui$opt.missing    <- c("Remove rows", "Remove columns", "Replace with class median/mode", "Replace with column median/mode")
+sgui$opt.missing    <- c("Do nothing", "Replace with class median/mode", "Replace with column median/mode", "Remove rows")
 
 
 # OTHER FILES
