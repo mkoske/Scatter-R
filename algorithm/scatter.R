@@ -29,11 +29,12 @@ run <- function(
     distance_matrix <- distance(data, distmethod, nominals)
     for(i in 1:iterations) {
         print(sprintf("Running iteration %s...", i))
+
         lbls <- traverse(data, distance_matrix)
         scatters <- c(scatters, scatter(lbls))
         collectionvector <- lbls
     }
-    
+
     if(length(lbls) < 1) {
         stop("No class labels available, cannot continue.")
     }
@@ -72,10 +73,8 @@ distance <- function(data, distmethod = "euclidean", nominals = c()) {
         print("You selected HEOM. This is currently *very* slow. So you must wait.")
         source('./algorithm/heom.R')
         
-        classless <- data[, 1:ncols]
-        # Go through rows, 
+        classless <- sapply(data[, 1:ncols], as.numeric)
         distances <- apply(classless, 1, function(row, data, nominals) {
-                
             temp <- apply(data, 1, function(a, b, d, n) {
                 return(heom(a, b, d, n))
             }, row, data, nominals)

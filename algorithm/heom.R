@@ -12,22 +12,27 @@ heom <- function(a, b, data, nominal = c()) {
         stop("Lengths of vectors a and b must be equal")
 
     len <- length(a)
-    distances <- c()     
-    for(i in 1:len) {
-
-        value_of_a <- a[[i]][[1]]
-        value_of_b <- b[[i]][[1]]
+    distances <- c()
+    
+    result <- mapply(function(a, b, data, nominal) {
                 
         # Contains missing values
-        if(is.na(value_of_a) || is.na(value_of_b)) {
-            distances <- c(distances, 1)
-            next
-        }
+        if(is.na(a) || is.na(b))
+            return 1;
 
         ## Nominal (and ordinal) attributes
+        ## TODO: How to do this in apply?
+        ## An idea to above: split the vectors into two, give those that are
+        ## nominal, in nominals-vector and rest in the a and b.
+        ## Like this: a = (1, 2, 3) and b = (4, 5, 6); nominals_of_a = ("a")
+        ## nominals_of_b = ("b"). But this has one problem: they MUST retain the
+        ## order, i.e. if there's two nominals, and they're ordered so that 
+        ## "x" and "y" in a, and "z" and "w" in b, the ordering must be same so
+        ## comparing feature agains feature, like "x" = "z" and "y" = "w", but 
+        ## not "x" = "w" or "y" = "z".
         if(any(i %in% nominal) == T) {
 
-            if(value_of_a == value_of_b)
+            if(a == b)
                 distances <- c(distances, 0)
             else
                 distances <- c(distances, 1)
@@ -36,20 +41,20 @@ heom <- function(a, b, data, nominal = c()) {
         }
 
         # In all other cases, the distance is the ratio of difference and range 
-        diff <- abs(value_of_a - value_of_b)
+        diff <- abs(a - b)
 
-        column <- as.vector(data[, i], mode = "double")
+        column <- as.vector(data[, i], mode = "numeric")
         range <- max(column) - min(column)
         
         # Temporary hack to prevent dividing with zero
         if(range == 0) {
-            print(sprintf("diff is %s and range is %s", diff, range))
+            print("Warning: The range was zero; replacing it with 1E-6 to prevent division by zero.")
             range <- 0.0000001
         }
         
-        distances <- c(distances, diff / range)
-    }
-
+        return(diff / range)   
+    }, a = a, b = b, MoreArgs = list(data = data, nominal = nominal))
+   
     # sos = sum of squares; note, that distances is a vector and this ^2
     # operation squares every element in the distances vector before summing it.
     sos <- sum(distances^2)
