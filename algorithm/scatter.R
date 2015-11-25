@@ -71,11 +71,19 @@ distance <- function(data, distmethod = "euclidean", nominals = c()) {
     if(distmethod == "heom") {
         print("You selected HEOM. This is currently *very* slow. So you must wait.")
         source('./algorithm/heom.R')
-        for(i in 1:n) {
-            for(j in 1:n) {
-                distances[i, j] <- heom(a = data[i, 1:ncols], b = data[j, 1:ncols], data = data, nominal = nominals)
-            }
-        }    
+        
+        classless <- data[, 1:ncols]
+        # Go through rows, 
+        distances <- apply(classless, 1, function(row, data, nominals) {
+                
+            temp <- apply(data, 1, function(a, b, d, n) {
+                return(heom(a, b, d, n))
+            }, row, data, nominals)
+            
+            return(temp)
+            
+        }, classless, nominals)
+        
     }
     
     if(distmethod == "hvdm") {
