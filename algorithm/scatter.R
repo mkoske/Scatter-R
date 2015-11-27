@@ -80,11 +80,13 @@ distance <- function(data, distmethod = "euclidean", nominals = c()) {
 
         start <- proc.time()
         distances <- apply(classless, 1, function(row, data, range, nominals) {
-            temp <- apply(data, 1, function(a, b, range, n) {
+
+            # TODO: It might optimize even more to mark cases done, so it must 
+            # not go through all n^2 iterations. If the distance between two 
+            # cases is already calculated, then just return. But how to do this?
+            return(apply(data, 1, function(a, b, range, n) {
                 return(heom(a, b, range, n))
-            }, row, range, nominals)
-            
-            return(temp)
+            }, row, range, nominals))
             
         }, classless, range, nominals)
         print(proc.time() - start)   
