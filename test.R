@@ -8,4 +8,4 @@ df$class <- raw[, 5]
 
 time <- system.time(dm <- distance(df, distmethod = "heom"))
 
-print(time)
+# print(time)

@@ -74,6 +74,7 @@ distance <- function(data, distmethod = "euclidean", nominals = c()) {
         source('./algorithm/heom.R')
         
         classless <- sapply(data[, 1:ncols], as.numeric)
+        start <- proc.time()
         distances <- apply(classless, 1, function(row, data, nominals) {
             temp <- apply(data, 1, function(a, b, d, n) {
                 return(heom(a, b, d, n))
@@ -82,7 +83,7 @@ distance <- function(data, distmethod = "euclidean", nominals = c()) {
             return(temp)
             
         }, classless, nominals)
-        
+        print(proc.time() - start)   
     }
     
     if(distmethod == "hvdm") {

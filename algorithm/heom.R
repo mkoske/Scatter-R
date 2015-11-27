@@ -7,20 +7,19 @@
 # ordinal
 # ##
 heom <- function(a, b, data, nominal = c()) {
-
+   
     if(length(a) != length(b))
         stop("Lengths of vectors a and b must be equal")
 
     len <- length(a)
     distances <- c()
-    
-    result <- mapply(function(a, b, data, nominal) {
-                
+    result <- mapply(function(a, b, i, data, nominal) {
+        
         # Contains missing values
         if(is.na(a) || is.na(b))
-            return 1;
+            return(1);
 
-        if(nominal == TRUE) {
+        if(any(i %in% nominal) == TRUE) {
 
             if(a == b)
                 return(0)
@@ -30,7 +29,6 @@ heom <- function(a, b, data, nominal = c()) {
 
         # In all other cases, the distance is the ratio of difference and range 
         diff <- abs(a - b)
-
         column <- as.vector(data[, i], mode = "numeric")
         range <- max(column) - min(column)
         
@@ -41,7 +39,7 @@ heom <- function(a, b, data, nominal = c()) {
         }
         
         return(diff / range)   
-    }, a = a, b = b, nominal = nominal, MoreArgs = list(data = data))
+    }, a, b, i = 1:length(a), nominal, MoreArgs = list(d = data)) 
    
     # sos = sum of squares; note, that distances is a vector and this ^2
     # operation squares every element in the distances vector before summing it.
