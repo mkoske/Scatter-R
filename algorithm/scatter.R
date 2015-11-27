@@ -74,15 +74,19 @@ distance <- function(data, distmethod = "euclidean", nominals = c()) {
         source('./algorithm/heom.R')
         
         classless <- sapply(data[, 1:ncols], as.numeric)
+ 
+        # Get max and min for all columns so they won't be calculated n^2 times
+        range <- apply(classless[, 1:ncols], 2, range)
+
         start <- proc.time()
-        distances <- apply(classless, 1, function(row, data, nominals) {
-            temp <- apply(data, 1, function(a, b, d, n) {
-                return(heom(a, b, d, n))
-            }, row, data, row %in% nominals)
+        distances <- apply(classless, 1, function(row, data, range, nominals) {
+            temp <- apply(data, 1, function(a, b, range, n) {
+                return(heom(a, b, range, n))
+            }, row, range, nominals)
             
             return(temp)
             
-        }, classless, nominals)
+        }, classless, range, nominals)
         print(proc.time() - start)   
     }
     

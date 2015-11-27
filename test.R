@@ -3,9 +3,7 @@ source('./algorithm/scatter.R')
 
 raw <- read.csv('testdata_3.csv', sep = ',')
 
-df <- data.Normalization(raw[, 1:4], type="n4")
-df$class <- raw[, 5]
+# Time with test data
+time <- system.time(dm <- distance(raw, distmethod = "heom", nominals = c(5, 7)))
 
-time <- system.time(dm <- distance(df, distmethod = "heom"))
-
-# print(time)
+print(time)
