@@ -77,7 +77,7 @@ distance <- function(data, distmethod = "euclidean", nominals = c()) {
         distances <- apply(classless, 1, function(row, data, nominals) {
             temp <- apply(data, 1, function(a, b, d, n) {
                 return(heom(a, b, d, n))
-            }, row, data, nominals)
+            }, row, data, row %in% nominals)
             
             return(temp)
             

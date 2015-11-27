@@ -20,24 +20,12 @@ heom <- function(a, b, data, nominal = c()) {
         if(is.na(a) || is.na(b))
             return 1;
 
-        ## Nominal (and ordinal) attributes
-        ## TODO: How to do this in apply?
-        ## An idea to above: split the vectors into two, give those that are
-        ## nominal, in nominals-vector and rest in the a and b.
-        ## Like this: a = (1, 2, 3) and b = (4, 5, 6); nominals_of_a = ("a")
-        ## nominals_of_b = ("b"). But this has one problem: they MUST retain the
-        ## order, i.e. if there's two nominals, and they're ordered so that 
-        ## "x" and "y" in a, and "z" and "w" in b, the ordering must be same so
-        ## comparing feature agains feature, like "x" = "z" and "y" = "w", but 
-        ## not "x" = "w" or "y" = "z".
-        if(any(i %in% nominal) == T) {
+        if(nominal == TRUE) {
 
             if(a == b)
-                distances <- c(distances, 0)
+                return(0)
             else
-                distances <- c(distances, 1)
-            
-            next
+                return(1)
         }
 
         # In all other cases, the distance is the ratio of difference and range 
@@ -53,7 +41,7 @@ heom <- function(a, b, data, nominal = c()) {
         }
         
         return(diff / range)   
-    }, a = a, b = b, MoreArgs = list(data = data, nominal = nominal))
+    }, a = a, b = b, nominal = nominal, MoreArgs = list(data = data))
    
     # sos = sum of squares; note, that distances is a vector and this ^2
     # operation squares every element in the distances vector before summing it.
