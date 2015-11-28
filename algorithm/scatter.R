@@ -72,17 +72,21 @@ run <- function(
 # ##
 distance <- function(data, distmethod = "euclidean", nominals = c()) {
 
-    n <- nrow(data)
     ncols = ncol(data) - 1
+    n <- nrow(data)
     
     distances = matrix(nrow = n, ncol = n)
 
     if(distmethod == "euclidean") {
-        distances <- as.matrix(dist(data[, 1:ncols], method = "euclidean"))
+        distances <- as.matrix(
+            dist(data[, 1:ncols], method = "euclidean")
+        )
     }
     
     if(distmethod == "manhattan") {
-        distances <- as.matrix(dist(data[, 1:ncols], method = "manhattan"))
+        distances <- as.matrix(
+            dist(data[, 1:ncols], method = "manhattan")
+        )
     }
     
     if(distmethod == "heom") {
