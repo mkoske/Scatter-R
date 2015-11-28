@@ -10,7 +10,7 @@
 # ##
 run <- function(
     data,
-    classlabel = c(),
+    classlabel = NULL,
     distmethod = "euclidean",
     iterations = 10,
     baseline_iterations = 50,
@@ -21,7 +21,23 @@ run <- function(
     if(!is.data.frame(data))
         stop("df should be data frame")
 
-    # TODO: Switch class to last column
+    # Ensure right class column. If the given class column identifier is
+    # the name, then get the index for it. But if it's already numeric, 
+    # then it probably is the index. Other types are not allowed. 
+    classIndex <- NULL
+    if(class(classlabel) == "character") {
+        classIndex <- which(names(data) == classlabel)
+    } else if(class(classlabel) == "numeric") {
+        classIndex <- classlabel
+    } else {
+        stop("Invalid class label column given.")
+    }
+   
+    # Move the class label column to last
+    classes <- data[, classIndex]
+    data[, classIndex] <- NULL
+    data$class <- classes
+    
     scatters <- vector()
     collectionvector = c()
     lbls <- c()
