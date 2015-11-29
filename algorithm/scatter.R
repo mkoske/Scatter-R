@@ -4,9 +4,12 @@
 # This is the main function, which groups all smaller parts together and returns
 # the final results.
 #
-# Takes a dataframe as input. The dataframe is assumed to be normalized to the
-# range [0, 1] and the last column contains the class label and thus ignored
-# when calculating distances etc.
+# Takes a dataframe as input. Note that the dataframe is assumed to be
+# normalized to the range [0, 1].
+#
+# The classlabel is the name or index of the column containing the classlabel
+# and it is moved to the last position and ignored when calculating distances
+# etc.
 # ##
 run <- function(
     data,
@@ -22,8 +25,8 @@ run <- function(
         stop("df should be data frame")
 
     # Ensure right class column. If the given class column identifier is
-    # the name, then get the index for it. But if it's already numeric, 
-    # then it probably is the index. Other types are not allowed. 
+    # the name, then get the index for it. But if it's already numeric,
+    # then it probably is the index. Other types are not allowed.
     classIndex <- NULL
     if(class(classlabel) == "character") {
         classIndex <- which(names(data) == classlabel)
@@ -101,8 +104,8 @@ distance <- function(data, distmethod = "euclidean", nominals = c()) {
         start <- proc.time()
         distances <- apply(classless, 1, function(row, data, range, nominals) {
 
-            # TODO: It might optimize even more to mark cases done, so it must 
-            # not go through all n^2 iterations. If the distance between two 
+            # TODO: It might optimize even more to mark cases done, so it must
+            # not go through all n^2 iterations. If the distance between two
             # cases is already calculated, then just return. But how to do this?
             return(apply(data, 1, function(a, b, range, n) {
                 return(heom(a, b, range, n))
