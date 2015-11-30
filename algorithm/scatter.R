@@ -12,15 +12,15 @@
 # etc.
 # ##
 run <- function(
-    data,                           # The data frame to process
-    classlabel = NULL,              # Column name or index for classlabel
-    distmethod = "euclidean",       # Distance method to use
-    usecase = "single",             # Usecase: single, class, variable or all
-    iterations = 10,                # Iterations; since random starting point
-    baseline_iterations = 50,       # Iterations for statistical baseline
-    classes    = c(),               # Which classes are included; others removed
-    columns    = c(),               # Which variables are used
-    nominals   = c()) {             # Which one are nominal; not in use atm.
+    data,                       # The data frame to process
+    classlabel  = NULL,         # Column name or index for classlabel
+    distmethod  = "euclidean",  # Distance method to use
+    usecase     = "single",     # Usecase: single, class, variable or all
+    iterations  = 10,           # Iterations; since random starting point
+    baseline_iterations = 50,   # Iterations for statistical baseline
+    classes     = c(),          # Which classes are included; others removed
+    columns     = c(),          # Which variables are used
+    nominals    = c()) {        # Which one are nominal; not in use atm.
 
     if(!is.data.frame(data))
         stop("Input must be a data frame.")
@@ -45,13 +45,32 @@ run <- function(
     scatters <- vector()
     collectionvector = c()
     lbls <- c()
-    
-    distance_matrix <- distance(data, distmethod, nominals)
+
+    # 1. distSelect the correct data
+    # 2. Calculate the distance matrix
+    # 3. Run correct usecase
+    # 4. Return result
+
+    if(length(classes) > 0) {
+        data <- data[, classes]
+    }
+
+    if(length(columns) > 0) {
+        data <- data[, columns]
+    }
+
+    result <- switch(
+        usecase,
+        single      = single(),
+        classes     = classes(),
+        variables   = variables(),
+        all         = all()
+        )
+
+
 
     # Run scatter iterations
     for(i in 1:iterations) {
-        print(sprintf("Running iteration %s...", i))
-
         lbls <- traverse(data, distance_matrix)
         scatters <- c(scatters, scatter(lbls))
         collectionvector <- lbls
