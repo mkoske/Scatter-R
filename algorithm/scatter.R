@@ -68,7 +68,7 @@ run <- function(
     # Return list of data, that was produced by algorithm.
     return(list(
         iterationvalues = scatters,
-        iterationmean = c(sum(scatters) / iterations ),
+        iterationmean = (mean(scatters)),
         sd = sd(scatters),
         collectionvector = collectionvector,
         baseline = baseline
