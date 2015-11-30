@@ -278,13 +278,13 @@ baseline <- function(classes, iterations = 30) {
 
     scatters <- list(values = c(), mean = c())
     for(i in 1:iterations) {
-
         smpl <- sample(classes, size = length(classes))
         scatters$values <- c(scatters$values, scatter(smpl))
 
     }
 
-    scatters$mean <- sum(scatters$values) / iterations
+    scatters$mean <- (sum(scatters$values) / iterations)
+    scatters$sd <- sd(scatters$values)
 
     return(scatters)
 }
