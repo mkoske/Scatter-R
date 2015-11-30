@@ -78,11 +78,14 @@ run <- function(
 # ##
 #
 # ##
-distance <- function(data, distmethod = "euclidean", nominals = c()) {
+distance <- function(
+    data,
+    distmethod = "euclidean",
+    nominals = c()) {
 
     ncols = ncol(data) - 1
     n <- nrow(data)
-    
+
     distances = matrix(nrow = n, ncol = n)
 
     if(distmethod == "euclidean") {
