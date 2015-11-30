@@ -12,17 +12,18 @@
 # etc.
 # ##
 run <- function(
-    data,
-    classlabel = NULL,
-    distmethod = "euclidean",
-    iterations = 10,
-    baseline_iterations = 50,
-    classes    = c(),
-    columns    = c(),
-    nominals   = c()) {
+    data,                           # The data frame to process
+    classlabel = NULL,              # Column name or index for classlabel
+    distmethod = "euclidean",       # Distance method to use
+    usecase = "single",             # Usecase: single, class, variable or all
+    iterations = 10,                # Iterations; since random starting point
+    baseline_iterations = 50,       # Iterations for statistical baseline
+    classes    = c(),               # Which classes are included; others removed
+    columns    = c(),               # Which variables are used
+    nominals   = c()) {             # Which one are nominal; not in use atm.
 
     if(!is.data.frame(data))
-        stop("df should be data frame")
+        stop("Input must be a data frame.")
 
     # Ensure right class column. If the given class column identifier is
     # the name, then get the index for it. But if it's already numeric,
@@ -46,6 +47,8 @@ run <- function(
     lbls <- c()
     
     distance_matrix <- distance(data, distmethod, nominals)
+
+    # Run scatter iterations
     for(i in 1:iterations) {
         print(sprintf("Running iteration %s...", i))
 
@@ -54,13 +57,15 @@ run <- function(
         collectionvector <- lbls
     }
 
+    # If there were no labels collected, cannot continue.
     if(length(lbls) < 1) {
         stop("No class labels available, cannot continue.")
     }
-    
+
+    # Calculate statistical baseline.
     baseline <- baseline(lbls, baseline_iterations)
 
-    # v = values, s = scatter
+    # Return list of data, that was produced by algorithm.
     return(list(
         iterationvalues = scatters,
         iterationmean = c(sum(scatters) / iterations ),
