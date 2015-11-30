@@ -36,12 +36,12 @@ run <- function(
     } else {
         stop("Invalid class label column given.")
     }
-   
+
     # Move the class label column to last
     classes <- data[, classIndex]
     data[, classIndex] <- NULL
     data$class <- classes
-    
+
     scatters <- vector()
     collectionvector = c()
     lbls <- c()
@@ -98,64 +98,46 @@ run <- function(
 #
 # ##
 distance <- function(
-    data,
-    distmethod = "euclidean",
-    nominals = c()) {
+    data,                       # Data frame
+    distmethod = "euclidean",   # Distance measure
+    nominals = c()) {           # Which columns are nominal; used for HEOM
 
-    ncols = ncol(data) - 1
+    if(!is.data.frame(data))
+        stop("Data must be a data frame type.")
+
+    ncols <- ncol(data) - 1
     n <- nrow(data)
+    result <- matrix(nrow = n, ncol = n)
 
-    distances = matrix(nrow = n, ncol = n)
+    result <- switch(
+        distmethod,
+        euclidean = dist(data[, 1:ncols], method = "euclidean"),
+        manhattan = dist(data[, 1:ncols], method = "manhattan"),
+        heom      = distheom(),
+        NA
+        )
 
-    if(distmethod == "euclidean") {
-        distances <- as.matrix(
-            dist(data[, 1:ncols], method = "euclidean")
-        )
-    }
-    
-    if(distmethod == "manhattan") {
-        distances <- as.matrix(
-            dist(data[, 1:ncols], method = "manhattan")
-        )
-    }
-    
-    if(distmethod == "heom") {
-        print("You selected HEOM. This is currently *very* slow. So you must wait.")
+    if(result == NA)
+        stop("Invalid distmethod. Must be 'euclidean', 'manhattan' or 'heom'.")
+
+    distheom <- function(data, nominal = c()) {
+
+        print("You selected HEOM. This is currently *very* slow.")
         source('./algorithm/heom.R')
-        
+
+        # Convert factors to their numeric values
         classless <- sapply(data[, 1:ncols], as.numeric)
- 
+
         # Get max and min for all columns so they won't be calculated n^2 times
         range <- apply(classless[, 1:ncols], 2, range)
 
-        start <- proc.time()
-        distances <- apply(classless, 1, function(row, data, range, nominals) {
-
-            # TODO: It might optimize even more to mark cases done, so it must
-            # not go through all n^2 iterations. If the distance between two
-            # cases is already calculated, then just return. But how to do this?
+        return(apply(classless, 1, function(row, data, range, nominals) {
             return(apply(data, 1, function(a, b, range, n) {
                 return(heom(a, b, range, n))
             }, row, range, nominals))
-            
-        }, classless, range, nominals)
-        print(proc.time() - start)   
+
+        }, classless, range, nominals))
     }
-    
-    if(distmethod == "hvdm") {
-        stop("Error: HVDM not implemented yet.")
-        for(row1 in data) {
-            for(row2 in data) {
-            }
-        }        
-    } 
-    
-    if(any(is.na(distances)) == T) {
-        stop("There were NA's in distance matrix.")
-    }
-    
-    
-    return(distances)
 }
 
 # ##
