@@ -113,9 +113,7 @@ sgui$lbl_selectMethod      <- glabel("Select distance measure", cont=sgui$cont.d
 sgui$rdo_selectMethod      <- gradio(sgui$opt.distmethod, cont=sgui$cont.dba)
 
 sgui$lbl_selectIterations  <- glabel("Select number of iterations", cont=sgui$cont.dbb)
-sgui$spn_selectIterations  <- gspinbutton(from=1, to=500, by=1, value=30, cont=sgui$cont.dbb)
+sgui$spn_selectIterations  <- gspinbutton(from=1, to=500, by=1, value=10, cont=sgui$cont.dbb)
 
 
 sgui$btn_calculate         <- gbutton("Calculate", cont=sgui$cont.dc, handler=sgui$hand.calculate)
-
-
