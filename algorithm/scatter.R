@@ -42,44 +42,22 @@ run <- function(
     data[, classIndex] <- NULL
     data$class <- classes
 
+    # TODO Find out how to select correct rows
+
     scatters <- vector()
     collectionvector = c()
     lbls <- c()
 
-    # 1. distSelect the correct data
-    # 2. Calculate the distance matrix
-    # 3. Run correct usecase
-    # 4. Return result
-
-    if(length(classes) > 0) {
-        data <- data[, classes]
-    }
-
-    if(length(columns) > 0) {
-        data <- data[, columns]
-    }
-
-    result <- switch(
-        usecase,
-        single      = single(),
-        classes     = classes(),
-        variables   = variables(),
-        all         = all()
-        )
-
-
-
-    # Run scatter iterations
+    distance_matrix <- distance(data, distmethod, nominal)
     for(i in 1:iterations) {
+        print(sprintf("Running iteration %s", i))
         lbls <- traverse(data, distance_matrix)
         scatters <- c(scatters, scatter(lbls))
         collectionvector <- lbls
     }
 
-    # If there were no labels collected, cannot continue.
-    if(length(lbls) < 1) {
+    if(length(lbls) < 1)
         stop("No class labels available, cannot continue.")
-    }
 
     # Calculate statistical baseline.
     baseline <- baseline(lbls, baseline_iterations)
@@ -109,17 +87,6 @@ distance <- function(
     n <- nrow(data)
     result <- matrix(nrow = n, ncol = n)
 
-    result <- switch(
-        distmethod,
-        euclidean = dist(data[, 1:ncols], method = "euclidean"),
-        manhattan = dist(data[, 1:ncols], method = "manhattan"),
-        heom      = distheom(),
-        NA
-        )
-
-    if(result == NA)
-        stop("Invalid distmethod. Must be 'euclidean', 'manhattan' or 'heom'.")
-
     distheom <- function(data, nominal = c()) {
 
         print("You selected HEOM. This is currently *very* slow.")
@@ -138,6 +105,19 @@ distance <- function(
 
         }, classless, range, nominals))
     }
+
+    result <- switch(
+        distmethod,
+        euclidean = as.matrix(dist(data[, 1:ncols], method = "euclidean")),
+        manhattan = as.matrix(dist(data[, 1:ncols], method = "manhattan")),
+        heom      = as.matrix(distheom()),
+        c()
+        )
+
+    if(length(result) == 0)
+        stop("Invalid distmethod. Must be 'euclidean', 'manhattan' or 'heom'.")
+
+    return(result)
 }
 
 # ##
