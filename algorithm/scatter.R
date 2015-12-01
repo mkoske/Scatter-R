@@ -38,9 +38,9 @@ run <- function(
     }
 
     # Move the class label column to last
-    classes <- data[, classIndex]
+    class_labels <- data[, classIndex]
     data[, classIndex] <- NULL
-    data$class <- classes
+    data$class <- class_labels
 
     # TODO Find out how to select correct rows
 
