@@ -223,9 +223,9 @@ lblchanges <- function(lbls) {
 
     changes <- 0
 
-    len <- length(lbls)
-    for(idx in 1:len) {
-        if((idx < len) && (lbls[idx] != lbls[idx + 1]))
+    n <- length(lbls)
+    for(idx in 1:n) {
+        if((idx < n) && (lbls[idx] != lbls[idx + 1])) 
             changes <- changes + 1
     }
 
