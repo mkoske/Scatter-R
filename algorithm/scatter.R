@@ -40,16 +40,29 @@ run <- function(
         stop("Invalid class label column given.")
     }
 
-    # Move the class label column to last
+    # Save the class labels column while selecting the right columns. This needs
+    # to be done to not to loose the class label column anywhere.
     class_labels <- data[, classIndex]
     data[, classIndex] <- NULL
+
+    # Select columns to process; if no columns were passed as an argument, then
+    # use all. This allows less typing on console. Only if one specifically want
+    # to choose only specific columns, there's need to type them.
+    if(length(columns) > 0)
+        data <- data[, columns]
+
+    # Note though, that when classes are selected, this must be taken into
+    # account, so that the actual data is less in number of rows than the class
+    # label column, e.g. data has 50 rows and labels 150.
+
+    # Append th class label column just before starting the calculation.
     data$class <- class_labels
-
-    # TODO Find out how to select correct rows
-
     scatters <- vector()
     collectionvector = c()
     lbls <- c()
+
+    print("The head() of data just before calculating distance matrix:")
+    print(head(data))
 
     distance_matrix <- distance(data, distmethod, nominal)
     for(i in 1:iterations) {
