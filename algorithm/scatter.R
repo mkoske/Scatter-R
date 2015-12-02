@@ -25,6 +25,9 @@ run <- function(
     if(!is.data.frame(data))
         stop("Input must be a data frame.")
 
+    if(!is.vector(columns, mode = "character") && !is.vector(columns, mode = "numeric"))
+        stop("Invalid columns vector given.")
+
     # Ensure right class column. If the given class column identifier is
     # the name, then get the index for it. But if it's already numeric,
     # then it probably is the index. Other types are not allowed.
