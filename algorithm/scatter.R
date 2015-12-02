@@ -217,7 +217,7 @@ traverse <- function(df, distm, seed = F) {
 # ##
 lblchanges <- function(lbls) {
 
-    if(!is.vector(lbls)) {
+    if(!is.vector(lbls, mode = "character"))
         stop("Not a vector.")
     }
 
