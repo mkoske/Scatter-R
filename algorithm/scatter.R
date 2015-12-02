@@ -65,11 +65,16 @@ run <- function(
     print(head(data))
 
     distance_matrix <- distance(data, distmethod, nominal)
-    for(i in 1:iterations) {
-        print(sprintf("Running iteration %s", i))
-        lbls <- traverse(data, distance_matrix)
-        scatters <- c(scatters, scatter(lbls))
-        collectionvector <- lbls
+
+    if(usecase == "single") {
+        for(i in 1:iterations) {
+            print(sprintf("Running iteration %s", i))
+            lbls <- traverse(data, distance_matrix)
+            scatters <- c(scatters, scatter(lbls))
+            collectionvector <- lbls
+        }
+    } else {
+        stop("No such usecase. Must be 'single', 'class', 'variable' or 'all'.")
     }
 
     if(length(lbls) < 1)
