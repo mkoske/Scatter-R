@@ -215,14 +215,12 @@ traverse <- function(df, distm, seed = F) {
 #
 # Returns the number of label changes
 # ##
-lblchanges <- function(lbls) {
+lblchanges <- function(lbls, cls = NULL) {
 
     if(!is.vector(lbls, mode = "character"))
         stop("Not a vector.")
-    }
 
     changes <- 0
-
     n <- length(lbls)
     for(idx in 1:n) {
         if((idx < n) && (lbls[idx] != lbls[idx + 1])) 
@@ -230,7 +228,6 @@ lblchanges <- function(lbls) {
     }
 
     return(changes)
-
 }
 
 # ##
