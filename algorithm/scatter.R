@@ -161,13 +161,29 @@ distance <- function(
 # ##
 # Calculate raw Scatter value
 # ##
-scatter <- function(lbls) {
+scatter <- function(classes) {
 
-    nchanges <- lblchanges(lbls)
-    thmax <- maxchanges(lbls)
+    n <- length(classes)
 
-    sval <- nchanges / thmax
-    return(sval)
+    # Label changes
+    changes <- 0
+    for(i in 1:n) {
+        if((i < n) && (classes[i] != classes[i + 1]))
+            changes <- changes + 1
+    }
+
+    # Theoretical maximum
+    sizes <- table(classes)
+    maxima <- max(sizes);
+    maximas <- length(as.vector(which(sizes == maxima)))
+
+    if((maximas == 1) && (maxima > (n - maxima)))
+        thmax <- (2 * (n - maxima))
+    else
+        thmax <- (n - 1)
+
+    # Scatter
+    return(changes / thmax)
 }
 
 # Traverse the dataset using nearest neighbour method, recording label changes
@@ -225,58 +241,6 @@ traverse <- function(df, distm, seed = F) {
     }
 
     lbls
-}
-
-# ##
-# Compute the number of label changes
-#
-# Returns the number of label changes
-# ##
-lblchanges <- function(lbls, cls = NULL) {
-
-    if(!is.vector(lbls, mode = "character"))
-        stop("Not a vector.")
-
-    changes <- 0
-    n <- length(lbls)
-    for(idx in 1:n) {
-        if((idx < n) && (lbls[idx] != lbls[idx + 1]))
-            changes <- changes + 1
-    }
-
-    return(changes)
-}
-
-# ##
-# Calculates the theoretical maximum of changes
-#
-# TODO: better variable naming; classes is not number of classes, but all class
-#       labels from the data, e.g. there might be many instances of "class 1"
-# ##
-maxchanges <- function(classes) {
-
-    if(!is.vector(classes)) {
-        stop("Not a vector.")
-    }
-
-    n <- length(classes)
-
-    # Sizes of classes
-    sizes <- table(classes)
-
-    # Maxima; this returns only one result, even if there are multiple
-    maxima <- max(sizes);
-
-    # This is a special case, where there are multiple maximas; in that case,
-    # the theoretical maxima is number of classes minus one.
-    maximas <- length(as.vector(which(sizes == maxima)))
-
-    if((maximas == 1) && (maxima > (n - maxima))) {
-        return(2 * (n - maxima))
-    } else {
-        return(n - 1)
-    }
-
 }
 
 # ##
