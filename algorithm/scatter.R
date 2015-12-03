@@ -42,8 +42,10 @@ run <- function(
         stop("Invalid class label column given.")
     }
 
-    # Save the class labels column while selecting the right columns. This needs
-    # to be done to not to loose the class label column anywhere.
+    # Select classes
+    if(length(classes) > 0)
+        data <- data[data[, classIndex] %in% classes, ]
+
     class_labels <- data[, classIndex]
     data[, classIndex] <- NULL
 
