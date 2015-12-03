@@ -131,7 +131,7 @@ distance <- function(
         distmethod,
         euclidean = as.matrix(dist(data[, 1:ncols], method = "euclidean")),
         manhattan = as.matrix(dist(data[, 1:ncols], method = "manhattan")),
-        heom      = as.matrix(distheom()),
+        heom      = as.matrix(distheom(data[, 1:ncols])),
         c()
         )
 
