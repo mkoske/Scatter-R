@@ -252,20 +252,18 @@ traverse <- function(df, distm, seed = F) {
 # ##
 baseline <- function(classes, iterations = 30) {
 
-    if(!is.vector(classes, mode = "character")) {
-        stop("baseline: lbls should be vector")
-    }
+    if(!is.vector(classes, mode = "character"))
+        stop("Labels must be a character vector")
 
+    n <- length(classes)
     scatters <- list(values = c(), mean = c())
     for(i in 1:iterations) {
-        smpl <- sample(classes, size = length(classes))
-        scatters$values <- c(scatters$values, scatter(smpl))
-
+        sample <- sample(classes, size = n)
+        scatters$values <- c(scatters$values, scatter(sample))
     }
 
-    scatters$mean <- (sum(scatters$values) / iterations)
+    scatters$mean <- sum(scatters$values) / iterations
     scatters$sd <- sd(scatters$values)
-
     return(scatters)
 }
 
