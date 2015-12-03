@@ -46,48 +46,54 @@ run <- function(
     class_labels <- data[, classIndex]
     data[, classIndex] <- NULL
 
-    # Select columns to process; if no columns were passed as an argument, then
-    # use all. This allows less typing on console. Only if one specifically want
-    # to choose only specific columns, there's need to type them.
     if(length(columns) > 0)
         data <- data[, columns]
-
-    # Note though, that when classes are selected, this must be taken into
-    # account, so that the actual data is less in number of rows than the class
-    # label column, e.g. data has 50 rows and labels 150.
 
     # Append th class label column just before starting the calculation.
     data$class <- class_labels
     scatters <- vector()
     collectionvector = c()
-    lbls <- c()
+    classes <- c()
 
     print("The head() of data just before calculating distance matrix:")
     print(head(data))
 
     distance_matrix <- distance(data, distmethod, nominal)
 
-    if(usecase == "single") {
-        for(i in 1:iterations) {
-            print(sprintf("Running iteration %s", i))
-            lbls <- traverse(data, distance_matrix)
-            scatters <- c(scatters, scatter(lbls))
-            collectionvector <- lbls
+    for(i in 1:iterations) {
+
+        print(sprintf("Running iteration %s", i))
+
+        classes <- traverse(data, distance_matrix)
+
+        if(usecase == "class") {
+            uniq <- unique(classes)
+            classwise <- list()
+            for(c in uniq) {
+                tf <- tf(classes, c)
+                classwise[[c]] <- scatter(tf)
+
+                if(length(collectionvector) < 1)
+                    collectionvector <- classes
+            }
+
+
         }
-    } else {
-        stop("No such usecase. Must be 'single', 'class', 'variable' or 'all'.")
+
+        if(usecase == "single") {
+            scatters <- c(scatters, scatter(classes))
+            if(length(collectionvector) < 1)
+                collectionvector <- classes
+        }
     }
 
-    if(length(lbls) < 1)
-        stop("No class labels available, cannot continue.")
-
     # Calculate statistical baseline.
-    baseline <- baseline(lbls, baseline_iterations)
+    baseline <- baseline(classes, baseline_iterations)
 
     # Return list of data, that was produced by algorithm.
     return(list(
         iterationvalues = scatters,
-        iterationmean = (mean(scatters)),
+        iterationmean = sum(scatters) / iterations,
         sd = sd(scatters),
         collectionvector = collectionvector,
         baseline = baseline
