@@ -1,6 +1,8 @@
 # ##
-# Scatter algorihm implementation
-#
+# This file contains an implementation of scatter algorithm.
+# ##
+
+# ##
 # This is the main function, which groups all smaller parts together and returns
 # the final results.
 #
@@ -18,9 +20,9 @@ run <- function(
     usecase     = "single",     # Usecase: single, class, variable or all
     iterations  = 10,           # Iterations; since random starting point
     baseline_iterations = 50,   # Iterations for statistical baseline
-    classes     = c(),          # Which classes are included; others removed
-    columns     = c(),          # Which variables are used
-    nominals    = c()) {        # Which one are nominal; not in use atm.
+    classes     = NULL,          # Which classes are included; others removed
+    columns     = NULL,          # Which variables are used
+    nominals    = NULL) {        # Which variables are nominal; not in use atm.
 
     if(!is.data.frame(data))
         stop("Input must be a data frame.")
