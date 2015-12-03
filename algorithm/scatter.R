@@ -54,6 +54,7 @@ run <- function(
     scatters <- vector()
     collectionvector = c()
     classes <- c()
+    result <- list()
 
     print("The head() of data just before calculating distance matrix:")
     print(head(data))
@@ -66,38 +67,37 @@ run <- function(
 
         classes <- traverse(data, distance_matrix)
 
+        # Usecase: class
         if(usecase == "class") {
-            uniq <- unique(classes)
-            classwise <- list()
-            for(c in uniq) {
-                tf <- tf(classes, c)
-                classwise[[c]] <- scatter(tf)
 
+            # result list should be:
+            # result[class][iteration] = value
+            # and then: sum(result[class]) sums all iterations for class
+            unique_classes <- unique(classes)
+            classwise_scatter <- list()
+            for(c in unique_classes) {
+                tf <- tf(classes, c)
+                classwise_scatter[[c]] <- scatter(tf)
                 if(length(collectionvector) < 1)
                     collectionvector <- classes
             }
-
-
         }
 
+        # Usecase: single
         if(usecase == "single") {
-            scatters <- c(scatters, scatter(classes))
+            single_scatter <- c(single_scatter, scatter(classes))
             if(length(collectionvector) < 1)
                 collectionvector <- classes
+
+            print(single_scatter)
         }
     }
 
     # Calculate statistical baseline.
-    baseline <- baseline(classes, baseline_iterations)
+    # baseline <- baseline(classes, baseline_iterations)
 
     # Return list of data, that was produced by algorithm.
-    return(list(
-        iterationvalues = scatters,
-        iterationmean = sum(scatters) / iterations,
-        sd = sd(scatters),
-        collectionvector = collectionvector,
-        baseline = baseline
-        ))
+    #return(result)
 }
 
 # ##
