@@ -101,6 +101,16 @@ run <- function(
 }
 
 # ##
+# Transforms the class label list so, that it contains only the current label
+# and others are counterclass.
+tf <- function(labels, current) {
+    labels <- as.vector(labels, mode = "character")
+    current <- as.character(current)
+    labels[labels != current] <- "-1"
+    return(labels)
+}
+
+# ##
 #
 # ##
 distance <- function(
