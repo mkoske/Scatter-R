@@ -223,7 +223,7 @@ lblchanges <- function(lbls, cls = NULL) {
     changes <- 0
     n <- length(lbls)
     for(idx in 1:n) {
-        if((idx < n) && (lbls[idx] != lbls[idx + 1])) 
+        if((idx < n) && (lbls[idx] != lbls[idx + 1]))
             changes <- changes + 1
     }
 
@@ -271,7 +271,7 @@ maxchanges <- function(classes) {
 # ##
 baseline <- function(classes, iterations = 30) {
 
-    if(!is.vector(classes)) {
+    if(!is.vector(classes, mode = "character")) {
         stop("baseline: lbls should be vector")
     }
 
