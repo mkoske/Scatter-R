@@ -69,15 +69,10 @@ run <- function(
 
         # Usecase: class
         if(usecase == "class") {
-
-            # result list should be:
-            # result[class][iteration] = value
-            # and then: sum(result[class]) sums all iterations for class
             unique_classes <- unique(classes)
-            classwise_scatter <- list()
             for(c in unique_classes) {
                 tf <- tf(classes, c)
-                classwise_scatter[[c]] <- scatter(tf)
+                result[[c]] <- c(result[[c]], scatter(tf, c))
                 if(length(collectionvector) < 1)
                     collectionvector <- classes
             }
@@ -97,7 +92,7 @@ run <- function(
     # baseline <- baseline(classes, baseline_iterations)
 
     # Return list of data, that was produced by algorithm.
-    #return(result)
+    return(result)
 }
 
 # ##
@@ -161,29 +156,49 @@ distance <- function(
 # ##
 # Calculate raw Scatter value
 # ##
-scatter <- function(classes) {
+scatter <- function(labels, current = NULL) {
+    changes <- labelchanges(labels)
+    thmax <- maxchanges(labels, current)
+    return(changes / thmax)
+}
 
-    n <- length(classes)
+# ##
+# If current is NULL, then consider the largest as current and others counter-
+# class; if current is set, then consider current, well, current and others as
+# counterclass together. This is like two-class situation.
+# ##
+maxchanges <- function(labels, current = NULL) {
 
-    # Label changes
-    changes <- 0
-    for(i in 1:n) {
-        if((i < n) && (classes[i] != classes[i + 1]))
-            changes <- changes + 1
+    nmax <- NULL
+    max <- NULL
+    n <- length(labels)
+    sizes <- table(labels)
+
+    if(is.null(current)) {
+        max <- max(sizes);
+        nmax <- length(as.vector(which(sizes == max)))
+    } else {
+        max <- sizes[[current]]
     }
 
-    # Theoretical maximum
-    sizes <- table(classes)
-    maxima <- max(sizes);
-    maximas <- length(as.vector(which(sizes == maxima)))
-
-    if((maximas == 1) && (maxima > (n - maxima)))
-        thmax <- (2 * (n - maxima))
+    if((nmax == 1) && (max > (n - max)))
+        thmax <- (2 * (n - max))
     else
         thmax <- (n - 1)
 
-    # Scatter
-    return(changes / thmax)
+    return(thmax)
+}
+
+labelchanges <- function(labels) {
+
+    n <- length(labels)
+    changes <- 0
+    for(i in 1:n) {
+        if((i < n) && (labels[i] != labels[i + 1]))
+            changes <- changes + 1
+    }
+
+    return(changes)
 }
 
 # Traverse the dataset using nearest neighbour method, recording label changes
