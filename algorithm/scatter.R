@@ -14,94 +14,66 @@
 # etc.
 # ##
 run <- function(
-    data,                       # The data frame to process
-    classlabel  = NULL,         # Column name or index for classlabel
-    distmethod  = "euclidean",  # Distance method to use
-    usecase     = "single",     # Usecase: single, class, variable or all
-    iterations  = 10,           # Iterations; since random starting point
-    baseline_iterations = 50,   # Iterations for statistical baseline
-    classes     = NULL,          # Which classes are included; others removed
-    columns     = NULL,          # Which variables are used
-    nominals    = NULL) {        # Which variables are nominal; not in use atm.
+    data,                           # The data frame to process
+    classlabel  = NULL,             # Column name or index for classlabel
+    distanceMethod  = "euclidean",  # Distance method to use
+    usecase     = "single",         # Usecase: single, class, variable or all
+    iterations  = 10,               # Iterations; since random starting point
+    baselineIterations = 50,        # Iterations for statistical baseline
+    classes     = NULL,             # Which classes are included; others removed
+    columns     = NULL,             # Which variables are used
+    nominals    = NULL) {           # Which variables are nominal; not in use
 
     if(!is.data.frame(data))
-        stop("Input must be a data frame.")
+        stop("Input data must be a data frame.")
 
-    # Ensure right class column. If the given class column identifier is
-    # the name, then get the index for it. But if it's already numeric,
-    # then it probably is the index. Other types are not allowed.
-    classIndex <- NULL
-    if(class(classlabel) == "character") {
-        classIndex <- which(names(data) == classlabel)
-    } else if(class(classlabel) == "numeric") {
-        classIndex <- classlabel
-    } else {
-        stop("Invalid class label column given.")
-    }
-
-    # Select classes
     if(length(classes) > 0)
-        data <- data[data[, classIndex] %in% classes, ]
+        data <- data[data[, classlabel] %in% classes, ]
 
-    class_labels <- data[, classIndex]
-    data[, classIndex] <- NULL
+    class_labels <- data[, classlabel]
+    data[, classlabel] <- NULL
 
     if(length(columns) > 0)
         data <- data[, columns]
 
-    # Append th class label column just before starting the calculation.
+    # Move classlabel column to last.
     data$class <- class_labels
-    scatters <- vector()
-    collectionvector = c()
-    classes <- c()
-    result <- list()
 
-    print("The head() of data just before calculating distance matrix:")
-    print(head(data))
 
-    distance_matrix <- distance(data, distmethod, nominal)
+    scatter <- switch(usecase,
+        single = usecase.single(data, distanceMethod, iterations, nominal),
+        class  = usecase.class(data, distanceMethod, iterations, nominal),
+        param  = usecase.param(),
+        all    = usecse.all())
+
+    baseline <- baseline(data$class, baselineIterations)
+    return(list(scatter = scatter, baseline = baseline))
+}
+
+usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c()) {
+
+    collectionVector <- vector(length = nrow(data))
+    distanceMatrix <- distance(data, distanceMethod, nominal)
+    values <- vector(length = iterations)
 
     for(i in 1:iterations) {
-
-        print(sprintf("Running iteration %s", i))
-
-        classes <- traverse(data, distance_matrix)
-
-        # Usecase: class
-        if(usecase == "class") {
-            unique_classes <- unique(classes)
-            for(c in unique_classes) {
-                tf <- tf(classes, c)
-                result[[c]] <- c(result[[c]], scatter(tf, c))
-                if(length(collectionvector) < 1)
-                    collectionvector <- classes
-            }
-        }
-
-        # Usecase: single
-        if(usecase == "single") {
-            single_scatter <- c(single_scatter, scatter(classes))
-            if(length(collectionvector) < 1)
-                collectionvector <- classes
-
-            print(single_scatter)
-        }
+        collectionVector <- traverse(data, distanceMatrix)
+        values[i] <- scatter(collectionVector)
     }
 
-    # Calculate statistical baseline.
-    # baseline <- baseline(classes, baseline_iterations)
-
-    # Return list of data, that was produced by algorithm.
-    return(result)
+    return(list(
+        values = values,
+        mean = (sum(values) / iterations),
+        collectionVector = collectionVector))
 }
 
 # ##
 # Transforms the class label list so, that it contains only the current label
 # and others are counterclass.
-tf <- function(labels, current) {
-    labels <- as.vector(labels, mode = "character")
+recode <- function(labels, current) {
+    labels <- as.vector(labels, numeric = "character")
     current <- as.character(current)
-    labels[labels != current] <- "-1"
+    labels[labels != current] <- 0
     return(labels)
 }
 
@@ -255,7 +227,7 @@ traverse <- function(df, distm, seed = F) {
         currentIdx <- nearest[1]
     }
 
-    lbls
+    return(lbls)
 }
 
 # ##
@@ -265,15 +237,12 @@ traverse <- function(df, distm, seed = F) {
 #
 # Returns mean scatter value
 # ##
-baseline <- function(classes, iterations = 30) {
+baseline <- function(labels, iterations = 50) {
 
-    if(!is.vector(classes, mode = "character"))
-        stop("Labels must be a character vector")
-
-    n <- length(classes)
+    n <- length(labels)
     scatters <- list(values = c(), mean = c())
     for(i in 1:iterations) {
-        sample <- sample(classes, size = n)
+        sample <- sample(labels, size = n)
         scatters$values <- c(scatters$values, scatter(sample))
     }
 
