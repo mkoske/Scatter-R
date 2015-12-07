@@ -1,6 +1,8 @@
 # ##
-# Scatter algorihm implementation
-#
+# This file contains an implementation of scatter algorithm.
+# ##
+
+# ##
 # This is the main function, which groups all smaller parts together and returns
 # the final results.
 #
@@ -18,15 +20,12 @@ run <- function(
     usecase     = "single",     # Usecase: single, class, variable or all
     iterations  = 10,           # Iterations; since random starting point
     baseline_iterations = 50,   # Iterations for statistical baseline
-    classes     = c(),          # Which classes are included; others removed
-    columns     = c(),          # Which variables are used
-    nominals    = c()) {        # Which one are nominal; not in use atm.
+    classes     = NULL,          # Which classes are included; others removed
+    columns     = NULL,          # Which variables are used
+    nominals    = NULL) {        # Which variables are nominal; not in use atm.
 
     if(!is.data.frame(data))
         stop("Input must be a data frame.")
-
-    if(!is.vector(columns, mode = "character") && !is.vector(columns, mode = "numeric"))
-        stop("Invalid columns vector given.")
 
     # Ensure right class column. If the given class column identifier is
     # the name, then get the index for it. But if it's already numeric,
@@ -40,57 +39,70 @@ run <- function(
         stop("Invalid class label column given.")
     }
 
-    # Save the class labels column while selecting the right columns. This needs
-    # to be done to not to loose the class label column anywhere.
+    # Select classes
+    if(length(classes) > 0)
+        data <- data[data[, classIndex] %in% classes, ]
+
     class_labels <- data[, classIndex]
     data[, classIndex] <- NULL
 
-    # Select columns to process; if no columns were passed as an argument, then
-    # use all. This allows less typing on console. Only if one specifically want
-    # to choose only specific columns, there's need to type them.
     if(length(columns) > 0)
         data <- data[, columns]
-
-    # Note though, that when classes are selected, this must be taken into
-    # account, so that the actual data is less in number of rows than the class
-    # label column, e.g. data has 50 rows and labels 150.
 
     # Append th class label column just before starting the calculation.
     data$class <- class_labels
     scatters <- vector()
     collectionvector = c()
-    lbls <- c()
+    classes <- c()
+    result <- list()
 
     print("The head() of data just before calculating distance matrix:")
     print(head(data))
 
     distance_matrix <- distance(data, distmethod, nominal)
 
-    if(usecase == "single") {
-        for(i in 1:iterations) {
-            print(sprintf("Running iteration %s", i))
-            lbls <- traverse(data, distance_matrix)
-            scatters <- c(scatters, scatter(lbls))
-            collectionvector <- lbls
+    for(i in 1:iterations) {
+
+        print(sprintf("Running iteration %s", i))
+
+        classes <- traverse(data, distance_matrix)
+
+        # Usecase: class
+        if(usecase == "class") {
+            unique_classes <- unique(classes)
+            for(c in unique_classes) {
+                tf <- tf(classes, c)
+                result[[c]] <- c(result[[c]], scatter(tf, c))
+                if(length(collectionvector) < 1)
+                    collectionvector <- classes
+            }
         }
-    } else {
-        stop("No such usecase. Must be 'single', 'class', 'variable' or 'all'.")
+
+        # Usecase: single
+        if(usecase == "single") {
+            single_scatter <- c(single_scatter, scatter(classes))
+            if(length(collectionvector) < 1)
+                collectionvector <- classes
+
+            print(single_scatter)
+        }
     }
 
-    if(length(lbls) < 1)
-        stop("No class labels available, cannot continue.")
-
     # Calculate statistical baseline.
-    baseline <- baseline(lbls, baseline_iterations)
+    # baseline <- baseline(classes, baseline_iterations)
 
     # Return list of data, that was produced by algorithm.
-    return(list(
-        iterationvalues = scatters,
-        iterationmean = (mean(scatters)),
-        sd = sd(scatters),
-        collectionvector = collectionvector,
-        baseline = baseline
-        ))
+    return(result)
+}
+
+# ##
+# Transforms the class label list so, that it contains only the current label
+# and others are counterclass.
+tf <- function(labels, current) {
+    labels <- as.vector(labels, mode = "character")
+    current <- as.character(current)
+    labels[labels != current] <- "-1"
+    return(labels)
 }
 
 # ##
@@ -131,7 +143,7 @@ distance <- function(
         distmethod,
         euclidean = as.matrix(dist(data[, 1:ncols], method = "euclidean")),
         manhattan = as.matrix(dist(data[, 1:ncols], method = "manhattan")),
-        heom      = as.matrix(distheom()),
+        heom      = as.matrix(distheom(data[, 1:ncols])),
         c()
         )
 
@@ -144,13 +156,49 @@ distance <- function(
 # ##
 # Calculate raw Scatter value
 # ##
-scatter <- function(lbls) {
+scatter <- function(labels, current = NULL) {
+    changes <- labelchanges(labels)
+    thmax <- maxchanges(labels, current)
+    return(changes / thmax)
+}
 
-    nchanges <- lblchanges(lbls)
-    thmax <- maxchanges(lbls)
+# ##
+# If current is NULL, then consider the largest as current and others counter-
+# class; if current is set, then consider current, well, current and others as
+# counterclass together. This is like two-class situation.
+# ##
+maxchanges <- function(labels, current = NULL) {
 
-    sval <- nchanges / thmax
-    return(sval)
+    nmax <- NULL
+    max <- NULL
+    n <- length(labels)
+    sizes <- table(labels)
+
+    if(is.null(current)) {
+        max <- max(sizes);
+        nmax <- length(as.vector(which(sizes == max)))
+    } else {
+        max <- sizes[[current]]
+    }
+
+    if((nmax == 1) && (max > (n - max)))
+        thmax <- (2 * (n - max))
+    else
+        thmax <- (n - 1)
+
+    return(thmax)
+}
+
+labelchanges <- function(labels) {
+
+    n <- length(labels)
+    changes <- 0
+    for(i in 1:n) {
+        if((i < n) && (labels[i] != labels[i + 1]))
+            changes <- changes + 1
+    }
+
+    return(changes)
 }
 
 # Traverse the dataset using nearest neighbour method, recording label changes
@@ -211,58 +259,6 @@ traverse <- function(df, distm, seed = F) {
 }
 
 # ##
-# Compute the number of label changes
-#
-# Returns the number of label changes
-# ##
-lblchanges <- function(lbls, cls = NULL) {
-
-    if(!is.vector(lbls, mode = "character"))
-        stop("Not a vector.")
-
-    changes <- 0
-    n <- length(lbls)
-    for(idx in 1:n) {
-        if((idx < n) && (lbls[idx] != lbls[idx + 1])) 
-            changes <- changes + 1
-    }
-
-    return(changes)
-}
-
-# ##
-# Calculates the theoretical maximum of changes
-#
-# TODO: better variable naming; classes is not number of classes, but all class
-#       labels from the data, e.g. there might be many instances of "class 1"
-# ##
-maxchanges <- function(classes) {
-
-    if(!is.vector(classes)) {
-        stop("Not a vector.")
-    }
-
-    n <- length(classes)
-
-    # Sizes of classes
-    sizes <- table(classes)
-
-    # Maxima; this returns only one result, even if there are multiple
-    maxima <- max(sizes);
-
-    # This is a special case, where there are multiple maximas; in that case,
-    # the theoretical maxima is number of classes minus one.
-    maximas <- length(as.vector(which(sizes == maxima)))
-
-    if((maximas == 1) && (maxima > (n - maxima))) {
-        return(2 * (n - maxima))
-    } else {
-        return(n - 1)
-    }
-
-}
-
-# ##
 # ##
 # Computes a statistical baseline running the algorithm multiple times and
 # calculating the mean of those runs.
@@ -271,20 +267,18 @@ maxchanges <- function(classes) {
 # ##
 baseline <- function(classes, iterations = 30) {
 
-    if(!is.vector(classes)) {
-        stop("baseline: lbls should be vector")
-    }
+    if(!is.vector(classes, mode = "character"))
+        stop("Labels must be a character vector")
 
+    n <- length(classes)
     scatters <- list(values = c(), mean = c())
     for(i in 1:iterations) {
-        smpl <- sample(classes, size = length(classes))
-        scatters$values <- c(scatters$values, scatter(smpl))
-
+        sample <- sample(classes, size = n)
+        scatters$values <- c(scatters$values, scatter(sample))
     }
 
-    scatters$mean <- (sum(scatters$values) / iterations)
+    scatters$mean <- sum(scatters$values) / iterations
     scatters$sd <- sd(scatters$values)
-
     return(scatters)
 }
 
