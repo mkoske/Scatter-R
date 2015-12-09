@@ -52,12 +52,16 @@ run <- function(
 
 usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c()) {
 
-    classes <- unique(data[, ncol(data)])
+    classes <- as.numeric(unique(data[, ncol(data)]))
     distanceMatrix <- distance(data, distanceMethod, nominal)
-
+    result <- list()
     for(class in classes) {
         for(i in iterations) {
+            collectionVector <- traverse(data, distanceMatrix)
+            collectionVector[collectionVector != class] <- 0
 
+            result[paste(c("class-", class))] <- scatter(collectionVector)
+            print("-------------------------------------------------------")
         }
     }
 }
@@ -77,15 +81,14 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
         values = values,
         mean = (sum(values) / iterations),
         sd = sd(values),
-        collectionVector = collectionVector))
+        collectionVector = collectionVector
+        ))
 }
 
 # ##
 # Transforms the class label list so, that it contains only the current label
 # and others are counterclass.
 recode <- function(labels, current) {
-    labels <- as.numeric(labels)
-    current <- as.numeric(current)
     labels[labels != current] <- 0
     return(labels)
 }
