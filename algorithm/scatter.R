@@ -50,6 +50,18 @@ run <- function(
     return(list(scatter = scatter, baseline = baseline))
 }
 
+usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c()) {
+
+    classes <- unique(data[, ncol(data)])
+    distanceMatrix <- distance(data, distanceMethod, nominal)
+
+    for(class in classes) {
+        for(i in iterations) {
+
+        }
+    }
+}
+
 usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c()) {
 
     collectionVector <- vector(length = nrow(data))
