@@ -76,6 +76,7 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
     return(list(
         values = values,
         mean = (sum(values) / iterations),
+        sd = sd(values),
         collectionVector = collectionVector))
 }
 
@@ -141,8 +142,8 @@ distance <- function(
 # Calculate raw Scatter value
 # ##
 scatter <- function(labels, current = NULL) {
-    changes <- labelchanges(labels)
-    thmax <- maxchanges(labels, current)
+    changes <- numChanges(labels)
+    thmax <- maxChanges(labels, current)
     return(changes / thmax)
 }
 
@@ -151,7 +152,7 @@ scatter <- function(labels, current = NULL) {
 # class; if current is set, then consider current, well, current and others as
 # counterclass together. This is like two-class situation.
 # ##
-maxchanges <- function(labels, current = NULL) {
+maxChanges <- function(labels, current = NULL) {
 
     nmax <- NULL
     max <- NULL
@@ -173,7 +174,7 @@ maxchanges <- function(labels, current = NULL) {
     return(thmax)
 }
 
-labelchanges <- function(labels) {
+numChanges <- function(labels) {
 
     n <- length(labels)
     changes <- 0
@@ -181,7 +182,6 @@ labelchanges <- function(labels) {
         if((i < n) && (labels[i] != labels[i + 1]))
             changes <- changes + 1
     }
-
     return(changes)
 }
 
@@ -203,7 +203,6 @@ traverse <- function(df, distm, seed = F) {
     # the number of columns (see above).
     df$Visited = F
 
-    # TODO: is there a way to extend dist function to handle other methods too?
     diag(distm) <- NA
 
     # For testing purposes, set always same seed for RNG
@@ -252,15 +251,12 @@ traverse <- function(df, distm, seed = F) {
 baseline <- function(labels, iterations = 50) {
 
     n <- length(labels)
-    scatters <- list(values = c(), mean = c())
-    for(i in 1:iterations) {
+    result <- sapply(1:iterations, function(iteration, labels, n) {
         sample <- sample(labels, size = n)
-        scatters$values <- c(scatters$values, scatter(sample))
-    }
+        return(scatter(sample))
+    }, labels, n)
 
-    scatters$mean <- sum(scatters$values) / iterations
-    scatters$sd <- sd(scatters$values)
-    return(scatters)
+    return(sum(result) / iterations)
 }
 
 # Not really needed?
