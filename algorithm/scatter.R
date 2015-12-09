@@ -239,13 +239,12 @@ traverse <- function(df, distm, seed = F) {
 baseline <- function(labels, iterations = 50) {
 
     n <- length(labels)
-    scatters <- vector(length = iterations)
-    sapply(1:iterations, function(iteration, labels, n) {
+    result <- sapply(1:iterations, function(iteration, labels, n) {
         sample <- sample(labels, size = n)
-        scatters[iteration] <- scatter(sample)
+        return(scatter(sample))
     }, labels, n)
 
-    return(sum(scatters) / iterations)
+    return(sum(result) / iterations)
 }
 
 # Not really needed?
