@@ -46,8 +46,7 @@ run <- function(
         param  = usecase.param(),
         all    = usecse.all())
 
-    baseline <- baseline(data$class, baselineIterations)
-    return(list(scatter = scatter, baseline = baseline))
+    return(scatter)
 }
 
 usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c()) {
@@ -55,16 +54,28 @@ usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, n
     classes <- as.numeric(unique(data[, ncol(data)]))
     distanceMatrix <- distance(data, distanceMethod, nominal)
     result <- matrix(nrow = length(classes), ncol = iterations)
+    baselines <- vector(mode = "numeric")
     for(class in classes) {
-        print(class)
         for(i in 1:iterations) {
+            print(sprintf("Running iteration %s for class %s...", i, class))
             collectionVector <- traverse(data, distanceMatrix)
             collectionVector[collectionVector != class] <- 0
             result[class, i] <- scatter(collectionVector)
         }
+
+        labels <- data$class
+        labels[labels != class] <- 0
+        baselines <- c(baselines, baseline(labels))
     }
 
-    return(result)
+    means <- apply(result[, 1:iterations], 1, mean)
+
+    return(list(
+        values    = result,
+        means     = means,
+        sd        = sd(result),
+        baselines = baselines
+        ))
 }
 
 usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c()) {
@@ -74,15 +85,19 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
     values <- vector(length = iterations)
 
     for(i in 1:iterations) {
+        print(sprintf("Running iteration %s...", i))
         collectionVector <- traverse(data, distanceMatrix)
         values[i] <- scatter(collectionVector)
     }
+
+    baseline <- baseline(collectionVector)
 
     return(list(
         values = values,
         mean = (sum(values) / iterations),
         sd = sd(values),
-        collectionVector = collectionVector
+        collectionVector = collectionVector,
+        baseline = baseline
         ))
 }
 
