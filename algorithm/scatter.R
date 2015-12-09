@@ -54,16 +54,17 @@ usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, n
 
     classes <- as.numeric(unique(data[, ncol(data)]))
     distanceMatrix <- distance(data, distanceMethod, nominal)
-    result <- list()
+    result <- matrix(nrow = length(classes), ncol = iterations)
     for(class in classes) {
-        for(i in iterations) {
+        print(class)
+        for(i in 1:iterations) {
             collectionVector <- traverse(data, distanceMatrix)
             collectionVector[collectionVector != class] <- 0
-
-            result[paste(c("class-", class))] <- scatter(collectionVector)
-            print("-------------------------------------------------------")
+            result[class, i] <- scatter(collectionVector)
         }
     }
+
+    return(result)
 }
 
 usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c()) {
