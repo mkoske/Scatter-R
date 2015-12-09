@@ -83,8 +83,8 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
 # Transforms the class label list so, that it contains only the current label
 # and others are counterclass.
 recode <- function(labels, current) {
-    labels <- as.vector(labels, numeric = "character")
-    current <- as.character(current)
+    labels <- as.numeric(labels)
+    current <- as.numeric(current)
     labels[labels != current] <- 0
     return(labels)
 }
