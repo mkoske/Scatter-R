@@ -64,6 +64,7 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
     return(list(
         values = values,
         mean = (sum(values) / iterations),
+        sd = sd(values),
         collectionVector = collectionVector))
 }
 
