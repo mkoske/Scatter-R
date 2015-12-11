@@ -51,18 +51,19 @@ run <- function(
 
 usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c()) {
 
-    variables <- names(data)
-    result <- matrix(nrow = length(variables), ncol = iterations)
+    variables <- ncol(data) - 1 # -1 for class column; it's last
+    result <- matrix(nrow = variables, ncol = iterations)
     baselines <- vector(mode = "numeric")
     collectionVector <- vector(mode = "numeric", length = nrow(data))
 
     for(variable in 1:variables) {
         distanceMatrix <- distance(as.data.frame(data[, variable]), distanceMethod, nominal)
         for(i in 1:iterations) {
+            print(sprintf("Running iteration %s for variable %s...", i, variable))
             collectionVector <- traverse(data, distanceMatrix)
             result[variable, i] <- scatter(collectionVector)
         }
-        
+
         baselines <- c(baselines, baseline(data$class))
     }
 
@@ -212,7 +213,7 @@ maxChanges <- function(labels, current = NULL) {
 }
 
 numChanges <- function(labels) {
-    
+
     n <- length(labels)
     changes <- 0
     for(i in 1:n) {
@@ -286,7 +287,7 @@ traverse <- function(df, distm, seed = F) {
 # Returns mean scatter value
 # ##
 baseline <- function(labels, iterations = 50) {
-   
+
     print("Calculating baseline...")
     n <- length(labels)
     values <- vector(mode = "numeric", length = iterations)
