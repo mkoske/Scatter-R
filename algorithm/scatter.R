@@ -56,8 +56,8 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
     baselines <- vector(mode = "numeric")
     collectionVector <- vector(mode = "numeric", length = nrow(data))
 
-    for(variable in variables) {
-        distanceMatrix <- distance(data[, variable], distanceMethod, nominal)
+    for(variable in 1:variables) {
+        distanceMatrix <- distance(as.data.frame(data[, variable]), distanceMethod, nominal)
         for(i in 1:iterations) {
             collectionVector <- traverse(data, distanceMatrix)
             result[variable, i] <- scatter(collectionVector)
