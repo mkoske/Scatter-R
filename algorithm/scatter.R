@@ -128,16 +128,6 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
 }
 
 # ##
-# Transforms the class label list so, that it contains only the current label
-# and others are counterclass.
-recode <- function(labels, current) {
-    print(labels)
-    print(current)
-    labels[labels != current] <- 0
-    return(labels)
-}
-
-# ##
 #
 # ##
 distance <- function(
