@@ -41,12 +41,38 @@ run <- function(
 
 
     scatter <- switch(usecase,
-        single = usecase.single(data, distanceMethod, iterations, nominal),
-        class  = usecase.class(data, distanceMethod, iterations, nominal),
-        param  = usecase.param(),
-        all    = usecse.all())
+        single    = usecase.single(data, distanceMethod, iterations, nominal),
+        class     = usecase.class(data, distanceMethod, iterations, nominal),
+        variable  = usecase.variable(data, distanceMethod, iterations, nominal),
+        all       = usecse.all())
 
     return(scatter)
+}
+
+usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c()) {
+
+    variables <- names(data)
+    result <- matrix(nrow = length(variables), ncol = iterations)
+    baselines <- vector(mode = "numeric")
+    collectionVector <- vector(mode = "numeric", length = nrow(data))
+
+    for(variable in variables) {
+        distanceMatrix <- distance(data[, variable], distanceMethod, nominal)
+        for(i in 1:iterations) {
+            collectionVector <- traverse(data, distanceMatrix)
+            result[variable, i] <- scatter(collectionVector)
+        }
+        
+        baselines <- c(baselines, baseline(data$class))
+    }
+
+    means <- apply(result, 1, mean)
+
+    return(list(
+        values    = result,
+        means     = means,
+        baselines = baselines
+        ))
 }
 
 usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c()) {
@@ -73,7 +99,7 @@ usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, n
     return(list(
         values    = result,
         means     = means,
-        sd        = sd(result),
+        sd        = sd(result), # FIXME
         baselines = baselines
         ))
 }
