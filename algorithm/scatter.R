@@ -204,16 +204,16 @@ maxChanges <- function(labels, current = NULL) {
         max <- sizes[[current]]
     }
 
-    if((nmax == 1) && (max > (n - max)))
+    if((nmax == 1) && (max > (n - max))) {
         thmax <- (2 * (n - max))
-    else
+    } else {
         thmax <- (n - 1)
+    }
 
     return(thmax)
 }
 
 numChanges <- function(labels) {
-
     n <- length(labels)
     changes <- 0
     for(i in 1:n) {
@@ -228,7 +228,7 @@ numChanges <- function(labels) {
 #
 # Returns the vector of labels
 # ##
-traverse <- function(df, distm, seed = F) {
+traverse <- function(df, distm) {
 
     # Assume last column is class label column, so ignore it. That's why - 1.
     ncols <- ncol(df) - 1
@@ -243,10 +243,6 @@ traverse <- function(df, distm, seed = F) {
 
     diag(distm) <- NA
 
-    # For testing purposes, set always same seed for RNG
-    if(seed == T)
-        set.seed(123)
-
     # Pick randomly a starting point
     currentIdx <- sample(1:nrows, size = 1)
 
@@ -256,7 +252,7 @@ traverse <- function(df, distm, seed = F) {
 
         # In the end of this function, the distance matrix is full of NAs, so it
         # generates a warning. This is to prevent the warning.
-        if(all(is.na(distm[currentIdx, ]))) {
+        if(all(is.na(distm))) {
             lbls <- c(lbls, df[currentIdx, (ncols + 1)])
             break
         }
@@ -268,12 +264,18 @@ traverse <- function(df, distm, seed = F) {
         df[currentIdx, "Visited"] <- T
 
         minima <- min(distm[currentIdx, ], na.rm = T)
-        nearest <- which(distm[currentIdx, ] == minima)
+        minimas <- which(distm[currentIdx, ] == minima)
 
         distm[currentIdx, ] <- NA
         distm[, currentIdx] <- NA
 
-        currentIdx <- nearest[1]
+        if(length(minimas) > 1) {
+            nearest <- sample(minimas, size = 1)
+        } else {
+            nearest <- minimas[1]
+        }
+
+        currentIdx <- nearest
     }
 
     return(lbls)
