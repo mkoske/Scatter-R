@@ -8,47 +8,57 @@ sgui$hand.fileOpen <- function(h, ...) {
 			"CSV files"=list(patterns="*.csv"), 
 			"TXT files"=list(patterns="*.txt")
 	))
-
-#~ 	if(is.null(sgui$sfile)) return()
-#~ 	if(is.na  (sgui$sfile)) return()
 	
 	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile))
 	sgui$sub.updateWithData()
 }
 
-# GUI Handler: Reread selected file with colon as separator 
-sgui$hand.useSeparator.colon <- function(h, ...) {
-	if(is.null(sgui$sfile)) return()
-	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep=";"))
-	sgui$sub.updateWithData()
-}
+sgui$hand.readDatafile <- function(h, ...) {
+	datafileWindow <- gwindow(title="Select datafile for read")
+	
+	cont.m <- ggroup(cont=datafileWindow, horizontal=FALSE, padding=20)
+	cont.a <- ggroup(cont=cont.m, horizontal=TRUE)
+	cont.b <- ggroup(cont=cont.m, horizontal=FALSE)
+	cont.c <- ggroup(cont=cont.m, horizontal=FALSE)
+	cont.d <- ggroup(cont=cont.m, horizontal=FALSE)
+	
+	sgui$sfile <- FALSE
+	
+	hand.selectfile <- function(h, ...) {
+		sgui$sfile <- gfile(
+			type="open",
+			filter=list(
+				"CSV files"=list(patterns="*.csv"),
+				"TXT files"=list(patterns="*.txt")
+			)
+		)
+		svalue(lbl_filename) <- sgui$sfile
+	}
+	
+	hand.readfile <- function(h, ...) {
+		if(sgui$sfile==FALSE) return()
+		sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep=func.separator_selToArg(svalue(rdo_separator))))
+		sgui$sub.updateWithData()
+		dispose(datafileWindow)
+	}
+	
+	func.separator_selToArg <- function(sel) {
+		if(sel==";") return (";")
+		if(sel==",") return (",")
+		if(sel==".") return (".")
+		if(sel=="[tab]") return ("\t")
+		if(sel=="[space]") return ("")
+	}
+	
+	
+	btn_selectFile <- gbutton("Select file...", cont=cont.a, handler=hand.selectfile)
+	lbl_filename   <- glabel("No file selected", cont=cont.a)
+	lbl_separator  <- glabel("Select value separator",cont=cont.b)
+	rdo_separator  <- gradio(c(";",",",".","[tab]","[space]"),selected=1,cont=cont.b)
+	lbl_decimal    <- glabel("Select decimal separator", cont=cont.c)
+	rdo_decimal    <- gradio(c(".",","),selected=1,cont=cont.c)
+	btn_readFile   <- gbutton("Read file", cont=cont.d, handler=hand.readfile)
 
-# GUI Handler: Reread selected file with comma as separator
-sgui$hand.useSeparator.comma <- function(h, ...) {
-	if(is.null(sgui$sfile)) return()
-	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep=","))
-	sgui$sub.updateWithData()
-}
-
-# GUI Handler: Reread selected file with dot as separator
-sgui$hand.useSeparator.dot <- function(h, ...) {
-	if(is.null(sgui$sfile)) return()
-	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep="."))
-	sgui$sub.updateWithData()
-}
-
-# GUI Handler: Reread selected file with tab as separator
-sgui$hand.useSeparator.tab <- function(h, ...) {
-	if(is.null(sgui$sfile)) return()
-	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep="\t"))
-	sgui$sub.updateWithData()
-}
-
-# GUI Handler: Reread selected file with space as separator
-sgui$hand.useSeparator.space <- function(h, ...) {
-	if(is.null(sgui$sfile)) return()
-	sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep=""))
-	sgui$sub.updateWithData()
 }
 
 # Call this function after changing classvar or included_variables selections
@@ -141,6 +151,7 @@ sgui$hand.select.classvar  <- function(h, ...) {
 	cont.b <- ggroup(cont=cont.m, use.scrollwindow=TRUE, horizontal=FALSE, expand=TRUE)
 	okButton <- gbutton("OK", cont=cont.a, hand=function(h,...)
 		{
+			sgui$var.selected.attributes <- append(sgui$var.selected.attributes, sgui$var.classvar) # Inject old classvar into selected attributes
 			sgui$var.classvar <- svalue(radio)
 			sgui$sub.selectionVectorUpdate_class()
 
@@ -228,16 +239,27 @@ sgui$hand.printSelections <- function(h, ...) {
 	print("--------------------------------------------------")
 }
 
+sgui$func.na.action_index_to_name <- function(index) {
+	if(index == 1) return("nothing")
+	if(index == 2) return("class")
+	if(index == 3) return("column")
+	if(index == 4) return("rmrows")
+	return("class")
+}
+
 # GUI handler: Pass data and selections to scatter algorithm; do something with result
 sgui$hand.calculate <- function(h, ...) {
 
-	sgui$ppdata <- scatpp$preprocess (
-		df         = sgui$sdata, 
-		binarized  = sgui$var.selected.binarized, 
-		scaled     = sgui$var.selected.scaled
+	sgui$ppdata <- scatter.preprocess (
+		df                  = sgui$sdata,
+		classvar            = sgui$var.classvar,
+		included.attributes = sgui$var.selected.attributes,
+		binarized           = sgui$var.selected.binarized, 
+		scaled              = sgui$var.selected.scaled,
+		na.action           = sgui$func.na.action_index_to_name(svalue(sgui$rdo_ppMissing, index=TRUE))
 	)
 
-	result <- run ( 
+	result <- run (
 		data       = sgui$ppdata, 
 		classlabel = sgui$var.classvar,
 		distmethod = tolower(svalue(sgui$rdo_selectMethod)),
