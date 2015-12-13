@@ -250,6 +250,8 @@ sgui$func.na.action_index_to_name <- function(index) {
 # GUI handler: Pass data and selections to scatter algorithm; do something with result
 sgui$hand.calculate <- function(h, ...) {
 
+	if(!is.data.frame(sgui$sdata)) return()
+
 	sgui$ppdata <- scatter.preprocess (
 		df                  = sgui$sdata,
 		classvar            = sgui$var.classvar,
