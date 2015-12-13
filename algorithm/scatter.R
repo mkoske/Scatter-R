@@ -58,12 +58,12 @@ usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, n
     for(class in classes) {
         for(i in 1:iterations) {
             print(sprintf("Running iteration %s for class %s...", i, class))
-            collectionVector <- traverse(data, distanceMatrix)
+            collectionVector <- as.numeric(traverse(data, distanceMatrix))
             collectionVector[collectionVector != class] <- 0
             result[class, i] <- scatter(collectionVector)
         }
 
-        labels <- data$class
+        labels <- as.numeric(data$class)
         labels[labels != class] <- 0
         baselines <- c(baselines, baseline(labels))
     }
@@ -105,6 +105,8 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
 # Transforms the class label list so, that it contains only the current label
 # and others are counterclass.
 recode <- function(labels, current) {
+    print(labels)
+    print(current)
     labels[labels != current] <- 0
     return(labels)
 }
@@ -194,7 +196,7 @@ maxChanges <- function(labels, current = NULL) {
 }
 
 numChanges <- function(labels) {
-
+    
     n <- length(labels)
     changes <- 0
     for(i in 1:n) {
@@ -268,14 +270,16 @@ traverse <- function(df, distm, seed = F) {
 # Returns mean scatter value
 # ##
 baseline <- function(labels, iterations = 50) {
-
+   
+    print("Calculating baseline...")
     n <- length(labels)
-    result <- sapply(1:iterations, function(iteration, labels, n) {
+    values <- vector(mode = "numeric", length = iterations)
+    for(i in 1:iterations) {
         sample <- sample(labels, size = n)
-        return(scatter(sample))
-    }, labels, n)
+        values[i] <- scatter(sample)
+    }
 
-    return(sum(result) / iterations)
+    return(sum(values) / iterations)
 }
 
 # Not really needed?
