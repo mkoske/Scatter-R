@@ -29,7 +29,6 @@ size(sgui$winMain) <- c(600, 500)
 sgui$cont.a   <- ggroup(horizontal=FALSE,  cont=sgui$cont)
 sgui$cont.aa  <- ggroup(horizontal=TRUE,   cont=sgui$cont.a)
 sgui$cont.aaa <- ggroup(horizontal=TRUE,   cont=sgui$cont.aa, expand=TRUE, fill=TRUE)
-sgui$cont.aab <- ggroup(horizontal=TRUE,   cont=sgui$cont.aa)
 sgui$cont.ab  <- ggroup(horizontal=FALSE,  cont=sgui$cont.a)
 
 sgui$cont.b   <- ggroup(horizontal=FALSE, cont=sgui$cont)
@@ -79,12 +78,8 @@ sgui$cont.dc  <- ggroup(horizontal=TRUE, cont=sgui$cont.d)
 
 
 # MAIN WINDOW CONTROLS
-sgui$btn_readfile     <- gbutton("Read CSV datafile...",cont=sgui$cont.aaa, handler=sgui$hand.fileOpen, expand=TRUE)
-sgui$btn_sepBtn_1     <- gbutton(";",       cont=sgui$cont.aab, handler=sgui$hand.useSeparator.colon)
-sgui$btn_sepBtn_1     <- gbutton(",",       cont=sgui$cont.aab, handler=sgui$hand.useSeparator.comma)
-sgui$btn_sepBtn_1     <- gbutton(".",       cont=sgui$cont.aab, handler=sgui$hand.useSeparator.dot)
-sgui$btn_sepBtn_1     <- gbutton("[tab]",   cont=sgui$cont.aab, handler=sgui$hand.useSeparator.tab)
-sgui$btn_sepBtn_1     <- gbutton("[space]", cont=sgui$cont.aab, handler=sgui$hand.useSeparator.space)
+sgui$btn_readfile     <- gbutton("Read CSV datafile...",cont=sgui$cont.aaa, handler=sgui$hand.readDatafile, expand=TRUE)
+
 sgui$lbl_datainfo     <- glabel("No file selected", cont=sgui$cont.ab)
 
 sgui$btn_selClassVar  <- gbutton("Select class variable...         ", cont=sgui$cont.baa, handler=sgui$hand.select.classvar)
