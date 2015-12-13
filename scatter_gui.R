@@ -10,7 +10,8 @@ sgui       <- new.env()
 sgui$opt.distmethod <- c("Euclidean", "Manhattan", "Heom")
 ## Treatment of missing values
 sgui$opt.missing    <- c("Do nothing", "Replace with class median/mode", "Replace with column median/mode", "Remove rows")
-
+## Calculation procedures
+sgui$opt.calcProcedure <- c("Single", "Variables", "Classes", "All")
 
 # OTHER FILES
 source("scatter_gui_handlers.R")
@@ -29,7 +30,6 @@ size(sgui$winMain) <- c(600, 500)
 sgui$cont.a   <- ggroup(horizontal=FALSE,  cont=sgui$cont)
 sgui$cont.aa  <- ggroup(horizontal=TRUE,   cont=sgui$cont.a)
 sgui$cont.aaa <- ggroup(horizontal=TRUE,   cont=sgui$cont.aa, expand=TRUE, fill=TRUE)
-sgui$cont.aab <- ggroup(horizontal=TRUE,   cont=sgui$cont.aa)
 sgui$cont.ab  <- ggroup(horizontal=FALSE,  cont=sgui$cont.a)
 
 sgui$cont.b   <- ggroup(horizontal=FALSE, cont=sgui$cont)
@@ -67,24 +67,20 @@ sgui$lbl_sectOtherOptions <- glabel("Other options", cont=sgui$cont.d)
 
 sgui$cont.da  <- ggroup(horizontal=TRUE, cont=sgui$cont.d)
 
-sgui$cont.db  <- ggroup(horizontal=TRUE,  cont=sgui$cont.d)
-sgui$cont.dba <- ggroup(horizontal=FALSE, cont=sgui$cont.db)
-sgui$cont.dbb <- ggroup(horizontal=FALSE, cont=sgui$cont.db)
-sgui$cont.dbc <- ggroup(horizontal=FALSE, cont=sgui$cont.db)
-sgui$cont.dbd <- ggroup(horizontal=FALSE, cont=sgui$cont.db)
+sgui$cont.db  <- ggroup(horizontal=TRUE,  cont=sgui$cont.d,  padding=15)
+sgui$cont.dba <- ggroup(horizontal=FALSE, cont=sgui$cont.db, padding=10)
+sgui$cont.dbb <- ggroup(horizontal=FALSE, cont=sgui$cont.db, padding=10)
+sgui$cont.dbc <- ggroup(horizontal=FALSE, cont=sgui$cont.db, padding=10)
+sgui$cont.dbd <- ggroup(horizontal=FALSE, cont=sgui$cont.db, padding=10)
 
-sgui$cont.dc  <- ggroup(horizontal=TRUE, cont=sgui$cont.d)
+sgui$cont.dc  <- ggroup(horizontal=TRUE, cont=sgui$cont.d, fill=TRUE, expand=TRUE)
 
 
 
 
 # MAIN WINDOW CONTROLS
-sgui$btn_readfile     <- gbutton("Read CSV datafile...",cont=sgui$cont.aaa, handler=sgui$hand.fileOpen, expand=TRUE)
-sgui$btn_sepBtn_1     <- gbutton(";",       cont=sgui$cont.aab, handler=sgui$hand.useSeparator.colon)
-sgui$btn_sepBtn_1     <- gbutton(",",       cont=sgui$cont.aab, handler=sgui$hand.useSeparator.comma)
-sgui$btn_sepBtn_1     <- gbutton(".",       cont=sgui$cont.aab, handler=sgui$hand.useSeparator.dot)
-sgui$btn_sepBtn_1     <- gbutton("[tab]",   cont=sgui$cont.aab, handler=sgui$hand.useSeparator.tab)
-sgui$btn_sepBtn_1     <- gbutton("[space]", cont=sgui$cont.aab, handler=sgui$hand.useSeparator.space)
+sgui$btn_readfile     <- gbutton("Read CSV datafile...",cont=sgui$cont.aaa, handler=sgui$hand.readDatafile, expand=TRUE)
+
 sgui$lbl_datainfo     <- glabel("No file selected", cont=sgui$cont.ab)
 
 sgui$btn_selClassVar  <- gbutton("Select class variable...         ", cont=sgui$cont.baa, handler=sgui$hand.select.classvar)
@@ -112,8 +108,14 @@ sgui$btn_printSelections  <- gbutton("Print selections", cont=sgui$cont.da, hand
 sgui$lbl_selectMethod      <- glabel("Select distance measure", cont=sgui$cont.dba)
 sgui$rdo_selectMethod      <- gradio(sgui$opt.distmethod, cont=sgui$cont.dba)
 
-sgui$lbl_selectIterations  <- glabel("Select number of iterations", cont=sgui$cont.dbb)
+sgui$lbl_selectIterations  <- glabel("Iterations", cont=sgui$cont.dbb)
 sgui$spn_selectIterations  <- gspinbutton(from=1, to=500, by=1, value=10, cont=sgui$cont.dbb)
+
+sgui$lbl_selectBaselineIterations <- glabel("Baseline iterations", cont=sgui$cont.dbc)
+sgui$spn_selectBaselineIterations <- gspinbutton(from=1, to=500, by=5, value=50, cont=sgui$cont.dbc)
+
+sgui$lbl_selectCalculation <- glabel("Select calculation", cont=sgui$cont.dbd)
+sgui$rdo_selectCalculation <- gradio(sgui$opt.calcProcedure, selected=1, cont=sgui$cont.dbd)
 
 
 sgui$btn_calculate         <- gbutton("Calculate", cont=sgui$cont.dc, handler=sgui$hand.calculate)
