@@ -277,6 +277,8 @@ traverse <- function(df, distm) {
             nearest <- minimas[1]
         }
 
+        # For testing :) Remove from final; FIXME
+        print(sprintf("From: %s, To: %s", currentIdx, nearest))
         currentIdx <- nearest
     }
 
