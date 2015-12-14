@@ -21,6 +21,7 @@ sgui$hand.readDatafile <- function(h, ...) {
 	cont.b <- ggroup(cont=cont.m, horizontal=FALSE)
 	cont.c <- ggroup(cont=cont.m, horizontal=FALSE)
 	cont.d <- ggroup(cont=cont.m, horizontal=FALSE)
+	
 
 	sgui$sfile <- FALSE
 
@@ -37,7 +38,7 @@ sgui$hand.readDatafile <- function(h, ...) {
 
 	hand.readfile <- function(h, ...) {
 		if(sgui$sfile==FALSE) return()
-		sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, sep=func.separator_selToArg(svalue(rdo_separator))))
+		sgui$sdata <- as.data.frame(read.csv(file=sgui$sfile, header=func.header_selToArg(svalue(rdo_headers)), sep=func.separator_selToArg(svalue(rdo_separator))))
 		sgui$sub.updateWithData()
 		dispose(datafileWindow)
 	}
@@ -49,14 +50,21 @@ sgui$hand.readDatafile <- function(h, ...) {
 		if(sel=="[tab]") return ("\t")
 		if(sel=="[space]") return ("")
 	}
+	
+	func.header_selToArg <- function(sel) {
+		if(sel=="Yes") return(TRUE)
+		if(sel=="No")  return(FALSE)
+	}
 
 
 	btn_selectFile <- gbutton("Select file...", cont=cont.a, handler=hand.selectfile)
 	lbl_filename   <- glabel("No file selected", cont=cont.a)
-	lbl_separator  <- glabel("Select value separator",cont=cont.b)
-	rdo_separator  <- gradio(c(";",",",".","[tab]","[space]"),selected=1,cont=cont.b)
-	lbl_decimal    <- glabel("Select decimal separator", cont=cont.c)
-	rdo_decimal    <- gradio(c(".",","),selected=1,cont=cont.c)
+	lbl_headers    <- glabel("Does the data file have column headers?", cont=cont.b)
+	rdo_headers    <- gradio(c("Yes","No"), selected=1, cont=cont.b)
+	lbl_separator  <- glabel("Select value separator",cont=cont.c)
+	rdo_separator  <- gradio(c(",",";",".","[tab]","[space]"),selected=1,cont=cont.c)
+#~ 	lbl_decimal    <- glabel("Select decimal separator", cont=cont.d)
+#~ 	rdo_decimal    <- gradio(c(".",","),selected=1,cont=cont.d)
 	btn_readFile   <- gbutton("Read file", cont=cont.d, handler=hand.readfile)
 
 }
@@ -261,7 +269,7 @@ sgui$hand.calculate <- function(h, ...) {
 		na.action           = sgui$func.na.action_index_to_name(svalue(sgui$rdo_ppMissing, index=TRUE))
 	)
 
-	result <- run (
+	sgui$result <- run (
 		data                = sgui$ppdata,
 		classlabel          = sgui$var.classvar,
 		distanceMethod      = tolower(svalue(sgui$rdo_selectMethod)),
@@ -271,8 +279,32 @@ sgui$hand.calculate <- function(h, ...) {
 	)
 
 	# TODO do something with result
-	print(result)
+	print(sgui$result)
+	sgui$hand.useResult()
 
+}
+
+sgui$hand.useResult <- function() {
+	resultWindow <- gwindow(title="Save results?")
+	
+	cont.m <- ggroup(cont=resultWindow, horizontal=FALSE, padding=20)
+	cont.a <- ggroup(cont=cont.m, horizontal=FALSE)
+	cont.b <- ggroup(cont=cont.m, horizontal=FALSE)
+	cont.c <- ggroup(cont=cont.m, horizontal=FALSE)
+
+	hand.saveTo <- function(h, ...) {
+		savefile <- gfile(type="save",initial.filename="result.txt")
+		resultText <- capture.output(sgui$result)
+		write(resultText, file=savefile)
+	}
+	
+	hand.showCollectionVector <- function(h, ...) {
+		plot(sgui$result$collectionVector)
+	}
+	
+	btn_saveResult <- gbutton("Save result to TXT file", cont=cont.a, handler=hand.saveTo)
+	btn_showSomething <- gbutton("Show picture", cont=cont.b, handler=hand.showCollectionVector)
+	
 }
 
 # Print a vector with label/explanation in front of it
