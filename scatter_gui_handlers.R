@@ -262,14 +262,12 @@ sgui$hand.calculate <- function(h, ...) {
 	)
 
 	result <- run (
-		data       = sgui$ppdata,
-		classlabel = sgui$var.classvar,
-		distanceMethod = tolower(svalue(sgui$rdo_selectMethod)),
-		iterations = svalue(sgui$spn_selectIterations),
-        usecase    = tolower(svalue(sgui$rdo_selectCalculation)),
-        baselineIterations = svalue(sgui$spn_selectBaselineIterations),
-		classes    = sgui$var.selected.classes,
-		columns    = sgui$var.selected.attributes
+		data                = sgui$ppdata,
+		classlabel          = sgui$var.classvar,
+		distanceMethod      = tolower(svalue(sgui$rdo_selectMethod)),
+		iterations          = svalue(sgui$spn_selectIterations),
+        usecase             = tolower(svalue(sgui$rdo_selectCalculation)),
+        baselineIterations  = svalue(sgui$spn_selectBaselineIterations)
 	)
 
 	# TODO do something with result
