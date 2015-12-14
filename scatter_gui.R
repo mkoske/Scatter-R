@@ -100,7 +100,7 @@ sgui$btn_ppBinarized  <- gbutton("Select variables to binarize...", cont=sgui$co
 sgui$lbl_ppBinarized  <- glabel("No data", cont=sgui$cont.cbb)
 
 sgui$lbl_ppMissing    <- glabel("Handling of missing values", cont=sgui$cont.cca)
-sgui$rdo_ppMissing    <- gradio(sgui$opt.missing, cont=sgui$cont.ccb)
+sgui$rdo_ppMissing    <- gradio(sgui$opt.missing, selected=2, cont=sgui$cont.ccb)
 
 
 sgui$btn_printSelections  <- gbutton("Print selections", cont=sgui$cont.da, handler=sgui$hand.printSelections)

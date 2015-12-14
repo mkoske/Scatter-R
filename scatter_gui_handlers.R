@@ -304,6 +304,7 @@ sgui$hand.useResult <- function() {
 	
 	btn_saveResult <- gbutton("Save result to TXT file", cont=cont.a, handler=hand.saveTo)
 	btn_showSomething <- gbutton("Show picture", cont=cont.b, handler=hand.showCollectionVector)
+	btn_exit <- gbutton("Close", cont=cont.c, handler=function(h,...) {dispose(resultWindow)})
 	
 }
 
