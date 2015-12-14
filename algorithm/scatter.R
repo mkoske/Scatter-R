@@ -86,12 +86,14 @@ usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, n
         for(i in 1:iterations) {
             print(sprintf("Running iteration %s for class %s...", i, class))
             collectionVector <- as.numeric(traverse(data, distanceMatrix))
-            collectionVector[collectionVector != class] <- 0
-            result[class, i] <- scatter(collectionVector)
+            collectionVector[collectionVector != class] <- (-1)
+            # +1 is because classes start from zero but indexin starts
+            # from 1.
+            result[(class + 1), i] <- scatter(collectionVector)
         }
 
         labels <- as.numeric(data$class)
-        labels[labels != class] <- 0
+        labels[labels != class] <- (-1)
         baselines <- c(baselines, baseline(labels))
     }
 
