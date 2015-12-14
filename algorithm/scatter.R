@@ -43,7 +43,7 @@ run <- function(
     scatter <- switch(usecase,
         single    = usecase.single(data, distanceMethod, iterations, nominal),
         class     = usecase.class(data, distanceMethod, iterations, nominal),
-        variable  = usecase.variable(data, distanceMethod, iterations, nominal),
+        variables = usecase.variable(data, distanceMethod, iterations, nominal),
         all       = usecse.all())
 
     return(scatter)
