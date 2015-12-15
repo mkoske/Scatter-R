@@ -292,20 +292,26 @@ sgui$hand.useResult <- function() {
 	cont.b <- ggroup(cont=cont.m, horizontal=FALSE)
 	cont.c <- ggroup(cont=cont.m, horizontal=FALSE)
 
-	hand.saveTo <- function(h, ...) {
+	hand.saveText <- function(h, ...) {
 		savefile <- gfile(type="save",initial.filename="result.txt")
 		resultText <- capture.output(sgui$result)
 		write(resultText, file=savefile)
+	}
+	
+	hand.saveObject <- function(h, ...) {
+		savefile <- gfile(type="save", initial.filename="result.txt")
+		dput(sgui$result, file=savefile)
 	}
 	
 	hand.showCollectionVector <- function(h, ...) {
 		plot(sgui$result$collectionVector)
 	}
 	
-	btn_saveResult <- gbutton("Save result to TXT file", cont=cont.a, handler=hand.saveTo)
+	btn_saveText   <- gbutton("Save result to TXT file", cont=cont.a, handler=hand.saveText)
+	btn_saveObject <- gbutton("Save result object as text representation", cont=cont.a, handler=hand.saveObject)
 	btn_showSomething <- gbutton("Show picture", cont=cont.b, handler=hand.showCollectionVector)
 	btn_exit <- gbutton("Close", cont=cont.c, handler=function(h,...) {dispose(resultWindow)})
-	
+
 }
 
 # Print a vector with label/explanation in front of it
