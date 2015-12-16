@@ -1,3 +1,3 @@
 # ```scatter.gui```
 
-# Purpose and general description
+## Purpose and general description
