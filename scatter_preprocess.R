@@ -1,8 +1,8 @@
 scatter.preprocess <- function(
 	df,                      # Dataframe to be preprocessed for Scatter algorithm
 	classvar,                # Name or index of column containing class label
-	included.attributes=NULL,# Attributes to be included (NULL includes all)
-	included.classes=NULL,   # Classes to be included (NULL includes all)
+	included.attributes=NULL,# Names or indices of columns/attributes to be included
+	included.classes=NULL,   # Names or indices of classes to be included
 	binarized=NULL,          # Names or indices of nominal attributes/columns to be binarized (NULL binarizes all factor-type columns)
 	scaled=NULL,             # Names or indices of numeric attributes/columns to be scaled (NULL scales all numeric-type columns)	
 	na.action=NULL           # Action for missing values {class,column,rmrows,nothing,NULL(=nothing)}
