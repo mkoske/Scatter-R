@@ -88,18 +88,28 @@ scatter.preprocess <- function(
 		}
 		
 		# Handle missing values in df
-		df <- remove_rows_with_missing_classvar(df, classvar)  # All rows with missing classvar are removed
+		df <- remove_rows_with_missing_classvar(df, classvar)  # All rows with missing classvar are always removed
 		if(is.null(action)) action="class" # Default to 'class' for missing value handling option
-		if(action=="rmrows") df <- na.omit(df)
-		if(action=="class")  df <- estimate_by_class(df, classvar)
-		if(action=="column") df <- estimate_by_column(df)
+		if(action=="rmrows") df <- na.omit(df)  # Action: Remove rows (with missing values)
+		if(action=="class")  df <- estimate_by_class(df, classvar) # Action: Replace missing values with class median/mode
+		if(action=="column") df <- estimate_by_column(df) # Action: Replace missing values with column median/mode
 		
 		return(df)
 		
 	}
 	
 	
-	# Binarize *binarized columns of *df and scale to range 0..1 *scaled columns of *df
+	# Binarize *binarized columns of *df and scale to range 0..1 *scaled columns of *df:
+	#  Binarization means that data in columns with factor-like/nominal data
+	#   is divided into several columns. A single column containing a nominal variable 
+	#   with e.g. 4 different values/levels will be transformed into 4 columns,
+	#   each containing binary values indicating a certain value for the variable.
+	#   New variable names will be the name of the original nominal variable 
+	#   concatenated with the value, separated by colon.
+	#  Scaling means mapping the values of each numeric column to range 0..1,
+	#   so that the smallest value in the column will be mapped to 0, the
+	#   highest to 1 and the values in between mapped linearly to the range.
+	
 	binarize_and_scale <- function(df, binarized=NULL, scaled=NULL) {
 		
 		require(DiscriMiner) # Binarization requires DiscriMiner package
@@ -107,11 +117,12 @@ scatter.preprocess <- function(
 		# Merge two dataframes, column by column, *df2 coming after *df1
 		appendMerge <- function(df1, df2)
 		{
-
-			if(ncol(df1)==0 && ncol(df2)==0) return(df1) # FIXME throw exception
+			# Exit if there is nothing to merge
+			if(ncol(df1)==0 && ncol(df2)==0) return(df1)
 			if(ncol(df1)==0) return(df2)
 			if(ncol(df2)==0) return(df1)
-
+			
+			# Add the columns of *df2 after the columns of *df1
 			df_new <- df1
 			for(ci in 1:ncol(df2)) {
 				df_new[,ncol(df_new)+1] <- df2[,ci]
@@ -170,8 +181,6 @@ scatter.preprocess <- function(
 		# Subset df for different types of preprocessing
 		bin.df <- df[binarized]  # Data frame with columns to be binarized
 		sca.df <- df[scaled]     # Data frame with columns to be scaled
-#~ 		binarized <- colnames(bin.df) # To make sure vectors contain colnames instead of indexes
-#~ 		scaled    <- colnames(sca.df) # To make sure vectors contain colnames instead of indexes
 		nop.df <- df[setdiff(colnames(df),union(binarized,scaled))] # Data frame with columns not preprocessed
 		
 
@@ -181,7 +190,7 @@ scatter.preprocess <- function(
 
 		# Combine subsets, order by column names and return dataframe preprocessed for Scatter algorithm
 		mrg.df <- appendMerge(appendMerge(sca.df, bin.df), nop.df) # Combine three dataframes
-#~ 		ord.df <- mrg.df[,order(names(mrg.df))]  # Order columns by name
+ 		# ord.df <- mrg.df[,order(names(mrg.df))]  # Order columns by name
 		return(mrg.df)
 		
 	}
@@ -207,6 +216,7 @@ scatter.preprocess <- function(
 	
 	
 	# ============ TESTING INPUTS ================== #
+	
 	if(!is.data.frame(df)) stop("df is not a dataframe")
 	if(ncol(df) < 2)       stop("df has less than two columns")
 	if(nrow(df) < 2)       stop("df has less than two rows")
@@ -214,16 +224,16 @@ scatter.preprocess <- function(
 	
 	if(is.numeric(classvar)) {
 		if(!classvar %in% 1:ncol(df))   stop("non-existing classvar index selected")
-		classvar <- colnames(df)[classvar]  # classvar name instead of index
+		classvar <- colnames(df)[classvar]  # Use classvar name instead of index
 	} else {
 		if (!classvar %in% colnames(df)) stop("non-existing classvar name selected")
 	}
 	
 	# Replace missing values with sensible defaults
-	if(!hasArg(included.attributes)) included.attributes <- colnames(df)
-	if(!hasArg(included.classes))    included.classes    <- levels(as.factor(df[[classvar]]))
-	if(!hasArg(binarized))  binarized <- included.attributes[sapply(df[included.attributes], is.factor)  & included.attributes != classvar] 
-	if(!hasArg(scaled))     scaled    <- included.attributes[sapply(df[included.attributes], is.numeric) & included.attributes != classvar]
+	if(!hasArg(included.attributes)) included.attributes <- colnames(df) # If included attributes are not selected, use all
+	if(!hasArg(included.classes))    included.classes    <- levels(as.factor(df[[classvar]])) # If included classes are not selected, use all
+	if(!hasArg(binarized))  binarized <- included.attributes[sapply(df[included.attributes], is.factor)  & included.attributes != classvar] # If binarized columns are not selected, binarize all factor-type columns of those that are selected (not including column with classvar)
+	if(!hasArg(scaled))     scaled    <- included.attributes[sapply(df[included.attributes], is.numeric) & included.attributes != classvar] # If scaled columns are not selected, scale all numeric columns of those that are selected (not including column with classvar)
 	if(!hasArg(na.action))  na.action <- "class"
 	
 	# Handle NULL valued arguments
