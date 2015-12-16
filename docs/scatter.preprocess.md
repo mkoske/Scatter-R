@@ -2,12 +2,31 @@
 
 Examples:
 
-```scatter.preprocess(dataframe, classvar="C")```  
-Preprocesses the dataframe with default preprocessing options, 
-class label is indicated to be in column with name "C"
+```scatter.preprocess(df, classvar="C")```  
+Preprocesses the dataframe ```df``` with default preprocessing options, 
+class label is indicated to be in column with name "C".
+All columns and all classes are included.
+All numeric columns are scaled, all factor-type columns are binarized 
+(except "C", which contains the class label).
+If data frame has missing values, the classwise medians or modes for the attribute
+(depending on whether the column is numeric or factor-type)
+are used in place of missing values.
 
-```scatter.preprocess(dataframe, classvar=7, included.attributes=c("A","B","X")```
+```scatter.preprocess(df, classvar=7, included.attributes=c("A","B","X")```  
+Preprocesses the dataframe ```df``` with the default preprocessing options.
+Class label is indicated to be in column 7 in the dataframe.
+Columns with names "A","B" and "X" and column 7 (containing classvar) 
+are included and other columns are stripped.
+All classes are included.
+Classwise medians or modes are used in place of missing values.
 
+```scatter.preprocess(df, "class", included.classes=c(1:4), scaled=c("height","weight"), binarized=(c("edu_level")), na.action="rmrows")```  
+Preprocesses the dataframe ```df```.
+Class label is in column named "class".
+Only classes with indices 1,2,3 and 4 are included; rows with class label not in this set are removed.
+Columns named "height" and "weight" are scaled.
+Column named "edu_level" is binarized.
+Rows with missing values are removed.
 
 
 **Arguments**
@@ -21,6 +40,19 @@ included.classes    | vector names or indices of classes    | The rows where ```
 binarized | vector of names or incides of columns | Indicates the columns to be binarized in preprocessing
 scaled    | vector of names or incides of columns | Indicates the columns to be scaled in preprocessing
 na.action | text | Action for missing values {class,column,rmrows,nothing,NULL(=nothing)} 
+
+If argument ```included.attributes``` is not passed, all attributes are included in the preprocessed dataframe.
+NULL select none of the attributes.
+
+If argument ```included.classes``` is not passed, all classes are included in the preprocessed dataframe.
+NULL select none of the classes.
+
+If argument ```binarized``` is not passed, all factor-type columns (except column containing *classvar*) are binarized.
+NULL selects none of the attributes for binarization.
+
+If argument ```scaled``` is not passed, all numeric-type columns (except column containing *classvar*) are scaled.
+NULL selects none of the attributes for scaling.
+
 
 ## Purpose and general description
 
