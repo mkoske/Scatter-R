@@ -1,8 +1,10 @@
 # ```scatter.preprocess``` function
 
-**Examples: **
+Examples:
 
-```scatter.preprocess(dataframe, classvar="C")```
+```scatter.preprocess(dataframe, classvar="C")```  
+Preprocesses the dataframe with default preprocessing options, 
+class label is indicated to be in column with name "C"
 
 ```scatter.preprocess(dataframe, classvar=7, included.attributes=c("A","B","X")```
 
