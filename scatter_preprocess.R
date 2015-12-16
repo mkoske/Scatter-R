@@ -29,12 +29,14 @@ scatter.preprocess <- function(
 	# Handles missing values according to *action argument
 	handle_missing_values <- function(df, classvar, action="class") {
 		
-		## Remove rows where classvar is missing. 
+		## Removes rows where classvar is missing. 
 		remove_rows_with_missing_classvar <- function(df, classvar) { 
 			df[!is.na(df[classvar]),] 
 		}
 		
-		## Estimate missing values by column median/mode for specific class
+		## Replaces missing values by column median/mode for specific class;
+		##  median is used for numeric columns,
+		##  mode for factor-type columns.
 		estimate_by_class <- function(df, classvar) {
 			
 			### Replaces missing values in *vars with classwise median/mode/mean
@@ -63,7 +65,10 @@ scatter.preprocess <- function(
 			}
 			return(estimate_by_column(df)) # Single-case classes are without class mean: use column mean instead
 		}
-
+		
+		## Replaces missing values with column median/mode.
+		##  median is used for numeric columns,
+		##  mode for factor-type columns.
 		estimate_by_column  <- function(df) {
 
 			numericCols <- sapply(df, is.numeric)
