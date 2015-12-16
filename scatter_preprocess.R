@@ -197,19 +197,21 @@ scatter.preprocess <- function(
 	
 	# ============ TEST FUNCTIONS ==================== #
 	
-	# Tests an individual column selection vector
+	# Tests an individual column selection vector.
+	#  Throws error if selection vector contains a value that is not in *allowed_values.
 	preprocess_selection_vector <- function(v, allowed_values) {
 		
-		if(is.null(v)) return(v)
-		
-		vname = deparse(substitute(v)) # Tested vector name
-		
+		if(is.null(v)) return(v) # No preprocessing for NULL-valued selection vectors
+		vname = deparse(substitute(v)) # Place tested vector name into variable
 		if(!is.vector(v)) stop(paste(vname, "is not of allowed type: try passing a vector"))
+		
+		# Selections for attributes/classes can be passed as a vector of names or as a vector of indices.
+		#  Indices are replaced at this step with attribute/class names to simplify the processing after this step.
 		if(is.numeric(v)) {
-			if (!all(v %in% 1:length(allowed_values)))   stop(paste("non-existing indices selected in",vname))
+			if (!all(v %in% 1:length(allowed_values)))   stop(paste("non-existing indices selected in",vname)) # Test that indices are in appropriate range
 			v <- allowed_values[v]  # Replace column indices with column names
 		} else {
-			if (!all(v %in% allowed_values)) stop(paste("non-existing names selected in", vname))
+			if (!all(v %in% allowed_values)) stop(paste("non-existing names selected in", vname)) # Test that vector contains only names that are in allowed values.
 		}
 		return(v)
 	}
@@ -234,12 +236,12 @@ scatter.preprocess <- function(
 	if(!hasArg(included.classes))    included.classes    <- levels(as.factor(df[[classvar]])) # If included classes are not selected, use all
 	if(!hasArg(binarized))  binarized <- included.attributes[sapply(df[included.attributes], is.factor)  & included.attributes != classvar] # If binarized columns are not selected, binarize all factor-type columns of those that are selected (not including column with classvar)
 	if(!hasArg(scaled))     scaled    <- included.attributes[sapply(df[included.attributes], is.numeric) & included.attributes != classvar] # If scaled columns are not selected, scale all numeric columns of those that are selected (not including column with classvar)
-	if(!hasArg(na.action))  na.action <- "class"
+	if(!hasArg(na.action))  na.action <- "class" # Replace missing values with appropriate class central tendency indicator if no na.action option is passed
 	
 	# Handle NULL valued arguments
 	if(is.null(included.attributes)) stop("NULL passed for included attributes: no attributes selected")
 	if(is.null(included.classes))    stop("NULL passed for included classes: no classes selected")
-	if(is.null(na.action))  na.action <- "nothing"
+	if(is.null(na.action))  na.action <- "nothing" # NULL for na.action is interpreted to mean "no action". 
 	
 	# Test and preprocess selection vectors
 	included.attributes <- preprocess_selection_vector(included.attributes, colnames(df))
@@ -247,7 +249,7 @@ scatter.preprocess <- function(
 	scaled              <- preprocess_selection_vector(scaled, colnames(df))
 	binarized           <- preprocess_selection_vector(binarized, colnames(df))
 
-	# TODO test that passed scaled/binarized attributes are not overlapping
+	# Test that passed scaled/binarized attributes are not overlapping
 	if(any(binarized %in% scaled)) stop("attributes selected for both binarization and scaling")
 	
 	# Add classvar to included attributes if it is not present
@@ -257,11 +259,11 @@ scatter.preprocess <- function(
 	binarized <- binarized[binarized != classvar]
 	scaled    <- scaled[scaled != classvar]
 	
+	# Test that *na.action option is supported by the scatter_preprocess function
 	if(!(na.action %in% c("class","column","rmrows","","nothing"))) 
 		stop("na.action is not supported. Try 'class','column','rmrows','nothing'")
 		
-	
-	
+		
 	# ============ PREPROCESSING ==================== #
 	
 	## Remove unselected attributes and classes
