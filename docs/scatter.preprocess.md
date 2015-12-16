@@ -42,10 +42,10 @@ scaled    | vector of names or incides of columns | Indicates the columns to be 
 na.action | text | Action for missing values {class,column,rmrows,nothing,NULL(=nothing)} 
 
 If argument ```included.attributes``` is not passed, all attributes are included in the preprocessed dataframe.
-NULL select none of the attributes.
+NULL select none of the attributes (which is not allowed as it would result in an empty dataframe).
 
 If argument ```included.classes``` is not passed, all classes are included in the preprocessed dataframe.
-NULL select none of the classes.
+NULL select none of the classes (which is not allowed as it would result in an empty dataframe).
 
 If argument ```binarized``` is not passed, all factor-type columns (except column containing *classvar*) are binarized.
 NULL selects none of the attributes for binarization.
