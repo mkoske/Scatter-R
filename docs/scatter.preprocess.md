@@ -1,3 +1,3 @@
-# ´´´scatter.preprocess´´´ function
+# ```scatter.preprocess``` function
 
-The ´´´scatter.preprocess´´´ function 
+The ```scatter.preprocess``` function 
