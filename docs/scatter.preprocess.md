@@ -1,6 +1,6 @@
 # ```scatter.preprocess``` function
 
-Examples: 
+**Examples: **
 
 ```scatter.preprocess(dataframe, classvar="C")```
 
@@ -8,11 +8,17 @@ Examples:
 
 
 
+**Arguments**
 
-
-
-
-
+Argument | Type | Explanation
+---------|------|------------
+df       | data.frame | The data frame to preprocess for use with the **scatter** algorithm
+classvar | name or index of column | The column that contains the class label data in the data frame
+included.attributes | vector of names or indices of columns | Columns to be included in the preprocessing, others are stripped
+included.classes    | vector names or indices of classes    | The rows where ```classvar``` is in included classes are included in the preprocessing, others are stripped
+binarized | vector of names or incides of columns | Indicates the columns to be binarized in preprocessing
+scaled    | vector of names or incides of columns | Indicates the columns to be scaled in preprocessing
+na.action | text | Action for missing values {class,column,rmrows,nothing,NULL(=nothing)} 
 
 ## Purpose and general description
 
