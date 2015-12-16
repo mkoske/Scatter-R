@@ -3,8 +3,8 @@ scatter.preprocess <- function(
 	classvar,                # Name or index of column containing class label
 	included.attributes=NULL,# Names or indices of columns/attributes to be included
 	included.classes=NULL,   # Names or indices of classes to be included
-	binarized=NULL,          # Names or indices of nominal attributes/columns to be binarized (NULL binarizes all factor-type columns)
-	scaled=NULL,             # Names or indices of numeric attributes/columns to be scaled (NULL scales all numeric-type columns)	
+	binarized=NULL,          # Names or indices of nominal attributes/columns to be binarized 
+	scaled=NULL,             # Names or indices of numeric attributes/columns to be scaled 
 	na.action=NULL           # Action for missing values {class,column,rmrows,nothing,NULL(=nothing)}
 	)
 
