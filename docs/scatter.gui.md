@@ -16,9 +16,8 @@ and ultimately saving the results.
 ## Dependencies
 
 The Scatter GUI requires the ```gWidgets2RGtk2``` package.
-It can be installed with command  
-```install.packages("gWidgets2RGtk2")```
-.
+It can be installed with command  ```install.packages("gWidgets2RGtk2")```.
+
 
 ## Calling the GUI
 
