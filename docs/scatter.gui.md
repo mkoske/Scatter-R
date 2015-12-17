@@ -101,16 +101,16 @@ is described, starting from the top-most elements.
 	- *Variables*
 	- *Classes*
 	- *All*
-- **Calculate**
+- **Calculate** button
 	- Starts the **Scatter** calculation with the selected data and options.
 	Data is first preprocessed according to the preprocessing options
 	and the preprocessed dataframe is then passed to the **Scatter** algorithm.
 	- The results are printed in the R console
 	- When the calculation finishes, ```scatter.gui```
 	shows a dialog where it is possible to save the result.
-		- **Save result to TXT file**: Opens a save dialog to save the results
+		- **Save result to TXT file** button: Opens a save dialog to save the results
 		in the format they are printed in the R console.
-		- **Save result object as text representation**: 
+		- **Save result object as text representation** button: 
 		Opens a save dialog to save the results
 		as an R object text representation, that can be read back to
 		R environment with the ```dget()``` function.
