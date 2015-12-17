@@ -41,15 +41,15 @@ run <- function(
 
 
     scatter <- switch(usecase,
-        single    = usecase.single(data, distanceMethod, iterations, nominal),
-        classes   = usecase.class(data, distanceMethod, iterations, nominal),
-        variables = usecase.variable(data, distanceMethod, iterations, nominal),
+        single    = usecase.single(data, distanceMethod, iterations, nominal, baselineIterations),
+        classes   = usecase.class(data, distanceMethod, iterations, nominal, baselineIterations),
+        variables = usecase.variable(data, distanceMethod, iterations, nominal, baselineIterations),
         all       = usecse.all())
 
     return(scatter)
 }
 
-usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c()) {
+usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
 
     variables <- ncol(data) - 1 # -1 for class column; it's last
     result <- matrix(nrow = variables, ncol = iterations)
@@ -64,7 +64,7 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
             result[variable, i] <- scatter(collectionVector)
         }
 
-        baselines <- c(baselines, baseline(data$class))
+        baselines <- c(baselines, baseline(data$class, baselineIterations))
     }
 
     means <- apply(result, 1, mean)
@@ -76,25 +76,32 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
         ))
 }
 
-usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c()) {
+usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
+
 
     classes <- as.numeric(unique(data[, ncol(data)]))
+
+    # If there is any classes labeled as zeros, add 1 to all of them to make
+    # non-zero class-labels.
+    if(any(classes == 0))
+        classes <- classes + 1
+
     distanceMatrix <- distance(data, distanceMethod, nominal)
+
     result <- matrix(nrow = length(classes), ncol = iterations)
     baselines <- vector(mode = "numeric")
+
     for(class in classes) {
         for(i in 1:iterations) {
             print(sprintf("Running iteration %s for class %s...", i, class))
             collectionVector <- as.numeric(traverse(data, distanceMatrix))
             collectionVector[collectionVector != class] <- (-1)
-            # +1 is because classes start from zero but indexin starts
-            # from 1.
-            result[(class + 1), i] <- scatter(collectionVector)
+            result[class, i] <- scatter(collectionVector)
         }
 
         labels <- as.numeric(data$class)
         labels[labels != class] <- (-1)
-        baselines <- c(baselines, baseline(labels))
+        baselines <- c(baselines, baseline(labels, baselineIterations))
     }
 
     means <- apply(result[, 1:iterations], 1, mean)
@@ -107,7 +114,7 @@ usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, n
         ))
 }
 
-usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c()) {
+usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
 
     collectionVector <- vector(length = nrow(data))
     distanceMatrix <- distance(data, distanceMethod, nominal)
@@ -119,7 +126,7 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
         values[i] <- scatter(collectionVector)
     }
 
-    baseline <- baseline(collectionVector)
+    baseline <- baseline(collectionVector, baselineIterations)
 
     return(list(
         values = values,
@@ -134,45 +141,23 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
 #
 # ##
 distance <- function(
-    data,                       # Data frame
-    distmethod = "euclidean",   # Distance measure
-    nominals = c()) {           # Which columns are nominal; used for HEOM
+    data,                           # Data frame
+    distmethod  = "euclidean",      # Distance measure
+    nominals    = NULL) {           # Which columns are nominal; used for HEOM
 
     if(!is.data.frame(data))
         stop("Data must be a data frame type.")
 
     ncols <- ncol(data) - 1
-    n <- nrow(data)
-    result <- matrix(nrow = n, ncol = n)
-
-    distheom <- function(data, nominal = c()) {
-
-        print("You selected HEOM. This is currently *very* slow.")
-        source('./algorithm/heom.R')
-
-        # Convert factors to their numeric values
-        classless <- sapply(data[, 1:ncols], as.numeric)
-
-        # Get max and min for all columns so they won't be calculated n^2 times
-        range <- apply(classless[, 1:ncols], 2, range)
-
-        return(apply(classless, 1, function(row, data, range, nominals) {
-            return(apply(data, 1, function(a, b, range, n) {
-                return(heom(a, b, range, n))
-            }, row, range, nominals))
-
-        }, classless, range, nominals))
-    }
-
     result <- switch(
         distmethod,
         euclidean = as.matrix(dist(data[, 1:ncols], method = "euclidean")),
         manhattan = as.matrix(dist(data[, 1:ncols], method = "manhattan")),
-        heom      = as.matrix(distheom(data[, 1:ncols])),
+        heom      = as.matrix(heom(data[, 1:ncols])),
         c()
         )
 
-    if(length(result) == 0)
+    if(is.null(result))
         stop("Invalid distmethod. Must be 'euclidean', 'manhattan' or 'heom'.")
 
     return(result)
@@ -278,7 +263,7 @@ traverse <- function(df, distm) {
         }
 
         # For testing :) Remove from final; FIXME
-        print(sprintf("From: %s, To: %s", currentIdx, nearest))
+        # print(sprintf("From: %s, To: %s", currentIdx, nearest))
         currentIdx <- nearest
     }
 
