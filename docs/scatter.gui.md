@@ -21,8 +21,7 @@ It can be installed with command  ```install.packages("gWidgets2RGtk2")```.
 
 ## Calling the GUI
 
-```scatter.gui()```  
-Opens the GUI main window.
+```scatter.gui()``` Opens the GUI main window.
 
 ## Using the GUI
 
