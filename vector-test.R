@@ -13,27 +13,27 @@ ncols <- ncol(data) - 1
 # Drop class label from data
 data <- data[, 1:ncols] # Drop class labels
 
-# Create matrix for final result
-fresult <- matrix(nrow = nrow(data), ncol = nrow(data))
+# Save info about factor columns
+factors <- sapply(data, is.factor)
+numerics <- sapply(data, is.numeric)
+ranges <- apply(data[, numerics], 2, max, na.rm = T) - apply(data[, numerics], 2, min, na.rm = T)
+data <- sapply(data, as.numeric)
 
 # Save the length of data (the number of rows)
 dlen <- nrow(data)
 
+result <- matrix(nrow = nrow(data), ncol = nrow(data))
+row <- vector(mode = "numeric", length = ncol(data))
+
 # Record starting time
 start  <- proc.time()
-
-# Save info about factor columns
-factors <- sapply(data, is.factor)
-
-# Convert to matrix
-data <- as.matrix(data)
-
-for(i in 1:dlen) {
-    if(i %% 10 == 0)
-        print("Next ten")
-    for(j in 1:dlen) {
-        a <- data[i, ]
-    }
+for (i in 1:dlen) {
+  for (j in 1:dlen) {
+    row[factors] <- !(data[i, factors] == data[j, factors])
+    row[numerics] <- (data[i, numerics] - data[j, numerics]) / ranges
+    row[is.na(row)] <- 1
+    result[i, j] <- sum(row^2)
+  }
 }
 
 print(proc.time() - start)
