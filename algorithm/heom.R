@@ -12,35 +12,22 @@ heom <- function(data) {
         # a is case a, b is case b, i is the current index, ranges is the value
         # range in in given variable.
         result <- vector(mode = "numeric", length = length(a))
-        for(i in 1:length(a)) {
 
-            # Contains missing values
-            if(is.na(a[i]) || is.na(b[i])) {
-                result[i] <- 1
-                next
-            }
+        # 1. NA's
+        # 2. Nominals; same or not
+        # 3. Numeric
 
-            if(!is.numeric(a[i])) {
-                if(a[i] == b[i])
-                    result[i] <- 0
-                else
-                    result[i] <- 1
+        # In HEOM, if either corresponding value is NA, the distance is 1, so
+        # this is, what it does. First, is.na()-calls returns logical vector
+        # indicating with TRUE that the value was NA and 0 that it was something
+        # else than NA. Next, we use OR operator, to find those that were NA's
+        # in either or both. Finally, we convert logical vector to numeric, and
+        # the result shows 1's in those places, where either one was NA and zero
+        # otherwise.
+        nas <- as.numeric(is.na(a) | is.na(b))
 
-                next
-            } else {
-                # In all other cases, the distance is the ratio of difference and range
-                diff <- abs(a[i] - b[i])
-                range <- max(data[, i]) - min(data[, i])
+        fas <- which(sapply(a, is.factor) == 1)
 
-                # Temporary hack to prevent dividing with zero
-                if(range == 0) {
-                    warning("The range was zero; replacing it with 1E-6 to prevent division by zero.")
-                    range <- 0.0000001
-                }
-
-                result[i] <- (diff / range)
-            }
-        }
 
         # sos = sum of squares; note, that distances is a vector and this ^2
         # operation squares every element in the distances vector before summing it.
