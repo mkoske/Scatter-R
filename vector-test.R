@@ -7,33 +7,41 @@
 # Read data
 data <- read.csv("testdata_3.csv")
 
-# Number of clumns - the class label column
-ncols <- ncol(data) - 1
+heom <- function(data) {
 
-# Drop class label from data
-data <- data[, 1:ncols] # Drop class labels
+  ncols <- ncol(data) - 1
+  data <- data[, 1:ncols]
+  
+  factors <- sapply(data, is.factor)
+  numerics <- sapply(data, is.numeric)
+  ranges <- apply(data[, numerics], 2, max, na.rm = T) - apply(data[, numerics], 2, min, na.rm = T)
 
-# Save info about factor columns
-factors <- sapply(data, is.factor)
-numerics <- sapply(data, is.numeric)
-ranges <- apply(data[, numerics], 2, max, na.rm = T) - apply(data[, numerics], 2, min, na.rm = T)
-data <- sapply(data, as.numeric)
-
-# Save the length of data (the number of rows)
-dlen <- nrow(data)
-
-result <- matrix(nrow = nrow(data), ncol = nrow(data))
-row <- vector(mode = "numeric", length = ncol(data))
-
-# Record starting time
-start  <- proc.time()
-for (i in 1:dlen) {
-  for (j in 1:dlen) {
-    row[factors] <- !(data[i, factors] == data[j, factors])
-    row[numerics] <- (data[i, numerics] - data[j, numerics]) / ranges
-    row[is.na(row)] <- 1
-    result[i, j] <- sum(row^2)
+  data <- sapply(data, as.numeric)
+  
+  dlen <- nrow(data)
+  result <- matrix(nrow = nrow(data), ncol = nrow(data))
+  row <- vector(mode = "numeric", length = ncol(data))
+  
+  for (i in 1:dlen) {
+    for (j in 1:dlen) {
+      
+      if(!is.na(result[i, j]))
+        next
+      
+      # For factor attributes, the distance is 1, if they're equal, 0 if not
+      row[factors] <- !(data[i, factors] == data[j, factors])
+      
+      # For numeric type, distance is xi - yi / range
+      row[numerics] <- (data[i, numerics] - data[j, numerics]) / ranges
+      
+      # For NA, distance is 1
+      row[is.na(row)] <- 1
+      ssum <- sum(row^2)
+      result[i, j] <- ssum
+      result[j, i] <- ssum
+    }
   }
+  
+  return(result)
 }
 
-print(proc.time() - start)

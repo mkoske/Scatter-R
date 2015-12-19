@@ -1,46 +1,48 @@
 # ##
-# Creates a distance matrix
-# ##
+# An implementation of HEOM metric. 
+# 
+# This creates distance matrix from given data.
+# 
+# For further reading, see [1].
+# 
+# [1] Wilson, D. Randall, and Tony R. Martinez. 1997. “Improved Heterogeneous
+# Distance Functions.” Journal of Artificial Intelligence Research 6: 1–34.
+# doi:10.1613/jair.346.
+# ## 
 heom <- function(data) {
-
-    if(!is.data.frame(data))
-        stop("Data must be data frame.")
-
-    print("You chose HEOM as distance method. It's implementation is very slow, so please be patient.")
-    calculate <- function(a, b) {
-
-        # a is case a, b is case b, i is the current index, ranges is the value
-        # range in in given variable.
-        result <- vector(mode = "numeric", length = length(a))
-
-        # 1. NA's
-        # 2. Nominals; same or not
-        # 3. Numeric
-
-        # In HEOM, if either corresponding value is NA, the distance is 1, so
-        # this is, what it does. First, is.na()-calls returns logical vector
-        # indicating with TRUE that the value was NA and 0 that it was something
-        # else than NA. Next, we use OR operator, to find those that were NA's
-        # in either or both. Finally, we convert logical vector to numeric, and
-        # the result shows 1's in those places, where either one was NA and zero
-        # otherwise.
-        nas <- as.numeric(is.na(a) | is.na(b))
-
-        fas <- which(sapply(a, is.factor) == 1)
-
-
-        # sos = sum of squares; note, that distances is a vector and this ^2
-        # operation squares every element in the distances vector before summing it.
-        sos <- sum(result^2)
-        return(sqrt(sos))
+  
+  ncols <- ncol(data) - 1
+  data <- data[, 1:ncols]
+  
+  factors <- sapply(data, is.factor)
+  numerics <- sapply(data, is.numeric)
+  ranges <- apply(data[, numerics], 2, max, na.rm = T) - apply(data[, numerics], 2, min, na.rm = T)
+  
+  data <- sapply(data, as.numeric)
+  
+  dlen <- nrow(data)
+  result <- matrix(nrow = nrow(data), ncol = nrow(data))
+  row <- vector(mode = "numeric", length = ncol(data))
+  
+  for (i in 1:dlen) {
+    for (j in 1:dlen) {
+      
+      if(!is.na(result[i, j]))
+        next
+      
+      # For factor attributes, the distance is 1, if they're equal, 0 if not
+      row[factors] <- !(data[i, factors] == data[j, factors])
+      
+      # For numeric type, distance is xi - yi / range
+      row[numerics] <- (data[i, numerics] - data[j, numerics]) / ranges
+      
+      # For NA, distance is 1
+      row[is.na(row)] <- 1
+      ssum <- sum(row^2)
+      result[i, j] <- ssum
+      result[j, i] <- ssum
     }
-
-    distanceMatrix <- matrix(nrow = nrow(data), ncol = nrow(data))
-    for(i in 1:nrow(data)) {
-        start <- proc.time()
-        for(j in 1:nrow(data)) {
-            distanceMatrix[i, j] <- calculate(data[i, ], data[j, ])
-        }
-        print(proc.time() - start)
-    }
+  }
+  
+  return(result)
 }
