@@ -44,7 +44,7 @@ run <- function(
         single    = usecase.single(data, distanceMethod, iterations, nominal, baselineIterations),
         classes   = usecase.class(data, distanceMethod, iterations, nominal, baselineIterations),
         variables = usecase.variable(data, distanceMethod, iterations, nominal, baselineIterations),
-        all       = usecse.all())
+        all       = usecse.all(data, distanceMethod, iterations, nominal, baselineIterations))
 
     return(scatter)
 }
@@ -135,6 +135,10 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
         collectionVector = collectionVector,
         baseline = baseline
         ))
+}
+
+usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
+    print("Not implemented yet.")
 }
 
 # ##
