@@ -48,5 +48,5 @@ heom <- function(data) {
     }
   }
 
-  return(result)
+  return(sqrt(result))
 }
