@@ -44,7 +44,7 @@ run <- function(
         single    = usecase.single(data, distanceMethod, iterations, nominal, baselineIterations),
         classes   = usecase.class(data, distanceMethod, iterations, nominal, baselineIterations),
         variables = usecase.variable(data, distanceMethod, iterations, nominal, baselineIterations),
-        all       = usecse.all(data, distanceMethod, iterations, nominal, baselineIterations))
+        all       = usecase.all(data, distanceMethod, iterations, nominal, baselineIterations))
 
     return(scatter)
 }
@@ -53,7 +53,7 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
 
     variables <- ncol(data) - 1 # -1 for class column; it's last
     result <- matrix(nrow = variables, ncol = iterations)
-    baselines <- vector(mode = "numeric")
+    baselines <- vector(mode = "numeric", length = baselineIterations)
     collectionVector <- vector(mode = "numeric", length = nrow(data))
 
     for(variable in 1:variables) {
@@ -80,23 +80,18 @@ usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, n
 
 
     classes <- as.numeric(unique(data[, ncol(data)]))
-
-    # If there is any classes labeled as zeros, add 1 to all of them to make
-    # non-zero class-labels.
-    if(any(classes == 0))
-        classes <- classes + 1
-
-    distanceMatrix <- distance(data, distanceMethod, nominal)
+    ncols <- ncol(data) - 1
+    distanceMatrix <- distance(data[, 1:ncols], distanceMethod, nominal)
 
     result <- matrix(nrow = length(classes), ncol = iterations)
     baselines <- vector(mode = "numeric")
-
+    print(classes)
     for(class in classes) {
         for(i in 1:iterations) {
             print(sprintf("Running iteration %s for class %s...", i, class))
             collectionVector <- as.numeric(traverse(data, distanceMatrix))
             collectionVector[collectionVector != class] <- (-1)
-            result[class, i] <- scatter(collectionVector)
+            result[(class + 1), i] <- scatter(collectionVector)
         }
 
         labels <- as.numeric(data$class)
@@ -116,8 +111,9 @@ usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, n
 
 usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
 
+    ncols <- ncol(data) - 1
     collectionVector <- vector(length = nrow(data))
-    distanceMatrix <- distance(data, distanceMethod, nominal)
+    distanceMatrix <- distance(data[, 1:ncols], distanceMethod, nominal)
     values <- vector(length = iterations)
 
     for(i in 1:iterations) {
@@ -142,7 +138,7 @@ usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nom
 }
 
 # ##
-#
+# Expects dataframe without class label column
 # ##
 distance <- function(
     data,                           # Data frame
@@ -152,12 +148,14 @@ distance <- function(
     if(!is.data.frame(data))
         stop("Data must be a data frame type.")
 
-    ncols <- ncol(data) - 1
+    if(distmethod == "heom")
+        source('algorithm/heom.R')
+
     result <- switch(
         distmethod,
-        euclidean = as.matrix(dist(data[, 1:ncols], method = "euclidean")),
-        manhattan = as.matrix(dist(data[, 1:ncols], method = "manhattan")),
-        heom      = as.matrix(heom(data[, 1:ncols])),
+        euclidean = as.matrix(dist(data, method = "euclidean")),
+        manhattan = as.matrix(dist(data, method = "manhattan")),
+        heom      = as.matrix(heom(data)),
         c()
         )
 
@@ -169,6 +167,8 @@ distance <- function(
 
 # ##
 # Calculate raw Scatter value
+#
+# TODO: Is `current` needed any more?
 # ##
 scatter <- function(labels, current = NULL) {
     changes <- numChanges(labels)
