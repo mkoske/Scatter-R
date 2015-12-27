@@ -89,7 +89,7 @@ usecase.class <- function(data, distanceMatrix, iterations = 10, nominal = c(), 
 
     result <- matrix(nrow = length(classes), ncol = iterations)
     baselines <- vector(mode = "numeric")
-    print(classes)
+
     for(class in classes) {
         for(i in 1:iterations) {
             print(sprintf("Running iteration %s for class %s...", i, class))
@@ -138,7 +138,25 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
 }
 
 usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
-    print("Not implemented yet.")
+
+    variables <- ncol(data) - 1
+    all <- list()
+    result <- matrix(nrow = variables, ncol = iterations)
+    baselines <- vector(mode = "numeric", length = baselineIterations)
+    collectionVector <- vector(mode = "numeric", length = nrow(data))
+
+    for(variable in 1:variables) {
+
+        distanceMatrix <- distance(as.data.frame(data[, variable]), distanceMethod, nominal)
+
+        for(i in 1:iterations) {
+            print(sprintf("Running iteration %s for variable %s...", i, variable))
+            result <- usecase.class(data, distanceMatrix, iterations, nominal, baselineIterations)
+        }
+
+    }
+
+    return(all)
 }
 
 # ##
