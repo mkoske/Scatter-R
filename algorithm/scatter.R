@@ -39,14 +39,20 @@ run <- function(
     # Move classlabel column to last.
     data$class <- class_labels
 
+    result <- NULL
+    if(usecase == "single") {
+        result <- usecase.single(data, distanceMethod, iterations, nominal, baselineIterations)
+    } else if(usecase == "classes") {
+        result <- usecase.class(data, distanceMethod, iterations, nominal, baselineIterations)
+    } else if(usecase == "variables") {
+        result  <- usecase.variable(data, distanceMethod, iterations, nominal, baselineIterations)
+    } else if(usecase == "all") {
+        result <- usecase.all(data, distanceMethod, iterations, nominal, baselineIterations)
+    } else {
+        stop("Unknown usecase. Must be one of following: single, classes, variables or all.")
+    }
 
-    scatter <- switch(usecase,
-        single    = usecase.single(data, distanceMethod, iterations, nominal, baselineIterations),
-        classes   = usecase.class(data, distanceMethod, iterations, nominal, baselineIterations),
-        variables = usecase.variable(data, distanceMethod, iterations, nominal, baselineIterations),
-        all       = usecase.all(data, distanceMethod, iterations, nominal, baselineIterations))
-
-    return(scatter)
+    return(result)
 }
 
 usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
@@ -76,12 +82,10 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
         ))
 }
 
-usecase.class <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
-
+usecase.class <- function(data, distanceMatrix, iterations = 10, nominal = c(), baselineIterations = 50) {
 
     classes <- as.numeric(unique(data[, ncol(data)]))
     ncols <- ncol(data) - 1
-    distanceMatrix <- distance(data[, 1:ncols], distanceMethod, nominal)
 
     result <- matrix(nrow = length(classes), ncol = iterations)
     baselines <- vector(mode = "numeric")
