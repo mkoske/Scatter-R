@@ -21,6 +21,16 @@ scatter.gui <- function() {
 	source("algorithm/scatter.R")
 
 # ============ HANDLERS AND FUNCTIONS FOR SCATTER GUI ================ #
+	
+	# GUI handler: show help text
+	scattergui$hand.showHelp <- function(h, ...) {
+		helpWindow <- gwindow(title="Help")
+		cont.a <- ggroup(cont=helpWindow, horizontal=FALSE, expand=TRUE, fill=TRUE)
+		filename <- "helptext.txt"
+		helptext <- readChar(filename, file.info(filename)$size)
+		lbl_helptext <- glabel(helptext, cont=cont.a, expand=TRUE, fill=TRUE)
+		btn_close <- gbutton("Close", cont=cont.a, handler=function(h,...){dispose(helpWindow)})
+	}
 
 	# GUI handler:btn_readDatafile; Shows dialog to select a datafile
 	#  and options for reading the data from file to dataframe.
@@ -344,7 +354,7 @@ scatter.gui <- function() {
 		
 		## Plotting variable-wise scatter values against baseline values
 		hand.showVariableScatter <- function(h, ...) {
-		
+			
 		}
 		
 		## Plotting class-wise scatter values against baseline values
@@ -442,7 +452,7 @@ scatter.gui <- function() {
 
 	# MAIN WINDOW CONTROLS
 	scattergui$btn_readDatafile <- gbutton("Read CSV datafile...",cont=scattergui$cont.aaa, handler=scattergui$hand.readDatafile, expand=TRUE)
-	scattergui$btn_info         <- gbutton("HELP", cont=scattergui$cont.aab)
+	scattergui$btn_info         <- gbutton("HELP", cont=scattergui$cont.aab, handler=scattergui$hand.showHelp)
 	scattergui$lbl_datainfo     <- glabel("No file selected", cont=scattergui$cont.ab)
 	scattergui$btn_selClassVar  <- gbutton("Select class variable...         ", cont=scattergui$cont.baa, handler=scattergui$hand.select.classvar)
 	scattergui$lbl_selClassVar  <- glabel("No data", cont=scattergui$cont.bab)
