@@ -273,6 +273,12 @@ scatter.gui <- function() {
 	scattergui$hand.calculate <- function(h, ...) {
 
 		if(!is.data.frame(scattergui$sdata)) return()
+		
+		scattergui$var.options.na.action          = scattergui$func.na.action_index_to_name(svalue(scattergui$rdo_ppMissing, index=TRUE))
+		scattergui$var.options.distanceMethod     = tolower(svalue(scattergui$rdo_selectMethod))
+		scattergui$var.options.iterations         = svalue(scattergui$spn_selectIterations)
+		scattergui$var.options.usecase            = tolower(svalue(scattergui$rdo_selectCalculation))
+		scattergui$var.options.baselineIterations = svalue(scattergui$spn_selectBaselineIterations)
 
 		scattergui$ppdata <- scatter.preprocess (
 			df                  = scattergui$sdata,
@@ -287,15 +293,15 @@ scatter.gui <- function() {
 		scattergui$result <- run (
 			data                = scattergui$ppdata,
 			classlabel          = scattergui$var.classvar,
-			distanceMethod      = tolower(svalue(scattergui$rdo_selectMethod)),
-			iterations          = svalue(scattergui$spn_selectIterations),
-			usecase             = tolower(svalue(scattergui$rdo_selectCalculation)),
-			baselineIterations  = svalue(scattergui$spn_selectBaselineIterations)
+			distanceMethod      = scattergui$var.options.distanceMethod,
+			iterations          = scattergui$var.options.iterations,
+			usecase             = scattergui$var.options.usecase,
+			baselineIterations  = scattergui$var.options.baselineIterations
 		)
 
 		# Handle result
-		print(scattergui$result)
-		scattergui$hand.useResult()
+		print(scattergui$result)    # Print the result in R console
+		scattergui$hand.useResult() # Show saving & plotting options in GUI
 
 	}
 
@@ -323,14 +329,47 @@ scatter.gui <- function() {
 			savefile <- gfile(type="save", initial.filename="result.txt")
 			if(!identical(savefile, character(0))) dput(scattergui$result, file=savefile)
 		}
-
+		
+		# Handlers for plotting the results
+		
+		## Collection vector plotting
 		hand.showCollectionVector <- function(h, ...) {
 			plot(scattergui$result$collectionVector)
 		}
-
-		btn_saveText   <- gbutton("Save result to TXT file", cont=cont.a, handler=hand.saveText)
-		btn_saveObject <- gbutton("Save result object as text representation", cont=cont.a, handler=hand.saveObject)
-		btn_showSomething <- gbutton("Show picture", cont=cont.b, handler=hand.showCollectionVector)
+		
+		## Plotting variable-wise scatter values against baseline values
+		hand.showVariableScatter <- function(h, ...) {
+		
+		}
+		
+		## Plotting class-wise scatter values against baseline values
+		hand.showClassScatter <- function(h, ...) {
+		
+		}
+		
+		## Plotting something that is sensible in usecase "all"
+		hand.showAllPlot <- function(h, ...) {
+			
+		}
+		
+		# GUI elements for saving the calculation result
+		btn_saveText     <- gbutton("Save result to TXT file", cont=cont.a, handler=hand.saveText)
+		btn_saveObject   <- gbutton("Save result object as text representation", cont=cont.a, handler=hand.saveObject)
+		
+		# GUI elements for plotting options specific to the use case
+		if(scattergui$var.options.usecase=="single") {
+			btn_showPlot <- gbutton("Plot collection vector", cont=cont.b, handler=hand.showCollectionVector)
+		}
+		if(scattergui$var.options.usecase=="variables") {
+			btn_showPlot <- gbutton("Plot variable-specific scatter values against baselines", cont=cont.b, handler=hand.showVariableScatter)
+		}
+		if(scattergui$var.options.usecase=="classes") {
+			btn_showPlot <- gbutton("Plot class-specific scatter values", cont=cont.b, handler=hand.showClassScatter) 
+		}
+		if(scattergui$var.options.usecase=="all") {
+			btn_showPlot <- gbutton("Plot something for usecase ALL", cont=cont.b, handler=hand.showAllPlot) 
+		}
+		
 		btn_exit <- gbutton("Close", cont=cont.c, handler=function(h,...) {dispose(resultWindow)})
 		
 	}
