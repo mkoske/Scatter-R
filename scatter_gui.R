@@ -21,21 +21,21 @@ scatter.gui <- function() {
 	source("algorithm/scatter.R")
 
 # ============ HANDLERS AND FUNCTIONS FOR SCATTER GUI ================ #
-	
-	# GUI handler:btn_readDatafile; Shows dialog to select a datafile 
-	#  and options for reading the data from file to dataframe.	
+
+	# GUI handler:btn_readDatafile; Shows dialog to select a datafile
+	#  and options for reading the data from file to dataframe.
 	scattergui$hand.readDatafile <- function(h, ...) {
-		
+
 		# Containers
-		datafileWindow <- gwindow(title="Select datafile for read")		
+		datafileWindow <- gwindow(title="Select datafile for read")
 		cont.m <- ggroup(cont=datafileWindow, horizontal=FALSE, padding=20)
 		cont.a <- ggroup(cont=cont.m, horizontal=TRUE)
 		cont.b <- ggroup(cont=cont.m, horizontal=FALSE)
 		cont.c <- ggroup(cont=cont.m, horizontal=FALSE)
 		cont.d <- ggroup(cont=cont.m, horizontal=FALSE)
-		
+
 		scattergui$sfile <- FALSE # Datafile is unselected
-		
+
 		# GUI handler:btn_selectFile; Shows a file selection dialog
 		hand.selectfile <- function(h, ...) {
 			scattergui$sfile <- gfile(
@@ -47,19 +47,19 @@ scatter.gui <- function() {
 			)
 			svalue(lbl_filename) <- scattergui$sfile
 		}
-		
+
 		# GUI handler:btn_readFile; Reads selected file with options and updates GUI
 		hand.readfile <- function(h, ...) {
 			if(scattergui$sfile==FALSE) return()
 			scattergui$sdata <- as.data.frame(read.csv(
-				file=scattergui$sfile, 
-				header=func.header_selToArg(svalue(rdo_headers)), 
+				file=scattergui$sfile,
+				header=func.header_selToArg(svalue(rdo_headers)),
 				sep=func.separator_selToArg(svalue(rdo_separator))
 			))
 			scattergui$sub.updateWithData()
 			dispose(datafileWindow)
 		}
-		
+
 		# Convert GUI element value to argument value
 		func.separator_selToArg <- function(sel) {
 			if(sel==";") return (";")
@@ -68,7 +68,7 @@ scatter.gui <- function() {
 			if(sel=="[tab]") return ("\t")
 			if(sel=="[space]") return ("")
 		}
-		
+
 		# Convert GUI element value to argument value
 		func.header_selToArg <- function(sel) {
 			if(sel=="Yes") return(TRUE)
@@ -159,7 +159,7 @@ scatter.gui <- function() {
 	}
 
 	# Guesses what might be the index of variable containing class information in dataframe
-	#  Returns the rightmost factor-type column index; 
+	#  Returns the rightmost factor-type column index;
 	#  in case there are no factors, the rightmost integer index;
 	#  in case there are no integers, the rightmost column
 	scattergui$guessClassvar <- function(df) {
@@ -182,8 +182,8 @@ scatter.gui <- function() {
 		okButton <- gbutton("OK", cont=cont.a, hand=function(h,...)
 			{
 				# Inject old classvar into selected attributes
-				scattergui$var.selected.attributes <- append(scattergui$var.selected.attributes, scattergui$var.classvar) 
-				
+				scattergui$var.selected.attributes <- append(scattergui$var.selected.attributes, scattergui$var.classvar)
+
 				scattergui$var.classvar <- svalue(radio)
 				scattergui$sub.selectionVectorUpdate_class()
 
@@ -259,7 +259,7 @@ scatter.gui <- function() {
 
 	}
 
-	# Maps missing value handling selection index 
+	# Maps missing value handling selection index
 	# to na.action argument name for scatter.preprocess function
 	scattergui$func.na.action_index_to_name <- function(index) {
 		if(index == 1) return("nothing")
@@ -278,6 +278,7 @@ scatter.gui <- function() {
 			df                  = scattergui$sdata,
 			classvar            = scattergui$var.classvar,
 			included.attributes = scattergui$var.selected.attributes,
+            included.classes    = scattergui$var.selected.classes,
 			binarized           = scattergui$var.selected.binarized,
 			scaled              = scattergui$var.selected.scaled,
 			na.action           = scattergui$func.na.action_index_to_name(svalue(scattergui$rdo_ppMissing, index=TRUE))
@@ -292,17 +293,17 @@ scatter.gui <- function() {
 			baselineIterations  = svalue(scattergui$spn_selectBaselineIterations)
 		)
 
-		# Handle result 
+		# Handle result
 		print(scattergui$result)
 		scattergui$hand.useResult()
 
 	}
-	
+
 	# Show dialog for saving result in text/deparsed format,
 	# showing different plots of result data
 	scattergui$hand.useResult <- function() {
 		resultWindow <- gwindow(title="Save results?")
-		
+
 		cont.m <- ggroup(cont=resultWindow, horizontal=FALSE, padding=20)
 		cont.a <- ggroup(cont=cont.m, horizontal=FALSE)
 		cont.b <- ggroup(cont=cont.m, horizontal=FALSE)
@@ -313,16 +314,16 @@ scatter.gui <- function() {
 			resultText <- capture.output(scattergui$result)
 			write(resultText, file=savefile)
 		}
-		
+
 		hand.saveObject <- function(h, ...) {
 			savefile <- gfile(type="save", initial.filename="result.txt")
 			dput(scattergui$result, file=savefile)
 		}
-		
+
 		hand.showCollectionVector <- function(h, ...) {
 			plot(scattergui$result$collectionVector)
 		}
-		
+
 		btn_saveText   <- gbutton("Save result to TXT file", cont=cont.a, handler=hand.saveText)
 		btn_saveObject <- gbutton("Save result object as text representation", cont=cont.a, handler=hand.saveObject)
 		btn_showSomething <- gbutton("Show picture", cont=cont.b, handler=hand.showCollectionVector)
@@ -416,4 +417,3 @@ scatter.gui <- function() {
 	scattergui$btn_calculate         <- gbutton("Calculate", cont=scattergui$cont.dc, handler=scattergui$hand.calculate)
 
 }
-
