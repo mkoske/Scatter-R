@@ -86,7 +86,7 @@ scatter.gui <- function() {
 
 	}
 
-	# This function does the updates necessary after changing classvar or included_variables selections
+	# Does the updates necessary after changing classvar or included_variables selections
 	scattergui$sub.selectionVectorUpdate_class <- function() {
 
 		scattergui$var.classes             <- levels(as.factor(scattergui$sdata[[match(scattergui$var.classvar, scattergui$var.allvariables)]]))
@@ -98,7 +98,7 @@ scatter.gui <- function() {
 		scattergui$sub.selectionVectorUpdate_attribute()
 	}
 
-	# This function does the updates necessary after changing the attribute selection vectors
+	# Does the updates necessary after changing the attribute selection vectors
 	scattergui$sub.selectionVectorUpdate_attribute <- function() {
 
 		scattergui$var.attributes_num    <- intersect(scattergui$var.selected.attributes, scattergui$var.allvariables_num)
@@ -110,7 +110,7 @@ scatter.gui <- function() {
 		scattergui$var.selected.scaled      <- intersect(scattergui$var.attributes_num, scattergui$var.selected.scaled)
 	}
 
-	# This function updates the GUI logic after reading a data file
+	# Updates the GUI logic after reading a data file
 	scattergui$sub.updateWithData <- function() {
 		rowCount = nrow(scattergui$sdata)
 		colCount = ncol(scattergui$sdata)
@@ -299,8 +299,8 @@ scatter.gui <- function() {
 
 	}
 
-	# Show dialog for saving result in text/deparsed format,
-	# showing different plots of result data
+	# GUI handler: Show dialog for saving result in 
+	#  text/deparsed format, showing different plots of result data
 	scattergui$hand.useResult <- function() {
 		resultWindow <- gwindow(title="Save or plot results")
 
@@ -308,16 +308,20 @@ scatter.gui <- function() {
 		cont.a <- ggroup(cont=cont.m, horizontal=FALSE)
 		cont.b <- ggroup(cont=cont.m, horizontal=FALSE)
 		cont.c <- ggroup(cont=cont.m, horizontal=FALSE)
-
+		
+		# Saving of results in R console format
 		hand.saveText <- function(h, ...) {
+			savefile <- FALSE
 			savefile <- gfile(type="save",initial.filename="result.txt")
 			resultText <- capture.output(scattergui$result)
-			write(resultText, file=savefile)
+			if(!identical(savefile, character(0))) write(resultText, file=savefile)
 		}
 
+		# Saving of results as text representation of R object;
+		#  can be read back to R with dget() function
 		hand.saveObject <- function(h, ...) {
 			savefile <- gfile(type="save", initial.filename="result.txt")
-			dput(scattergui$result, file=savefile)
+			if(!identical(savefile, character(0))) dput(scattergui$result, file=savefile)
 		}
 
 		hand.showCollectionVector <- function(h, ...) {
@@ -328,7 +332,7 @@ scatter.gui <- function() {
 		btn_saveObject <- gbutton("Save result object as text representation", cont=cont.a, handler=hand.saveObject)
 		btn_showSomething <- gbutton("Show picture", cont=cont.b, handler=hand.showCollectionVector)
 		btn_exit <- gbutton("Close", cont=cont.c, handler=function(h,...) {dispose(resultWindow)})
-
+		
 	}
 
 	# Print a vector with label/explanation in front of it
@@ -349,6 +353,7 @@ scatter.gui <- function() {
 	scattergui$cont.a   <- ggroup(horizontal=FALSE,  cont=scattergui$cont)
 	scattergui$cont.aa  <- ggroup(horizontal=TRUE,   cont=scattergui$cont.a)
 	scattergui$cont.aaa <- ggroup(horizontal=TRUE,   cont=scattergui$cont.aa, expand=TRUE, fill=TRUE)
+	scattergui$cont.aab <- ggroup(horizontal=TRUE,   cont=scattergui$cont.aa)
 	scattergui$cont.ab  <- ggroup(horizontal=FALSE,  cont=scattergui$cont.a)
 
 	scattergui$cont.b   <- ggroup(horizontal=FALSE, cont=scattergui$cont)
@@ -393,6 +398,7 @@ scatter.gui <- function() {
 
 	# MAIN WINDOW CONTROLS
 	scattergui$btn_readDatafile <- gbutton("Read CSV datafile...",cont=scattergui$cont.aaa, handler=scattergui$hand.readDatafile, expand=TRUE)
+	scattergui$btn_info         <- gbutton("HELP", cont=scattergui$cont.aab)
 	scattergui$lbl_datainfo     <- glabel("No file selected", cont=scattergui$cont.ab)
 	scattergui$btn_selClassVar  <- gbutton("Select class variable...         ", cont=scattergui$cont.baa, handler=scattergui$hand.select.classvar)
 	scattergui$lbl_selClassVar  <- glabel("No data", cont=scattergui$cont.bab)
