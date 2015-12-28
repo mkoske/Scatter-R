@@ -269,7 +269,7 @@ scatter.gui <- function() {
 		return("class")
 	}
 
-	# GUI handler: Pass data and selections to scatter algorithm; do something with result
+	# GUI handler: Pass data and selections to scatter algorithm; show dialog for saving&plotting results
 	scattergui$hand.calculate <- function(h, ...) {
 
 		if(!is.data.frame(scattergui$sdata)) return()
