@@ -334,7 +334,12 @@ scatter.gui <- function() {
 		
 		## Collection vector plotting
 		hand.showCollectionVector <- function(h, ...) {
-			plot(scattergui$result$collectionVector)
+			yvals = c(1,length(unique(scattergui$result$collectionVector)))
+			ytx   = 1:length(unique(scattergui$result$collectionVector))
+			ylabel = "Class"
+			xlabel = "Case"
+			plot(scattergui$result$collectionVector, ylim=yvals, ylab=ylabel, yaxt="n", xlab=xlabel)
+			axis(2, at=ytx)
 		}
 		
 		## Plotting variable-wise scatter values against baseline values
