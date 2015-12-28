@@ -10,7 +10,7 @@ scatter.gui <- function() {
 
 	# AVAILABLE OPTIONS
 	## Distance measures
-	scattergui$opt.distmethod <- c("Euclidean", "Manhattan", "Heom")
+	scattergui$opt.distmethod <- c("Euclidean", "Manhattan", "HEOM")
 	## Treatment of missing values
 	scattergui$opt.missing    <- c("Do nothing", "Replace with class median/mode", "Replace with column median/mode", "Remove rows")
 	## Calculation procedures
@@ -302,7 +302,7 @@ scatter.gui <- function() {
 	# Show dialog for saving result in text/deparsed format,
 	# showing different plots of result data
 	scattergui$hand.useResult <- function() {
-		resultWindow <- gwindow(title="Save results?")
+		resultWindow <- gwindow(title="Save or plot results")
 
 		cont.m <- ggroup(cont=resultWindow, horizontal=FALSE, padding=20)
 		cont.a <- ggroup(cont=cont.m, horizontal=FALSE)
