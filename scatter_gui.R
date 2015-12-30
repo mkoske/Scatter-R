@@ -311,8 +311,7 @@ scatter.gui <- function() {
 
 		# Handle result
 		print(scattergui$result)    # Print the result in R console
-		scattergui$hand.useResult() # Show saving & plotting options in GUI
-
+		scattergui$hand.useResult() # Show saving & plotting options in GUI	
 	}
 
 	# GUI handler: Show dialog for saving result in 
@@ -343,27 +342,29 @@ scatter.gui <- function() {
 		# Handlers for plotting the results
 		
 		## Collection vector plotting
-		hand.showCollectionVector <- function(h, ...) {
-			yvals = c(1,length(unique(scattergui$result$collectionVector)))
-			ytx   = 1:length(unique(scattergui$result$collectionVector))
+		hand.plotCollectionVector <- function(h, ...) {
+			nClasses = as.numeric(length(unique(scattergui$result$collectionVector)))
+			yvals  = as.numeric(c(1,nClasses))
+			yticks = as.numeric(1:nClasses)
 			ylabel = "Class"
 			xlabel = "Case"
-			plot(scattergui$result$collectionVector, ylim=yvals, ylab=ylabel, yaxt="n", xlab=xlabel)
-			axis(2, at=ytx)
+			
+			plot(scattergui$result$collectionVector, ylim=yvals, ylab=ylabel, yaxt="n", xlab=xlabel,type="s")
+			axis(2, at=yticks)
 		}
 		
 		## Plotting variable-wise scatter values against baseline values
-		hand.showVariableScatter <- function(h, ...) {
+		hand.plotVariableScatter <- function(h, ...) {
 			
 		}
 		
 		## Plotting class-wise scatter values against baseline values
-		hand.showClassScatter <- function(h, ...) {
+		hand.plotClassScatter <- function(h, ...) {
 		
 		}
 		
 		## Plotting something that is sensible in usecase "all"
-		hand.showAllPlot <- function(h, ...) {
+		hand.plotAll <- function(h, ...) {
 			
 		}
 		
@@ -373,19 +374,21 @@ scatter.gui <- function() {
 		
 		# GUI elements for plotting options specific to the use case
 		if(scattergui$var.options.usecase=="single") {
-			btn_showPlot <- gbutton("Plot collection vector", cont=cont.b, handler=hand.showCollectionVector)
+			btn_showPlot <- gbutton("Plot collection vector", cont=cont.b, handler=hand.plotCollectionVector)
 		}
 		if(scattergui$var.options.usecase=="variables") {
-			btn_showPlot <- gbutton("Plot variable-specific scatter values against baselines", cont=cont.b, handler=hand.showVariableScatter)
+			btn_showPlot <- gbutton("Plot variable-specific scatter values against baselines", cont=cont.b, handler=hand.plotVariableScatter)
 		}
 		if(scattergui$var.options.usecase=="classes") {
-			btn_showPlot <- gbutton("Plot class-specific scatter values", cont=cont.b, handler=hand.showClassScatter) 
+			btn_showPlot <- gbutton("Plot class-specific scatter values", cont=cont.b, handler=hand.plotClassScatter) 
 		}
 		if(scattergui$var.options.usecase=="all") {
-			btn_showPlot <- gbutton("Plot something for usecase ALL", cont=cont.b, handler=hand.showAllPlot) 
+			btn_showPlot <- gbutton("Plot something for usecase ALL", cont=cont.b, handler=hand.plotAll) 
 		}
 		
-		btn_exit <- gbutton("Close", cont=cont.c, handler=function(h,...) {dispose(resultWindow)})
+		btn_exit <- gbutton("Close", cont=cont.c, handler=function(h,...) {
+			dispose(resultWindow)
+		})
 		
 	}
 
