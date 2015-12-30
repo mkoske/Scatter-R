@@ -59,7 +59,7 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
 
     variables <- ncol(data) - 1 # -1 for class column; it's last
     result <- matrix(nrow = variables, ncol = iterations)
-    baselines <- vector(mode = "numeric", length = baselineIterations)
+    baselines <- vector(mode = "numeric")
     collectionVector <- vector(mode = "numeric", length = nrow(data))
 
     for(variable in 1:variables) {
