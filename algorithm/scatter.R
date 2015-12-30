@@ -43,7 +43,8 @@ run <- function(
     if(usecase == "single") {
         result <- usecase.single(data, distanceMethod, iterations, nominal, baselineIterations)
     } else if(usecase == "classes") {
-        result <- usecase.class(data, distanceMethod, iterations, nominal, baselineIterations)
+        distanceMatrix = distance(data, distanceMethod, nominal)
+        result <- usecase.class(data, distanceMatrix, iterations, nominal, baselineIterations)
     } else if(usecase == "variables") {
         result  <- usecase.variable(data, distanceMethod, iterations, nominal, baselineIterations)
     } else if(usecase == "all") {
@@ -85,6 +86,10 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
 usecase.class <- function(data, distanceMatrix, iterations = 10, nominal = c(), baselineIterations = 50) {
 
     classes <- as.numeric(unique(data[, ncol(data)]))
+    # TODO: Any other ideas to handle this?
+    if(any(classes == 0))
+        classes <- classes + 1
+        
     ncols <- ncol(data) - 1
 
     result <- matrix(nrow = length(classes), ncol = iterations)
@@ -95,7 +100,7 @@ usecase.class <- function(data, distanceMatrix, iterations = 10, nominal = c(), 
             print(sprintf("Running iteration %s for class %s...", i, class))
             collectionVector <- as.numeric(traverse(data, distanceMatrix))
             collectionVector[collectionVector != class] <- (-1)
-            result[(class + 1), i] <- scatter(collectionVector)
+            result[class, i] <- scatter(collectionVector)
         }
 
         labels <- as.numeric(data$class)
@@ -103,7 +108,7 @@ usecase.class <- function(data, distanceMatrix, iterations = 10, nominal = c(), 
         baselines <- c(baselines, baseline(labels, baselineIterations))
     }
 
-    means <- apply(result[, 1:iterations], 1, mean)
+    means <- apply(result, 1, mean)
 
     return(list(
         values    = result,
@@ -253,7 +258,6 @@ traverse <- function(df, distm) {
     # Add column to track visited; important to do it here, NOT before counting
     # the number of columns (see above).
     df$Visited = F
-
     diag(distm) <- NA
 
     # Pick randomly a starting point
