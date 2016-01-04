@@ -56,6 +56,9 @@ run <- function(
     return(result)
 }
 
+# ##
+# Usecase `variable`. This runs scatter algorithm for each variable separately.
+# ##
 usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
 
     variables <- ncol(data) - 1 # -1 for class column; it's last
@@ -83,6 +86,9 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
         ))
 }
 
+# ##
+# Usecase `class`. This runs scatter algorithm for each class separately.
+# ##
 usecase.class <- function(data, distanceMatrix, iterations = 10, nominal = c(), baselineIterations = 50) {
 
     classes <- as.numeric(unique(data[, ncol(data)]))
@@ -118,6 +124,9 @@ usecase.class <- function(data, distanceMatrix, iterations = 10, nominal = c(), 
         ))
 }
 
+# ##
+# Usecase `single`. This runs scatter algorithm for the whole dataset.
+# ##
 usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
 
     ncols <- ncol(data) - 1
@@ -142,6 +151,10 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
         ))
 }
 
+# ##
+# Usecase `all`. This function is a bit more complicated than others. It runs the classwise
+# analysis for all variables separately, i.e. it runs the usecase `class` for each variable.
+# ##
 usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
 
     variables <- ncol(data) - 1
@@ -165,7 +178,12 @@ usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nom
 }
 
 # ##
-# Expects dataframe without class label column
+# Distance function.
+# 
+# Expects dataframe *without* class label column
+# 
+# For euclidean and manhattan distances, it uses the `dist` function from base and for HEOM,
+# it uses the code found in `heom.R`-file.
 # ##
 distance <- function(
     data,                           # Data frame
@@ -204,6 +222,8 @@ scatter <- function(labels, current = NULL) {
 }
 
 # ##
+# Calculate theoretical maximum value for label changes.
+#
 # If current is NULL, then consider the largest as current and others counter-
 # class; if current is set, then consider current, well, current and others as
 # counterclass together. This is like two-class situation.
@@ -231,6 +251,11 @@ maxChanges <- function(labels, current = NULL) {
     return(thmax)
 }
 
+# ## 
+# Calculate the number of label changes.
+#
+# If current and next label are not the same, then counter is incremented by one.
+# ##
 numChanges <- function(labels) {
     n <- length(labels)
     changes <- 0
@@ -252,23 +277,24 @@ traverse <- function(df, distm) {
     ncols <- ncol(df) - 1
     nrows <- nrow(df)
 
-    # labels
     lbls <- vector(mode = "character")
 
     # Add column to track visited; important to do it here, NOT before counting
     # the number of columns (see above).
     df$Visited = F
+    
+    # Set the diagonal to NA to ignore it when finding nearest neighbour. Diagonal
+    # means the distance between the case itself.
     diag(distm) <- NA
 
-    # Pick randomly a starting point
+    # Random starting point
     currentIdx <- sample(1:nrows, size = 1)
 
-    # This seems to work now; but find out if this could be done just using
+    # TODO: This seems to work now; but find out if this could be done just using
     # apply and its friends.
     while(nrow(df[df$Visited == F, ]) > 0) {
 
-        # In the end of this function, the distance matrix is full of NAs, so it
-        # generates a warning. This is to prevent the warning.
+        # No more cases to visit, so stop here.
         if(all(is.na(distm))) {
             lbls <- c(lbls, df[currentIdx, (ncols + 1)])
             break
@@ -292,8 +318,6 @@ traverse <- function(df, distm) {
             nearest <- minimas[1]
         }
 
-        # For testing :) Remove from final; FIXME
-        # print(sprintf("From: %s, To: %s", currentIdx, nearest))
         currentIdx <- nearest
     }
 
@@ -301,15 +325,14 @@ traverse <- function(df, distm) {
 }
 
 # ##
-# ##
 # Computes a statistical baseline running the algorithm multiple times and
 # calculating the mean of those runs.
 #
-# Returns mean scatter value
+# Returns mean of iteration
 # ##
 baseline <- function(labels, iterations = 50) {
 
-    print("Calculating baseline...")
+    print(sprintf("Calculating baseline with %s iterations...", iteration))
     n <- length(labels)
     values <- vector(mode = "numeric", length = iterations)
     for(i in 1:iterations) {
