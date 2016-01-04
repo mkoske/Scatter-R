@@ -1,9 +1,9 @@
 Package: Scatter-R
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
+Title: An implementation of scatter-algorithm in R
+Version: 0.9
 Date: 2016-01-04
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Author: Tommi Tuominen, Juha Panula-Ontto, Miika Koskela
+Maintainer: 
+Description: At the moment, see README for more information.
+License: GPLv3 (see COPYING)
