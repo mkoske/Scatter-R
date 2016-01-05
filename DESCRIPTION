@@ -1,4 +1,4 @@
-Package: Scatter-R
+Package: ScatterR
 Type: Package
 Title: An implementation of scatter-algorithm in R
 Version: 0.9
