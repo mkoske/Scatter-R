@@ -3,15 +3,29 @@
 # ##
 
 # ##
-# This is the main function, which groups all smaller parts together and returns
-# the final results.
-#
-# Takes a dataframe as input. Note that the dataframe is assumed to be
-# normalized to the range [0, 1].
-#
-# The classlabel is the name or index of the column containing the classlabel
-# and it is moved to the last position and ignored when calculating distances
-# etc.
+#' This is the main function, which groups all smaller parts together and returns
+#' the final results.
+#'
+#' Takes a dataframe as input. Note that the dataframe is assumed to be
+#' normalized to the range [0, 1].
+#'
+#' The classlabel is the name or index of the column containing the classlabel
+#' and it is moved to the last position and ignored when calculating distances
+#' etc.
+#'
+#' @param data A data frame to process
+#' @param classlabel Column name or index for class label
+#' @param distanceMethod Distance method to use; must be one of following: euclidean, 
+#'    manhattan or heom.
+#' @param usecase A usecase to select; must be one of following: single, classes, variables 
+#'    or all
+#' @param iteration A number of iterations for Scatter-algorithm
+#' @param baselineIterations A number of iteration for baseline calculation
+#' @param classes List of class included in the calculation
+#' @param columns List of indices or names of columns included in the calculation 
+#' @param nominals List of indices or names of those columns that are nominal; not in use at
+#'    the moment
+#' @return result   
 # ##
 run <- function(
     data,                           # The data frame to process
@@ -351,5 +365,6 @@ baseline <- function(labels, iterations = 50) {
 
 # Not really needed?
 spower <- function(z, s) {
+
     return(z - s)
 }
