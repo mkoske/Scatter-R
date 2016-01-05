@@ -355,17 +355,31 @@ scatter.gui <- function() {
 		
 		## Plotting variable-wise scatter values against baseline values
 		hand.plotVariableScatter <- function(h, ...) {
+			barplot(
+				rbind(scattergui$result$means, scattergui$result$baselines),
+				ylim=c(0,1),
+				ylab="Means",
+				beside=TRUE
+			)
 			
+			title(main="Variable-wise scatter values against baseline values")
 		}
 		
 		## Plotting class-wise scatter values against baseline values
 		hand.plotClassScatter <- function(h, ...) {
-		
+			barplot(
+				rbind(scattergui$result$means, scattergui$result$baselines),
+				ylim=c(0,1),
+				ylab="Means",
+				beside=TRUE
+			)
+			
+			title(main="Classwise scatter values against baseline values")
 		}
 		
 		## Plotting something that is sensible in usecase "all"
 		hand.plotAll <- function(h, ...) {
-			
+			# NOT IMPLEMENTED
 		}
 		
 		# GUI elements for saving the calculation result
@@ -383,7 +397,9 @@ scatter.gui <- function() {
 			btn_showPlot <- gbutton("Plot class-specific scatter values", cont=cont.b, handler=hand.plotClassScatter) 
 		}
 		if(scattergui$var.options.usecase=="all") {
-			btn_showPlot <- gbutton("Plot something for usecase ALL", cont=cont.b, handler=hand.plotAll) 
+			# NOT IMPLEMENTED
+			# Show button for plotting something that makes sense in usecase "All"
+			# btn_showPlot <- gbutton("Plot something for usecase ALL", cont=cont.b, handler=hand.plotAll) 
 		}
 		
 		btn_exit <- gbutton("Close", cont=cont.c, handler=function(h,...) {
