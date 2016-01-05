@@ -4,6 +4,5 @@ Title: An implementation of scatter-algorithm in R
 Version: 0.9
 Date: 2016-01-04
 Author: Tommi Tuominen, Juha Panula-Ontto, Miika Koskela
-Maintainer: 
 Description: At the moment, see README for more information.
 License: GPLv3 (see COPYING)
