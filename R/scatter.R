@@ -61,8 +61,13 @@ run <- function(
 # ##
 usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
 
-    variables <- ncol(data) - 1 # -1 for class column; it's last
+    # -1 for class column; it's the last one
+    variables <- ncol(data) - 1
+    
+    # Result matrix; rows are variables and columns are iterations, i.e. 
+    # `result[i, j]` contains scatter value for variable `i` on iteration `j`.
     result <- matrix(nrow = variables, ncol = iterations)
+    
     baselines <- vector(mode = "numeric")
     collectionVector <- vector(mode = "numeric", length = nrow(data))
 
@@ -92,7 +97,9 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
 usecase.class <- function(data, distanceMatrix, iterations = 10, nominal = c(), baselineIterations = 50) {
 
     classes <- as.numeric(unique(data[, ncol(data)]))
-    # TODO: Any other ideas to handle this?
+    
+    # TODO: Any other ideas to handle this? This is due to fact that R starts it's indexing from 1 instead of
+    # zero and class is used also as an index in result matrix.
     if(any(classes == 0))
         classes <- classes + 1
         
@@ -102,6 +109,7 @@ usecase.class <- function(data, distanceMatrix, iterations = 10, nominal = c(), 
     baselines <- vector(mode = "numeric")
 
     for(class in classes) {
+    
         for(i in 1:iterations) {
             print(sprintf("Running iteration %s for class %s...", i, class))
             collectionVector <- as.numeric(traverse(data, distanceMatrix))
@@ -119,7 +127,6 @@ usecase.class <- function(data, distanceMatrix, iterations = 10, nominal = c(), 
     return(list(
         values    = result,
         means     = means,
-        sd        = sd(result), # FIXME
         baselines = baselines
         ))
 }
@@ -143,11 +150,10 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
     baseline <- baseline(collectionVector, baselineIterations)
 
     return(list(
-        values = values,
-        mean = (sum(values) / iterations),
-        sd = sd(values),
-        collectionVector = collectionVector,
-        baseline = baseline
+        values      = values,
+        means       = (sum(values) / iterations),
+        baselines   = baseline,
+        collectionVector = collectionVector
         ))
 }
 
@@ -332,7 +338,7 @@ traverse <- function(df, distm) {
 # ##
 baseline <- function(labels, iterations = 50) {
 
-    print(sprintf("Calculating baseline with %s iterations...", iteration))
+    print(sprintf("Calculating baseline with %s iterations...", iterations))
     n <- length(labels)
     values <- vector(mode = "numeric", length = iterations)
     for(i in 1:iterations) {
