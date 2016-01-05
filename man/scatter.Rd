@@ -1,11 +1,10 @@
 \name{scatter}
 \alias{scatter}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
+\title{ScatterR}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+This is an implementation of Scatter-algorithm in R. It can be used in 
+data learnability analysis and dimensionality reduction. 
 }
 \usage{
 scatter(labels, current = NULL)
