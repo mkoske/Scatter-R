@@ -2,8 +2,7 @@
 % Please edit documentation in R/scatter.R
 \name{run}
 \alias{run}
-\title{This is the main function, which groups all smaller parts together and returns
-the final results.}
+\title{Function \code{run} is main entry point to Scatter-algorithm.}
 \usage{
 run(data, classlabel = NULL, distanceMethod = "euclidean",
   usecase = "single", iterations = 10, baselineIterations = 50,
@@ -12,35 +11,48 @@ run(data, classlabel = NULL, distanceMethod = "euclidean",
 \arguments{
 \item{data}{A data frame to process}
 
-\item{classlabel}{Column name or index for class label}
+\item{classlabel}{Column name or index for class label; if none provided,
+last column is assumed}
 
-\item{distanceMethod}{Distance method to use; must be one of following: euclidean, 
-manhattan or heom.}
+\item{distanceMethod}{Distance method to use; must be one of following:
+\code{euclidean}, \code{manhattan} or \code{heom}.}
 
-\item{usecase}{A usecase to select; must be one of following: single, classes, variables 
-or all}
+\item{usecase}{A usecase to select; must be one of following: \code{single},
+\code{classes}, \code{variables} or \code{all}}
 
 \item{baselineIterations}{A number of iteration for baseline calculation}
 
 \item{classes}{List of class included in the calculation}
 
-\item{columns}{List of indices or names of columns included in the calculation}
+\item{columns}{List of indices or names of columns included in the
+calculation}
 
-\item{nominals}{List of indices or names of those columns that are nominal; not in use at
-the moment}
+\item{nominals}{List of indices or names of those columns that are nominal;
+not in use at the moment}
 
 \item{iteration}{A number of iterations for Scatter-algorithm}
 }
 \value{
-result
+This returns whatever \code{usecase.*}-functions return, since this
+        function is only a wrapper to usecases.
 }
 \description{
-Takes a dataframe as input. Note that the dataframe is assumed to be
-normalized to the range [0, 1].
+Function \code{run} takes a dataframe as input, which is only required
+parameter, and calculates various values from it.
 }
 \details{
-The classlabel is the name or index of the column containing the classlabel
-and it is moved to the last position and ignored when calculating distances
-etc.
+\code{run} first performs some checks on parameters, moves the class label
+column to last position. Then proper \code{usecase} is selected and run.
+Finally, the result is returned.
+
+Usecases perform different calculations: usecase \code{single} runs the
+scatter algorithm on whole dataset, usecase \code{classes} runs the scatter
+algorithm on every class in the dataset, usecase \code{variables} runs the
+scatter algorithm on every variable and finally, usecase \code{all} runs
+\code{classes} usecase for every variable.
+}
+\examples{
+run(iris, classlabel = 5, usecase = single)
+run(iris)
 }
 

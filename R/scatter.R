@@ -1,42 +1,50 @@
 # ##
-# This file contains an implementation of scatter algorithm.
-# ##
-
-# ##
-#' This is the main function, which groups all smaller parts together and returns
-#' the final results.
+#' Function \code{run} is main entry point to Scatter-algorithm.
 #'
-#' Takes a dataframe as input. Note that the dataframe is assumed to be
-#' normalized to the range [0, 1].
+#' Function \code{run} takes a dataframe as input, which is only required
+#' parameter, and calculates various values from it.
 #'
-#' The classlabel is the name or index of the column containing the classlabel
-#' and it is moved to the last position and ignored when calculating distances
-#' etc.
+#' \code{run} first performs some checks on parameters, moves the class label
+#' column to last position. Then proper \code{usecase} is selected and run.
+#' Finally, the result is returned.
+#'
+#' Usecases perform different calculations: usecase \code{single} runs the
+#' scatter algorithm on whole dataset, usecase \code{classes} runs the scatter
+#' algorithm on every class in the dataset, usecase \code{variables} runs the
+#' scatter algorithm on every variable and finally, usecase \code{all} runs
+#' \code{classes} usecase for every variable.
 #'
 #' @param data A data frame to process
-#' @param classlabel Column name or index for class label
-#' @param distanceMethod Distance method to use; must be one of following: euclidean, 
-#'    manhattan or heom.
-#' @param usecase A usecase to select; must be one of following: single, classes, variables 
-#'    or all
+#' @param classlabel Column name or index for class label; if none provided,
+#'        last column is assumed
+#' @param distanceMethod Distance method to use; must be one of following:
+#'        \code{euclidean}, \code{manhattan} or \code{heom}.
+#' @param usecase A usecase to select; must be one of following: \code{single},
+#'        \code{classes}, \code{variables} or \code{all}
 #' @param iteration A number of iterations for Scatter-algorithm
 #' @param baselineIterations A number of iteration for baseline calculation
 #' @param classes List of class included in the calculation
-#' @param columns List of indices or names of columns included in the calculation 
-#' @param nominals List of indices or names of those columns that are nominal; not in use at
-#'    the moment
-#' @return result   
+#' @param columns List of indices or names of columns included in the
+#'        calculation 
+#' @param nominals List of indices or names of those columns that are nominal;
+#'        not in use at the moment
+#' @return This returns whatever \code{usecase.*}-functions return, since this
+#'         function is only a wrapper to usecases.
+#' @examples
+#' run(iris)
+#' run(iris, classlabel = 5, usecase = "single")
+#' run(iris, classlabel = 5, distanceMethod = "manhattan", usecase = "class", iterations = 30)
 # ##
 run <- function(
-    data,                           # The data frame to process
-    classlabel  = NULL,             # Column name or index for classlabel
-    distanceMethod  = "euclidean",  # Distance method to use
-    usecase     = "single",         # Usecase: single, class, variable or all
-    iterations  = 10,               # Iterations; since random starting point
-    baselineIterations = 50,        # Iterations for statistical baseline
-    classes     = NULL,             # Which classes are included; others removed
-    columns     = NULL,             # Which variables are used
-    nominals    = NULL) {           # Which variables are nominal; not in use
+    data,                           
+    classlabel = NULL,             
+    distanceMethod  = "euclidean",  
+    usecase     = "single",         
+    iterations  = 10,               
+    baselineIterations = 50,        
+    classes     = NULL,             
+    columns     = NULL,             
+    nominals    = NULL) {           
 
     if(!is.data.frame(data))
         stop("Input data must be a data frame.")
