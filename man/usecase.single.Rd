@@ -25,6 +25,6 @@ TBD
 Usecase `single`. This runs scatter algorithm for the whole dataset.
 }
 \examples{
-TBD
+#TBD
 }
 

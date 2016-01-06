@@ -27,6 +27,6 @@ TBD
 Usecase \code{class} runs the algorithm for each class separately.
 }
 \examples{
-TBD
+#TBD
 }
 

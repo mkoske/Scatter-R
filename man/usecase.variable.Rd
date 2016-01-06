@@ -25,6 +25,6 @@ TBD
 Usecase \code{variable} runs the algorithm for each variable separately.
 }
 \examples{
-TBD
+#TBD
 }
 

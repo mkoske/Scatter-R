@@ -20,6 +20,8 @@ last column is assumed}
 \item{usecase}{A usecase to select; must be one of following: \code{single},
 \code{classes}, \code{variables} or \code{all}}
 
+\item{iterations}{A number of iterations for Scatter-algorithm}
+
 \item{baselineIterations}{A number of iteration for baseline calculation}
 
 \item{classes}{List of class included in the calculation}
@@ -29,8 +31,6 @@ calculation}
 
 \item{nominals}{List of indices or names of those columns that are nominal;
 not in use at the moment}
-
-\item{iteration}{A number of iterations for Scatter-algorithm}
 }
 \value{
 This returns whatever \code{usecase.*}-functions return, since this
@@ -54,6 +54,6 @@ scatter algorithm on every variable and finally, usecase \code{all} runs
 \examples{
 run(iris)
 run(iris, classlabel = 5, usecase = "single")
-run(iris, classlabel = 5, distanceMethod = "manhattan", usecase = "class", iterations = 30)
+run(iris, classlabel = 5, distanceMethod = "manhattan", usecase = "classes", iterations = 30)
 }
 

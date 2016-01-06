@@ -4,27 +4,21 @@
 \alias{distance}
 \title{Distance function.}
 \usage{
-distance(data, distmethod = "euclidean", nominals = NULL)
+distance(data, distanceMethod = "euclidean", nominals = NULL)
 }
 \arguments{
-\item{data}{Data}
+\item{data}{The data}
 
-\item{distanceMethod}{Distance method}
+\item{distanceMethod}{Distance method; must be one of following:
+\code{euclidean}, \code{manhattan} or \code{heom}}
 
-\item{iterations}{Number of iterations}
-
-\item{nominal}{Nominal attributes}
-
-\item{baselineIterations}{Number of baseline iterations}
+\item{nominals}{Nominal attributes; not in use at the moment}
 }
 \value{
-Returns distance matrix.
+Returns a distance matrix.
 }
 \description{
-Expects dataframe \emph{without} class label column
-}
-\details{
-For euclidean and manhattan distances, it uses the `dist` function from base and for HEOM,
-it uses the code found in `heom.R`-file.
+For euclidean and manhattan distances, it uses the `dist` function from
+base and for HEOM, it uses the code found in `heom.R`-file.
 }
 

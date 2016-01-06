@@ -6,6 +6,14 @@
 \usage{
 scatter(labels, current = NULL)
 }
+\arguments{
+\item{labels}{The set of labels found from data}
+
+\item{current}{The current class}
+}
+\value{
+Returns a raw Scatter value
+}
 \description{
 Calculate raw Scatter value
 }
