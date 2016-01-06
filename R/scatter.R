@@ -34,7 +34,7 @@
 #' @examples
 #' run(iris)
 #' run(iris, classlabel = 5, usecase = "single")
-#' run(iris, classlabel = 5, distanceMethod = "manhattan", usecase = "class", iterations = 30)
+#' run(iris, classlabel = 5, distanceMethod = "manhattan", usecase = "classes", iterations = 30)
 # ##
 run <- function(
     data,                           
@@ -93,7 +93,7 @@ run <- function(
 #' @param baselineIterations Number of baseline iterations
 #' @return TBD
 #' @examples
-#' TBD
+#' #TBD
 # ##
 usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
 
@@ -139,7 +139,7 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
 #' @param baselineIterations Number of baseline iterations
 #' @return TBD
 #' @examples
-#' TBD
+#' #TBD
 # ##
 usecase.class <- function(
     data,
@@ -193,7 +193,7 @@ usecase.class <- function(
 #' @param baselineIterations Number of baseline iterations
 #' @return TBD
 #' @examples
-#' TBD
+#' #TBD
 # ##
 usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
 
@@ -253,31 +253,28 @@ usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nom
 # ##
 #' Distance function.
 #' 
-#' Expects dataframe \emph{without} class label column
-#' 
-#' For euclidean and manhattan distances, it uses the `dist` function from base and for HEOM,
-#' it uses the code found in `heom.R`-file.
+#' For euclidean and manhattan distances, it uses the `dist` function from
+#' base and for HEOM, it uses the code found in `heom.R`-file.
 #'
-#' @param data Data
-#' @param distanceMethod Distance method
-#' @param iterations Number of iterations
-#' @param nominal Nominal attributes
-#' @param baselineIterations Number of baseline iterations
-#' @return Returns distance matrix.
+#' @param data The data
+#' @param distanceMethod Distance method; must be one of following:
+#'        \code{euclidean}, \code{manhattan} or \code{heom}
+#' @param nominals Nominal attributes; not in use at the moment
+#' @return Returns a distance matrix.
 # ##
 distance <- function(
     data,                           # Data frame
-    distmethod  = "euclidean",      # Distance measure
-    nominals    = NULL) {           # Which columns are nominal; used for HEOM
+    distanceMethod  = "euclidean",      # Distance measure
+    nominals        = NULL) {           # Which columns are nominal; used for HEOM
 
     if(!is.data.frame(data))
         stop("Data must be a data frame type.")
 
-    if(distmethod == "heom")
+    if(distanceMethod == "heom")
         source('algorithm/heom.R')
 
     result <- switch(
-        distmethod,
+        distanceMethod,
         euclidean = as.matrix(dist(data, method = "euclidean")),
         manhattan = as.matrix(dist(data, method = "manhattan")),
         heom      = as.matrix(heom(data)),
@@ -285,15 +282,17 @@ distance <- function(
         )
 
     if(is.null(result))
-        stop("Invalid distmethod. Must be 'euclidean', 'manhattan' or 'heom'.")
+        stop("Invalid distanceMethod. Must be 'euclidean', 'manhattan' or 'heom'.")
 
     return(result)
 }
 
 # ##
 #' Calculate raw Scatter value
-#
-# TODO: Is `current` needed any more?
+#'
+#' @param labels The set of labels found from data
+#' @param current The current class
+#' @return Returns a raw Scatter value 
 # ##
 scatter <- function(labels, current = NULL) {
     changes <- numChanges(labels)
