@@ -44,6 +44,10 @@ run <- function(
     if(length(classes) > 0)
         data <- data[data[, classlabel] %in% classes, ]
 
+    # If no classlabel was provided, assume it's the last column
+    if(is.null(classlabel))
+        classlabel <- ncol(data)
+
     class_labels <- data[, classlabel]
     data[, classlabel] <- NULL
 
