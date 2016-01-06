@@ -83,7 +83,16 @@ run <- function(
 }
 
 # ##
-# Usecase `variable`. This runs scatter algorithm for each variable separately.
+#' Usecase \code{variable} runs the algorithm for each variable separately.
+#'
+#' @param data Data
+#' @param distanceMethod Distance method
+#' @param iterations Number of iterations
+#' @param nominal Nominal attributes
+#' @param baselineIterations Number of baseline iterations
+#' @return TBD
+#' @examples
+#' TBD
 # ##
 usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
 
@@ -118,7 +127,16 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
 }
 
 # ##
-# Usecase `class`. This runs scatter algorithm for each class separately.
+#' Usecase \code{class} runs the algorithm for each class separately.
+#'
+#' @param data Data
+#' @param distanceMethod Distance method
+#' @param iterations Number of iterations
+#' @param nominal Nominal attributes
+#' @param baselineIterations Number of baseline iterations
+#' @return TBD
+#' @examples
+#' TBD
 # ##
 usecase.class <- function(data, distanceMatrix, iterations = 10, nominal = c(), baselineIterations = 50) {
 
@@ -158,7 +176,16 @@ usecase.class <- function(data, distanceMatrix, iterations = 10, nominal = c(), 
 }
 
 # ##
-# Usecase `single`. This runs scatter algorithm for the whole dataset.
+#' Usecase `single`. This runs scatter algorithm for the whole dataset.
+#'
+#' @param data Data
+#' @param distanceMethod Distance method
+#' @param iterations Number of iterations
+#' @param nominal Nominal attributes
+#' @param baselineIterations Number of baseline iterations
+#' @return TBD
+#' @examples
+#' TBD
 # ##
 usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
 
@@ -184,8 +211,7 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
 }
 
 # ##
-# Usecase `all`. This function is a bit more complicated than others. It runs the classwise
-# analysis for all variables separately, i.e. it runs the usecase `class` for each variable.
+#' Usecase `all` runs the \code{classes} for all variables separately
 # ##
 usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
 
@@ -210,12 +236,12 @@ usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nom
 }
 
 # ##
-# Distance function.
-# 
-# Expects dataframe *without* class label column
-# 
-# For euclidean and manhattan distances, it uses the `dist` function from base and for HEOM,
-# it uses the code found in `heom.R`-file.
+#' Distance function.
+#' 
+#' Expects dataframe \emph{without} class label column
+#' 
+#' For euclidean and manhattan distances, it uses the `dist` function from base and for HEOM,
+#' it uses the code found in `heom.R`-file.
 # ##
 distance <- function(
     data,                           # Data frame
@@ -243,7 +269,7 @@ distance <- function(
 }
 
 # ##
-# Calculate raw Scatter value
+#' Calculate raw Scatter value
 #
 # TODO: Is `current` needed any more?
 # ##
@@ -254,7 +280,7 @@ scatter <- function(labels, current = NULL) {
 }
 
 # ##
-# Calculate theoretical maximum value for label changes.
+#' Calculate theoretical maximum value for label changes.
 #
 # If current is NULL, then consider the largest as current and others counter-
 # class; if current is set, then consider current, well, current and others as
@@ -284,7 +310,7 @@ maxChanges <- function(labels, current = NULL) {
 }
 
 # ## 
-# Calculate the number of label changes.
+#' Calculate the number of label changes.
 #
 # If current and next label are not the same, then counter is incremented by one.
 # ##
@@ -298,6 +324,9 @@ numChanges <- function(labels) {
     return(changes)
 }
 
+# ##
+#' Generate collection vector
+#
 # Traverse the dataset using nearest neighbour method, recording label changes
 # as we go.
 #
@@ -357,10 +386,13 @@ traverse <- function(df, distm) {
 }
 
 # ##
-# Computes a statistical baseline running the algorithm multiple times and
-# calculating the mean of those runs.
-#
-# Returns mean of iteration
+#' Computes the statistical baseline
+#'
+#' Computes a statistical baseline running the algorithm multiple times and
+#' calculating the mean of those runs.
+#' @param labels Vector of all labels contained in the dataset
+#' @param iterations Number of baseline iterations
+#' @return Returns mean of iteration
 # ##
 baseline <- function(labels, iterations = 50) {
 
@@ -375,6 +407,8 @@ baseline <- function(labels, iterations = 50) {
     return(sum(values) / iterations)
 }
 
+# ##
+#' Calculates separation power
 # Not really needed?
 spower <- function(z, s) {
 

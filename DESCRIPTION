@@ -3,7 +3,9 @@ Type: Package
 Title: An implementation of scatter-algorithm in R
 Version: 0.9
 Date: 2016-01-04
+Imports: DiscriMiner
 Author: Tommi Tuominen, Juha Panula-Ontto, Miika Koskela
+Maintainer: Miika Koskela <Koskela.Miika.S@student.uta.fi>
 Description: At the moment, see README for more information.
 License: GPLv3 (see COPYING)
 RoxygenNote: 5.0.1

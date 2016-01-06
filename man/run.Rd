@@ -52,7 +52,8 @@ scatter algorithm on every variable and finally, usecase \code{all} runs
 \code{classes} usecase for every variable.
 }
 \examples{
-run(iris, classlabel = 5, usecase = single)
 run(iris)
+run(iris, classlabel = 5, usecase = "single")
+run(iris, classlabel = 5, distanceMethod = "manhattan", usecase = "class", iterations = 30)
 }
 
