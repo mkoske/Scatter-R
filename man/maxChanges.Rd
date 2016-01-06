@@ -6,7 +6,17 @@
 \usage{
 maxChanges(labels, current = NULL)
 }
+\arguments{
+\item{labels}{A set of labels found in dataset that is being processed.}
+
+\item{current}{Current class; others are counterclass together}
+}
+\value{
+Returns maximum number of label changes within given set of labels.
+}
 \description{
-Calculate theoretical maximum value for label changes.
+If current is NULL, then consider the largest as current and others counter-
+class; if current is set, then consider current, well, current and others as
+counterclass together. This is like two-class situation.
 }
 

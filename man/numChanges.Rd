@@ -2,11 +2,18 @@
 % Please edit documentation in R/scatter.R
 \name{numChanges}
 \alias{numChanges}
-\title{Calculate the number of label changes.}
+\title{Calculate the number of label changes}
 \usage{
-numChanges(labels)
+numChanges(collectionVector)
+}
+\arguments{
+\item{collectionVector}{A collection vector produced by \code{traverse}.}
+}
+\value{
+The number of changes in the collection vector
 }
 \description{
-Calculate the number of label changes.
+If current and next label are not the same, then counter is incremented by
+one.
 }
 

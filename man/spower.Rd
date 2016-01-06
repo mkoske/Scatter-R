@@ -6,6 +6,14 @@
 \usage{
 spower(z, s)
 }
+\arguments{
+\item{z}{Baseline}
+
+\item{s}{Raw Scatter value}
+}
+\value{
+Returns the difference between baseline and raw scatter value.
+}
 \description{
 Calculates separation power
 }

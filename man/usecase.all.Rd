@@ -7,6 +7,20 @@
 usecase.all(data, distanceMethod = "euclidean", iterations = 10,
   nominal = c(), baselineIterations = 50)
 }
+\arguments{
+\item{data}{Data}
+
+\item{distanceMethod}{Distance method}
+
+\item{iterations}{Number of iterations}
+
+\item{nominal}{Nominal attributes}
+
+\item{baselineIterations}{Number of baseline iterations}
+}
+\value{
+TBD
+}
 \description{
 Usecase `all` runs the \code{classes} for all variables separately
 }

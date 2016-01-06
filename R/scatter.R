@@ -30,6 +30,7 @@
 #'        not in use at the moment
 #' @return This returns whatever \code{usecase.*}-functions return, since this
 #'         function is only a wrapper to usecases.
+#' @export
 #' @examples
 #' run(iris)
 #' run(iris, classlabel = 5, usecase = "single")
@@ -130,7 +131,9 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
 #' Usecase \code{class} runs the algorithm for each class separately.
 #'
 #' @param data Data
-#' @param distanceMethod Distance method
+#' @param distanceMatrix A distance matrix. This is different than other
+#'        usecases as it doesn't take \code{distanceMethod} but 
+#'        \code{distanceMatrix}.
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
 #' @param baselineIterations Number of baseline iterations
@@ -138,7 +141,12 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
 #' @examples
 #' TBD
 # ##
-usecase.class <- function(data, distanceMatrix, iterations = 10, nominal = c(), baselineIterations = 50) {
+usecase.class <- function(
+    data,
+    distanceMatrix,
+    iterations          = 10,
+    nominal             = c(),
+    baselineIterations  = 50) {
 
     classes <- as.numeric(unique(data[, ncol(data)]))
     
@@ -212,6 +220,13 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
 
 # ##
 #' Usecase `all` runs the \code{classes} for all variables separately
+#'
+#' @param data Data
+#' @param distanceMethod Distance method
+#' @param iterations Number of iterations
+#' @param nominal Nominal attributes
+#' @param baselineIterations Number of baseline iterations
+#' @return TBD
 # ##
 usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
 
@@ -242,6 +257,13 @@ usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nom
 #' 
 #' For euclidean and manhattan distances, it uses the `dist` function from base and for HEOM,
 #' it uses the code found in `heom.R`-file.
+#'
+#' @param data Data
+#' @param distanceMethod Distance method
+#' @param iterations Number of iterations
+#' @param nominal Nominal attributes
+#' @param baselineIterations Number of baseline iterations
+#' @return Returns distance matrix.
 # ##
 distance <- function(
     data,                           # Data frame
@@ -281,10 +303,14 @@ scatter <- function(labels, current = NULL) {
 
 # ##
 #' Calculate theoretical maximum value for label changes.
-#
-# If current is NULL, then consider the largest as current and others counter-
-# class; if current is set, then consider current, well, current and others as
-# counterclass together. This is like two-class situation.
+#'
+#' If current is NULL, then consider the largest as current and others counter-
+#' class; if current is set, then consider current, well, current and others as
+#' counterclass together. This is like two-class situation.
+#'
+#' @param labels A set of labels found in dataset that is being processed.
+#' @param current Current class; others are counterclass together
+#' @return Returns maximum number of label changes within given set of labels.
 # ##
 maxChanges <- function(labels, current = NULL) {
 
@@ -310,15 +336,19 @@ maxChanges <- function(labels, current = NULL) {
 }
 
 # ## 
-#' Calculate the number of label changes.
-#
-# If current and next label are not the same, then counter is incremented by one.
+#' Calculate the number of label changes
+#'
+#' If current and next label are not the same, then counter is incremented by
+#' one.
+#' 
+#' @param collectionVector A collection vector produced by \code{traverse}.
+#' @return The number of changes in the collection vector
 # ##
-numChanges <- function(labels) {
-    n <- length(labels)
+numChanges <- function(collectionVector) {
+    n <- length(collectionVector)
     changes <- 0
     for(i in 1:n) {
-        if((i < n) && (labels[i] != labels[i + 1]))
+        if((i < n) && (collectionVector[i] != collectionVector[i + 1]))
             changes <- changes + 1
     }
     return(changes)
@@ -326,52 +356,54 @@ numChanges <- function(labels) {
 
 # ##
 #' Generate collection vector
-#
-# Traverse the dataset using nearest neighbour method, recording label changes
-# as we go.
-#
-# Returns the vector of labels
+#'
+#' Traverse the dataset using nearest neighbour method, recording label changes
+#' as we go.
+#'
+#' @param data The data
+#' @param distanceMatrix The distance matrix calculated from \code{data}
+#' @return Returns the vector of labels
 # ##
-traverse <- function(df, distm) {
+traverse <- function(data, distanceMatrix) {
 
     # Assume last column is class label column, so ignore it. That's why - 1.
-    ncols <- ncol(df) - 1
-    nrows <- nrow(df)
+    ncols <- ncol(data) - 1
+    nrows <- nrow(data)
 
     lbls <- vector(mode = "character")
 
     # Add column to track visited; important to do it here, NOT before counting
     # the number of columns (see above).
-    df$Visited = F
+    data$Visited = F
     
     # Set the diagonal to NA to ignore it when finding nearest neighbour. Diagonal
     # means the distance between the case itself.
-    diag(distm) <- NA
+    diag(distanceMatrix) <- NA
 
     # Random starting point
     currentIdx <- sample(1:nrows, size = 1)
 
     # TODO: This seems to work now; but find out if this could be done just using
     # apply and its friends.
-    while(nrow(df[df$Visited == F, ]) > 0) {
+    while(nrow(data[data$Visited == F, ]) > 0) {
 
         # No more cases to visit, so stop here.
-        if(all(is.na(distm))) {
-            lbls <- c(lbls, df[currentIdx, (ncols + 1)])
+        if(all(is.na(distanceMatrix))) {
+            lbls <- c(lbls, data[currentIdx, (ncols + 1)])
             break
         }
 
         # Save the label of the current index
-        lbls <- c(lbls, df[currentIdx, (ncols + 1)])
+        lbls <- c(lbls, data[currentIdx, (ncols + 1)])
 
         # Also, set the current index visited
-        df[currentIdx, "Visited"] <- T
+        data[currentIdx, "Visited"] <- T
 
-        minima <- min(distm[currentIdx, ], na.rm = T)
-        minimas <- which(distm[currentIdx, ] == minima)
+        minima <- min(distanceMatrix[currentIdx, ], na.rm = T)
+        minimas <- which(distanceMatrix[currentIdx, ] == minima)
 
-        distm[currentIdx, ] <- NA
-        distm[, currentIdx] <- NA
+        distanceMatrix[currentIdx, ] <- NA
+        distanceMatrix[, currentIdx] <- NA
 
         if(length(minimas) > 1) {
             nearest <- sample(minimas, size = 1)
@@ -409,7 +441,12 @@ baseline <- function(labels, iterations = 50) {
 
 # ##
 #' Calculates separation power
-# Not really needed?
+#'
+#' @param z Baseline
+#' @param s Raw Scatter value
+#' @return Returns the difference between baseline and raw scatter value.
+# TODO: Is this really needed?
+# ##
 spower <- function(z, s) {
 
     return(z - s)

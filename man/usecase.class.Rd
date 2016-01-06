@@ -10,13 +10,15 @@ usecase.class(data, distanceMatrix, iterations = 10, nominal = c(),
 \arguments{
 \item{data}{Data}
 
+\item{distanceMatrix}{A distance matrix. This is different than other
+usecases as it doesn't take \code{distanceMethod} but 
+\code{distanceMatrix}.}
+
 \item{iterations}{Number of iterations}
 
 \item{nominal}{Nominal attributes}
 
 \item{baselineIterations}{Number of baseline iterations}
-
-\item{distanceMethod}{Distance method}
 }
 \value{
 TBD

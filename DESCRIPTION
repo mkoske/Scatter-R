@@ -7,5 +7,5 @@ Imports: DiscriMiner
 Author: Tommi Tuominen, Juha Panula-Ontto, Miika Koskela
 Maintainer: Miika Koskela <Koskela.Miika.S@student.uta.fi>
 Description: At the moment, see README for more information.
-License: GPLv3 (see COPYING)
+License: GPL-3
 RoxygenNote: 5.0.1

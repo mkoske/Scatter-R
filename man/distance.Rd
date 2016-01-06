@@ -6,6 +6,20 @@
 \usage{
 distance(data, distmethod = "euclidean", nominals = NULL)
 }
+\arguments{
+\item{data}{Data}
+
+\item{distanceMethod}{Distance method}
+
+\item{iterations}{Number of iterations}
+
+\item{nominal}{Nominal attributes}
+
+\item{baselineIterations}{Number of baseline iterations}
+}
+\value{
+Returns distance matrix.
+}
 \description{
 Expects dataframe \emph{without} class label column
 }

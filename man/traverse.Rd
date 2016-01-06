@@ -4,9 +4,18 @@
 \alias{traverse}
 \title{Generate collection vector}
 \usage{
-traverse(df, distm)
+traverse(data, distanceMatrix)
+}
+\arguments{
+\item{data}{The data}
+
+\item{distanceMatrix}{The distance matrix calculated from \code{data}}
+}
+\value{
+Returns the vector of labels
 }
 \description{
-Generate collection vector
+Traverse the dataset using nearest neighbour method, recording label changes
+as we go.
 }
 
