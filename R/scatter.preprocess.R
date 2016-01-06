@@ -1,3 +1,4 @@
+
 scatter.preprocess <- function(
 	df,                      # Dataframe to be preprocessed for Scatter algorithm
 	classvar,                # Name or index of column containing class label
@@ -109,10 +110,8 @@ scatter.preprocess <- function(
 	#  Scaling means mapping the values of each numeric column to range 0..1,
 	#   so that the smallest value in the column will be mapped to 0, the
 	#   highest to 1 and the values in between mapped linearly to the range.
-	
+    #' @importFrom DiscriMiner binarize
 	binarize_and_scale <- function(df, binarized=NULL, scaled=NULL) {
-		
-		require(DiscriMiner) # Binarization requires DiscriMiner package
 		
 		# Merge two dataframes, column by column, *df2 coming after *df1
 		appendMerge <- function(df1, df2)
