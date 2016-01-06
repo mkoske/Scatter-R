@@ -21,7 +21,7 @@
 #'        \code{euclidean}, \code{manhattan} or \code{heom}.
 #' @param usecase A usecase to select; must be one of following: \code{single},
 #'        \code{classes}, \code{variables} or \code{all}
-#' @param iteration A number of iterations for Scatter-algorithm
+#' @param iterations A number of iterations for Scatter-algorithm
 #' @param baselineIterations A number of iteration for baseline calculation
 #' @param classes List of class included in the calculation
 #' @param columns List of indices or names of columns included in the
@@ -68,14 +68,14 @@ run <- function(
 
     result <- NULL
     if(usecase == "single") {
-        result <- usecase.single(data, distanceMethod, iterations, nominal, baselineIterations)
+        result <- usecase.single(data, distanceMethod, iterations, nominals, baselineIterations)
     } else if(usecase == "classes") {
-        distanceMatrix = distance(data, distanceMethod, nominal)
-        result <- usecase.class(data, distanceMatrix, iterations, nominal, baselineIterations)
+        distanceMatrix = distance(data, distanceMethod, nominals)
+        result <- usecase.class(data, distanceMatrix, iterations, nominals, baselineIterations)
     } else if(usecase == "variables") {
-        result  <- usecase.variable(data, distanceMethod, iterations, nominal, baselineIterations)
+        result  <- usecase.variable(data, distanceMethod, iterations, nominals, baselineIterations)
     } else if(usecase == "all") {
-        result <- usecase.all(data, distanceMethod, iterations, nominal, baselineIterations)
+        result <- usecase.all(data, distanceMethod, iterations, nominals, baselineIterations)
     } else {
         stop("Unknown usecase. Must be one of following: single, classes, variables or all.")
     }
