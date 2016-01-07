@@ -1,3 +1,14 @@
+#' Transform a dataframe into a format suitable for the Scatter algorithm
+#' 
+#' @param df A dataframe to be preprocessed for use with the Scatter algorithm
+#' @param classvar Name or index of the column containing the class label
+#' @param included.attributes Names or indices of columns/attributes to be included in the processed dataframe (columns that are not in included attributes are stripped)
+#' @param included.classes Names or indices of classes to be included in the processed dataframe (rows where class label is not in included classes are stripped)
+#' @param binarized Names or indices of nominal attributes/columns to be binarized in the preprocessing
+#' @param scaled Names or indices of numeric attributes/columns to be scaled in the preprocessing
+#' @param na.action Action for missing values (class/column/rmrows/nothing/NULL)
+#' @return A dataframe preprocessed according to the arguments
+
 scatter.preprocess <- function(
 	df,                      # Dataframe to be preprocessed for Scatter algorithm
 	classvar,                # Name or index of column containing class label
