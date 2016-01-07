@@ -159,7 +159,7 @@ scatter.preprocess <- function(
 			}
 			
 			colnames(bdf) <- binNames #Add "binarized" names to binarized dataframe
-			return(bdf)
+			return(as.data.frame(bdf))
 		}
 		
 		# Merge two dataframes, column by column, *df2 coming after *df1
