@@ -13,7 +13,7 @@
 #' Distance Functions.” Journal of Artificial Intelligence Research 6: 1–34.
 #' doi:10.1613/jair.346.
 #'
-#' @parm data
+#' @param data The data to calculate the distance matrix from
 #' @return Returns a distance matrix
 # ##
 heom <- function(data) {

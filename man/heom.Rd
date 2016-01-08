@@ -6,6 +6,9 @@
 \usage{
 heom(data)
 }
+\arguments{
+\item{data}{The data to calculate the distance matrix from}
+}
 \value{
 Returns a distance matrix
 }
