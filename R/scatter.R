@@ -270,9 +270,6 @@ distance <- function(
     if(!is.data.frame(data))
         stop("Data must be a data frame type.")
 
-    if(distanceMethod == "heom")
-        source('algorithm/heom.R')
-
     result <- switch(
         distanceMethod,
         euclidean = as.matrix(dist(data, method = "euclidean")),
