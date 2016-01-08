@@ -120,10 +120,11 @@ scatter.preprocess <- function(
 	#  Scaling means mapping the values of each numeric column to range 0..1,
 	#   so that the smallest value in the column will be mapped to 0, the
 	#   highest to 1 and the values in between mapped linearly to the range.
-	
 	binarize_and_scale <- function(df, binarized=NULL, scaled=NULL) {
 		
-		my_binarize <- function(df) {
+		# Perform the binarization of a dataframe which contains
+		# only factor-like variables.
+		binarize_factor_df <- function(df) {
 			# Check that df is a dataframe with factors only, with no missing values
 			if(!is.data.frame(df)) stop("df must be a data frame")
 			if(!all(sapply(df, is.factor))) stop("df must be a data frame containning only factors")
@@ -189,7 +190,7 @@ scatter.preprocess <- function(
 			if(ncol(df)==0) return(df)
 
 			fdf <- as.data.frame((sapply(df, as.factor))) # Mark all columns as factors
-			bdf <- my_binarize(fdf) # Binarize all columns of df
+			bdf <- binarize_factor_df(fdf) # Binarize all columns of df
 			return(bdf)
 		}
 
