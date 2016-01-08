@@ -64,6 +64,11 @@ This runs the algorithm 10 iterations and 50 iterations for baseline. It outputs
 
 Please read the articles below to understand how to interpret these values.
 
+Things to note
+--------------
+
+If the data contains numeric labels for classes and they start from zero, they all will be incremented by one, i.e. if class label is 0, it will become 1 and so on.
+
 Further reading and references
 ------------------------------
 
