@@ -262,24 +262,15 @@ usecase.all <- function(
     baselineIterations = 50,
     quiet = FALSE) {
 
-    variables <- ncol(data) - 1
     all <- list()
+    variables <- ncol(data) - 1
     result <- matrix(nrow = variables, ncol = iterations)
-    baselines <- vector(mode = "numeric", length = baselineIterations)
-    collectionVector <- vector(mode = "numeric", length = nrow(data))
 
+    # Run classwise analysis for each variable
     for(variable in 1:variables) {
-
         distanceMatrix <- distance(as.data.frame(data[, variable]), distanceMethod, nominal)
-
-        for(i in 1:iterations) {
-            if(quiet == FALSE) {
-                print(sprintf("Running iteration %s for variable %s...", i, variable))
-            }
-            result <- usecase.class(data, distanceMatrix, 1, nominal, baselineIterations, quiet = TRUE)
-            all <- c(all, result)
-        }
-
+        result <- usecase.class(data[, variable], distanceMatrix, iterations, nominal, baselineIterations, quiet)
+        all <- c(all, result)
     }
 
     return(all)
