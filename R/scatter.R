@@ -263,7 +263,8 @@ usecase.all <- function(
 
         for(i in 1:iterations) {
             print(sprintf("Running iteration %s for variable %s...", i, variable))
-            result <- usecase.class(data, distanceMatrix, iterations, nominal, baselineIterations)
+            result <- usecase.class(data, distanceMatrix, 1, nominal, baselineIterations, TRUE)
+            all <- c(all, result)
         }
 
     }
@@ -287,7 +288,7 @@ distance <- function(
     data,                           # Data frame
     distanceMethod  = "euclidean",      # Distance measure
     nominals        = NULL) {           # Which columns are nominal; used for HEOM
-
+    
     if(!is.data.frame(data))
         stop("Data must be a data frame type.")
 
