@@ -70,8 +70,9 @@ run <- function(
     if(usecase == "single") {
         result <- usecase.single(data, distanceMethod, iterations, nominals, baselineIterations)
     } else if(usecase == "classes") {
-        distanceMatrix = distance(data, distanceMethod, nominals)
-        result <- usecase.class(data, distanceMatrix, iterations, nominals, baselineIterations)
+        # TODO: Any way to ensure classlabel is correct subscript?
+        distanceMatrix = distance(data[, -classlabel], distanceMethod, nominals)
+        result <- usecase.class(data, distanceMatrix, iterations, nominals, baselineIterations, quiet = FALSE)
     } else if(usecase == "variables") {
         result  <- usecase.variable(data, distanceMethod, iterations, nominals, baselineIterations)
     } else if(usecase == "all") {
