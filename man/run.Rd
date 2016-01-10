@@ -6,7 +6,7 @@
 \usage{
 run(data, classlabel = NULL, distanceMethod = "euclidean",
   usecase = "single", iterations = 10, baselineIterations = 50,
-  classes = NULL, columns = NULL, nominals = NULL)
+  classes = NULL, columns = NULL, nominals = NULL, quiet = FALSE)
 }
 \arguments{
 \item{data}{A data frame to process}

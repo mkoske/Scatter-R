@@ -28,6 +28,7 @@
 #'        calculation 
 #' @param nominals List of indices or names of those columns that are nominal;
 #'        not in use at the moment
+#' @param quiet A flag that controls whether messages are printed or not
 #' @return This returns whatever \code{usecase.*}-functions return, since this
 #'         function is only a wrapper to usecases.
 #' @export
@@ -99,6 +100,7 @@ run <- function(
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
 #' @param baselineIterations Number of baseline iterations
+#' @param quiet A flag that controls whether messages are printed or not
 #' @return TBD
 #' @examples
 #' #TBD
@@ -153,6 +155,7 @@ usecase.variable <- function(
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
 #' @param baselineIterations Number of baseline iterations
+#' @param quiet A flag that controls whether messages are printed or not
 #' @return TBD
 #' @examples
 #' #TBD
@@ -210,6 +213,7 @@ usecase.class <- function(
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
 #' @param baselineIterations Number of baseline iterations
+#' @param quiet A flag that controls whether messages are printed or not
 #' @return TBD
 #' @examples
 #' #TBD
@@ -253,6 +257,7 @@ usecase.single <- function(
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
 #' @param baselineIterations Number of baseline iterations
+#' @param quiet A flag that controls whether messages are printed or not
 #' @return TBD
 # ##
 usecase.all <- function(
@@ -320,7 +325,6 @@ distance <- function(
 #' Calculate raw Scatter value
 #'
 #' @param labels The set of labels found from data
-#' @param current The current class
 #' @return Returns a raw Scatter value 
 # ##
 scatter <- function(labels) {
@@ -337,7 +341,6 @@ scatter <- function(labels) {
 #' counterclass together. This is like two-class situation.
 #'
 #' @param labels A set of labels found in dataset that is being processed.
-#' @param current Current class; others are counterclass together
 #' @return Returns maximum number of label changes within given set of labels.
 # ##
 maxChanges <- function(labels) {

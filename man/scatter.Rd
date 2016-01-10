@@ -4,7 +4,7 @@
 \alias{scatter}
 \title{Calculate raw Scatter value}
 \usage{
-scatter(labels, current = NULL)
+scatter(labels)
 }
 \arguments{
 \item{labels}{The set of labels found from data}

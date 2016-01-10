@@ -5,7 +5,7 @@
 \title{Usecase \code{variable} runs the algorithm for each variable separately.}
 \usage{
 usecase.variable(data, distanceMethod = "euclidean", iterations = 10,
-  nominal = c(), baselineIterations = 50)
+  nominal = c(), baselineIterations = 50, quiet = FALSE)
 }
 \arguments{
 \item{data}{Data}
