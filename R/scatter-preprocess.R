@@ -8,7 +8,7 @@
 #' @param scaled Names or indices of numeric attributes/columns to be scaled in the preprocessing
 #' @param na.action Action for missing values (class/column/rmrows/nothing/NULL)
 #' @return A dataframe preprocessed according to the arguments
-
+#' @export
 scatter.preprocess <- function(
 	df,                      # Dataframe to be preprocessed for Scatter algorithm
 	classvar,                # Name or index of column containing class label
