@@ -263,7 +263,7 @@ usecase.all <- function(
 
         for(i in 1:iterations) {
             print(sprintf("Running iteration %s for variable %s...", i, variable))
-            result <- usecase.class(data, distanceMatrix, 1, nominal, baselineIterations, TRUE)
+            result <- usecase.class(data, distanceMatrix, 1, nominal, baselineIterations, quiet = TRUE)
             all <- c(all, result)
         }
 
