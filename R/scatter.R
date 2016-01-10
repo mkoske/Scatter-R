@@ -45,7 +45,8 @@ run <- function(
     baselineIterations = 50,        
     classes     = NULL,             
     columns     = NULL,             
-    nominals    = NULL) {           
+    nominals    = NULL,
+    quiet       = FALSE) {           
 
     if(!is.data.frame(data))
         stop("Input data must be a data frame.")
@@ -68,15 +69,15 @@ run <- function(
 
     result <- NULL
     if(usecase == "single") {
-        result <- usecase.single(data, distanceMethod, iterations, nominals, baselineIterations)
+        result <- usecase.single(data, distanceMethod, iterations, nominals, baselineIterations, quiet)
     } else if(usecase == "classes") {
         # TODO: Any way to ensure classlabel is correct subscript?
         distanceMatrix = distance(data[, -classlabel], distanceMethod, nominals)
-        result <- usecase.class(data, distanceMatrix, iterations, nominals, baselineIterations, quiet = FALSE)
+        result <- usecase.class(data, distanceMatrix, iterations, nominals, baselineIterations, quiet)
     } else if(usecase == "variables") {
-        result  <- usecase.variable(data, distanceMethod, iterations, nominals, baselineIterations)
+        result  <- usecase.variable(data, distanceMethod, iterations, nominals, baselineIterations, quiet)
     } else if(usecase == "all") {
-        result <- usecase.all(data, distanceMethod, iterations, nominals, baselineIterations)
+        result <- usecase.all(data, distanceMethod, iterations, nominals, baselineIterations, quiet)
     } else {
         stop("Unknown usecase. Must be one of following: single, classes, variables or all.")
     }
@@ -101,7 +102,8 @@ usecase.variable <- function(
     distanceMethod = "euclidean",
     iterations = 10,
     nominal = c(),
-    baselineIterations = 50) {
+    baselineIterations = 50,
+    quiet = FALSE) {
 
     # -1 for class column; it's the last one
     variables <- ncol(data) - 1
@@ -116,7 +118,9 @@ usecase.variable <- function(
     for(variable in 1:variables) {
         distanceMatrix <- distance(as.data.frame(data[, variable]), distanceMethod, nominal)
         for(i in 1:iterations) {
-            print(sprintf("Running iteration %s for variable %s...", i, variable))
+            if(quiet == FALSE) {
+                print(sprintf("Running iteration %s for variable %s...", i, variable))
+            }
             collectionVector <- traverse(data, distanceMatrix)
             result[variable, i] <- scatter(collectionVector)
         }
@@ -160,8 +164,10 @@ usecase.class <- function(
     # TODO: Any other ideas to handle this? This is due to fact that R starts it's indexing from 1 instead of
     # zero and class is used also as an index in result matrix.
     if(any(classes == 0)) {
-        print("Note, that classlabels contained zeros and all labels has been incremented by one.")
-        print("That means, if you had class labels 0, 1 and 2, they're now 1, 2, 3 respectively.")    
+        if(quiet == FALSE) {
+            print("Note, that classlabels contained zeros and all labels has been incremented by one.")
+            print("That means, if you had class labels 0, 1 and 2, they're now 1, 2, 3 respectively.")                
+        }
         classes <- classes + 1
     }
         
@@ -173,8 +179,9 @@ usecase.class <- function(
     for(class in classes) {
     
         for(i in 1:iterations) {
-            if(quiet == FALSE)
+            if(quiet == FALSE) {
                 print(sprintf("Running iteration %s for class %s...", i, class))
+            }
             collectionVector <- as.numeric(traverse(data, distanceMatrix))
             collectionVector[collectionVector != class] <- (-1)
             result[class, i] <- scatter(collectionVector)
@@ -211,7 +218,8 @@ usecase.single <- function(
     distanceMethod = "euclidean",
     iterations = 10,
     nominal = c(),
-    baselineIterations = 50) {
+    baselineIterations = 50,
+    quiet = FALSE) {
 
     ncols <- ncol(data) - 1
     collectionVector <- vector(length = nrow(data))
@@ -219,7 +227,9 @@ usecase.single <- function(
     values <- vector(length = iterations)
 
     for(i in 1:iterations) {
-        print(sprintf("Running iteration %s...", i))
+        if(quiet == FALSE) {
+            print(sprintf("Running iteration %s...", i))
+        }
         collectionVector <- traverse(data, distanceMatrix)
         values[i] <- scatter(collectionVector)
     }
@@ -249,7 +259,8 @@ usecase.all <- function(
     distanceMethod = "euclidean",
     iterations = 10,
     nominal = c(),
-    baselineIterations = 50) {
+    baselineIterations = 50,
+    quiet = FALSE) {
 
     variables <- ncol(data) - 1
     all <- list()
@@ -262,7 +273,9 @@ usecase.all <- function(
         distanceMatrix <- distance(as.data.frame(data[, variable]), distanceMethod, nominal)
 
         for(i in 1:iterations) {
-            print(sprintf("Running iteration %s for variable %s...", i, variable))
+            if(quiet == FALSE) {
+                print(sprintf("Running iteration %s for variable %s...", i, variable))
+            }
             result <- usecase.class(data, distanceMatrix, 1, nominal, baselineIterations, quiet = TRUE)
             all <- c(all, result)
         }
@@ -276,7 +289,8 @@ usecase.all <- function(
 #' Distance function.
 #' 
 #' For euclidean and manhattan distances, it uses the `dist` function from
-#' base and for HEOM, it uses the code found in `heom.R`-file.
+#' base and for HEOM, it uses the code found in `heom.R`-file. Note, that 
+#' this function expects data to be without class-column!
 #'
 #' @param data The data
 #' @param distanceMethod Distance method; must be one of following:
@@ -285,7 +299,7 @@ usecase.all <- function(
 #' @return Returns a distance matrix.
 # ##
 distance <- function(
-    data,                           # Data frame
+    data,                               # Data frame
     distanceMethod  = "euclidean",      # Distance measure
     nominals        = NULL) {           # Which columns are nominal; used for HEOM
     
