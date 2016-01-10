@@ -152,7 +152,8 @@ usecase.class <- function(
     distanceMatrix,
     iterations          = 10,
     nominal             = c(),
-    baselineIterations  = 50) {
+    baselineIterations  = 50,
+    quiet = FALSE) {
 
     classes <- as.numeric(unique(data[, ncol(data)]))
     
