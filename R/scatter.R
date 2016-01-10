@@ -206,7 +206,12 @@ usecase.class <- function(
 #' @examples
 #' #TBD
 # ##
-usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
+usecase.single <- function(
+    data,
+    distanceMethod = "euclidean",
+    iterations = 10,
+    nominal = c(),
+    baselineIterations = 50) {
 
     ncols <- ncol(data) - 1
     collectionVector <- vector(length = nrow(data))
@@ -239,7 +244,12 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
 #' @param baselineIterations Number of baseline iterations
 #' @return TBD
 # ##
-usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
+usecase.all <- function(
+    data,
+    distanceMethod = "euclidean",
+    iterations = 10,
+    nominal = c(),
+    baselineIterations = 50) {
 
     variables <- ncol(data) - 1
     all <- list()
