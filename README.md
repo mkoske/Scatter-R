@@ -19,7 +19,7 @@ Usage
 
 The main entry point to algorithm is `run()`-function. It aggregates all the steps needed to calculate different values. It's signature is the following.
 
-```
+```R
 run <- function(
     data,                           
     classlabel  = NULL,             
@@ -53,6 +53,8 @@ In simplest case, using for example popular Iris [3] dataset, the command needed
 ```
 > run(iris, classlabel = 5)
 ```
+
+> If the class label column is the last one, classlabel-parameter can be omitted.
 
 This runs the algorithm 10 iterations and 50 iterations for baseline. It outputs the following values (plus the information, that is currently running etc).
 
