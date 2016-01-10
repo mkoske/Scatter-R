@@ -156,11 +156,14 @@ usecase.class <- function(
     quiet = FALSE) {
 
     classes <- as.numeric(unique(data[, ncol(data)]))
-    
+
     # TODO: Any other ideas to handle this? This is due to fact that R starts it's indexing from 1 instead of
     # zero and class is used also as an index in result matrix.
-    if(any(classes == 0))
+    if(any(classes == 0)) {
+        print("Note, that classlabels contained zeros and all labels has been incremented by one.")
+        print("That means, if you had class labels 0, 1 and 2, they're now 1, 2, 3 respectively.")    
         classes <- classes + 1
+    }
         
     ncols <- ncol(data) - 1
 
