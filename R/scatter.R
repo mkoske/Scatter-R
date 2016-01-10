@@ -96,7 +96,12 @@ run <- function(
 #' @examples
 #' #TBD
 # ##
-usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
+usecase.variable <- function(
+    data,
+    distanceMethod = "euclidean",
+    iterations = 10,
+    nominal = c(),
+    baselineIterations = 50) {
 
     # -1 for class column; it's the last one
     variables <- ncol(data) - 1
