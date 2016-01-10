@@ -131,7 +131,7 @@ usecase.variable <- function(
             result[variable, i] <- scatter(collectionVector)
         }
 
-        baselines <- c(baselines, baseline(data$class, baselineIterations))
+        baselines <- c(baselines, baseline(data[, (variables + 1)], baselineIterations))
     }
 
     means <- apply(result, 1, mean)
@@ -172,7 +172,7 @@ usecase.class <- function(
         
     ncols <- ncol(data) - 1
     result <- vector(mode = "numeric")  # TODO: Don't grow in a loop :)
-    baselines <- vector(length = length(classes))
+    baselines <- vector(mode = "numeric")
     
     for(class in classes) {
 
@@ -186,7 +186,10 @@ usecase.class <- function(
             collectionVector[collectionVector != class] <- (-1)
             result <- c(result, scatter(collectionVector))
         }
-
+        
+         labels <- as.numeric(data[, (ncols + 1)])
+         labels[labels != class] <- (-1)
+         baselines <- c(baselines, baseline(labels, baselineIterations))
     }
     
     result <- matrix(result, ncol = iterations, byrow = TRUE)
