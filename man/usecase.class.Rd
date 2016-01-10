@@ -19,6 +19,8 @@ usecases as it doesn't take \code{distanceMethod} but
 \item{nominal}{Nominal attributes}
 
 \item{baselineIterations}{Number of baseline iterations}
+
+\item{quiet}{A flag that controls whether messages are printed or not}
 }
 \value{
 TBD

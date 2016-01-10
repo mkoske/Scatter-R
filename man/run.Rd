@@ -31,6 +31,8 @@ calculation}
 
 \item{nominals}{List of indices or names of those columns that are nominal;
 not in use at the moment}
+
+\item{quiet}{A flag that controls whether messages are printed or not}
 }
 \value{
 This returns whatever \code{usecase.*}-functions return, since this

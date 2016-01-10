@@ -8,8 +8,6 @@ scatter(labels)
 }
 \arguments{
 \item{labels}{The set of labels found from data}
-
-\item{current}{The current class}
 }
 \value{
 Returns a raw Scatter value

@@ -17,6 +17,8 @@ usecase.variable(data, distanceMethod = "euclidean", iterations = 10,
 \item{nominal}{Nominal attributes}
 
 \item{baselineIterations}{Number of baseline iterations}
+
+\item{quiet}{A flag that controls whether messages are printed or not}
 }
 \value{
 TBD
