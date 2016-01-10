@@ -173,7 +173,8 @@ usecase.class <- function(
     for(class in classes) {
     
         for(i in 1:iterations) {
-            print(sprintf("Running iteration %s for class %s...", i, class))
+            if(quiet == FALSE)
+                print(sprintf("Running iteration %s for class %s...", i, class))
             collectionVector <- as.numeric(traverse(data, distanceMatrix))
             collectionVector[collectionVector != class] <- (-1)
             result[class, i] <- scatter(collectionVector)
