@@ -5,7 +5,7 @@
 \title{Usecase \code{class} runs the algorithm for each class separately.}
 \usage{
 usecase.class(data, distanceMatrix, iterations = 10, nominal = c(),
-  baselineIterations = 50)
+  baselineIterations = 50, quiet = FALSE)
 }
 \arguments{
 \item{data}{Data}
