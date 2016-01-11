@@ -267,6 +267,9 @@ scatter.preprocess <- function(
 		if (!classvar %in% colnames(df)) stop("non-existing classvar name selected")
 	}
 	
+	# Mark classvar column as factor
+	df[[classvar]] <- as.factor(df[[classvar]])
+	
 	# Replace missing values with sensible defaults
 	if(!hasArg(included.attributes)) included.attributes <- colnames(df) # If included attributes are not selected, use all
 	if(!hasArg(included.classes))    included.classes    <- levels(as.factor(df[[classvar]])) # If included classes are not selected, use all
