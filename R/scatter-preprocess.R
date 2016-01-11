@@ -270,6 +270,9 @@ scatter.preprocess <- function(
 	# Mark classvar column as factor
 	df[[classvar]] <- as.factor(df[[classvar]])
 	
+	# Check for duplicate column names in df
+	if(anyDuplicated(colnames(df))!=0) stop("duplicate column names are not allowed")
+	
 	# Replace missing values with sensible defaults
 	if(!hasArg(included.attributes)) included.attributes <- colnames(df) # If included attributes are not selected, use all
 	if(!hasArg(included.classes))    included.classes    <- levels(as.factor(df[[classvar]])) # If included classes are not selected, use all
