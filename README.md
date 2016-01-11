@@ -14,6 +14,11 @@ It works simply by traversing the dataset from a randomly chosen starting case t
 
 Scatter value is also used to calculate *separation power*, which is the difference between random situation, i.e. the labels of the current dataset is randomly distributed, and the current situation. The equation for separation power is `F = z - s`, where `z` is the scatter value for random situation.[1]
 
+Installation
+------------
+
+TBD
+
 Usage
 -----
 
@@ -21,15 +26,15 @@ The main entry point to algorithm is `run()`-function. It aggregates all the ste
 
 ```R
 run <- function(
-    data,                           
-    classlabel  = NULL,             
-    distanceMethod  = "euclidean",  
-    usecase     = "single",         
-    iterations  = 10,              
-    baselineIterations = 50,        
-    classes     = NULL,             
-    columns     = NULL,             
-    nominals    = NULL)        
+    data,
+    classlabel  = NULL,
+    distanceMethod  = "euclidean",
+    usecase     = "single",
+    iterations  = 10,
+    baselineIterations = 50,
+    classes     = NULL,
+    columns     = NULL,
+    nominals    = NULL)
 ```
 
 **data** is a `dataframe`, from which user wishes to calculate Scatter etc. values from. It must be `dataframe`.
@@ -69,7 +74,7 @@ Please read the articles below to understand how to interpret these values.
 Things to note
 --------------
 
-If the data contains numeric labels for classes and they start from zero, they all will be incremented by one, i.e. if class label is 0, it will become 1 and so on.
+There exists also GUI for this projecet. Check out [GUI for Scatter-R](https://github.com/jmpaon/scatterr-gui). If you wish to use the GUI, please install this (Scatter-R) before installing GUI.
 
 Further reading and references
 ------------------------------
