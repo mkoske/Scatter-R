@@ -6,7 +6,7 @@
 \usage{
 run(data, classlabel = NULL, distanceMethod = "euclidean",
   usecase = "single", iterations = 10, baselineIterations = 50,
-  classes = NULL, columns = NULL, nominals = NULL)
+  classes = NULL, columns = NULL, nominals = NULL, quiet = FALSE)
 }
 \arguments{
 \item{data}{A data frame to process}
@@ -31,6 +31,8 @@ calculation}
 
 \item{nominals}{List of indices or names of those columns that are nominal;
 not in use at the moment}
+
+\item{quiet}{A flag that controls whether messages are printed or not}
 }
 \value{
 This returns whatever \code{usecase.*}-functions return, since this

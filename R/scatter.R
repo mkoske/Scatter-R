@@ -28,6 +28,7 @@
 #'        calculation 
 #' @param nominals List of indices or names of those columns that are nominal;
 #'        not in use at the moment
+#' @param quiet A flag that controls whether messages are printed or not
 #' @return This returns whatever \code{usecase.*}-functions return, since this
 #'         function is only a wrapper to usecases.
 #' @export
@@ -45,37 +46,45 @@ run <- function(
     baselineIterations = 50,        
     classes     = NULL,             
     columns     = NULL,             
-    nominals    = NULL) {           
+    nominals    = NULL,
+    quiet       = FALSE) {           
 
     if(!is.data.frame(data))
         stop("Input data must be a data frame.")
 
     if(length(classes) > 0)
-        data <- data[data[, classlabel] %in% classes, ]
+        data <- data[data[, classlabel] %in% classes, , drop = FALSE]
 
     # If no classlabel was provided, assume it's the last column
     if(is.null(classlabel))
         classlabel <- ncol(data)
+        
+    # Ensure numeric classlabel 
+    if(!is.numeric(classlabel)) {
+        classlabel <- which(names(data) == classlabel)
+    }
 
     class_labels <- data[, classlabel]
     data[, classlabel] <- NULL
 
     if(length(columns) > 0)
-        data <- data[, columns]
+        data <- data[columns]
 
     # Move classlabel column to last.
-    data$class <- class_labels
+    data[, classlabel] <- class_labels
 
     result <- NULL
     if(usecase == "single") {
-        result <- usecase.single(data, distanceMethod, iterations, nominals, baselineIterations)
+        result <- usecase.single(data, distanceMethod, iterations, nominals, baselineIterations, quiet)
     } else if(usecase == "classes") {
-        distanceMatrix = distance(data, distanceMethod, nominals)
-        result <- usecase.class(data, distanceMatrix, iterations, nominals, baselineIterations)
+        # TODO: Any way to ensure classlabel is correct subscript?
+        ncols <- ncol(data) - 1
+        distanceMatrix = distance(data[1:ncols], distanceMethod, nominals)
+        result <- usecase.class(data, distanceMatrix, iterations, nominals, baselineIterations, quiet)
     } else if(usecase == "variables") {
-        result  <- usecase.variable(data, distanceMethod, iterations, nominals, baselineIterations)
+        result <- usecase.variable(data, distanceMethod, iterations, nominals, baselineIterations, quiet)
     } else if(usecase == "all") {
-        result <- usecase.all(data, distanceMethod, iterations, nominals, baselineIterations)
+        result <- usecase.all(data, distanceMethod, iterations, nominals, baselineIterations, quiet)
     } else {
         stop("Unknown usecase. Must be one of following: single, classes, variables or all.")
     }
@@ -91,11 +100,18 @@ run <- function(
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
 #' @param baselineIterations Number of baseline iterations
+#' @param quiet A flag that controls whether messages are printed or not
 #' @return TBD
 #' @examples
 #' #TBD
 # ##
-usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
+usecase.variable <- function(
+    data,
+    distanceMethod = "euclidean",
+    iterations = 10,
+    nominal = c(),
+    baselineIterations = 50,
+    quiet = FALSE) {
 
     # -1 for class column; it's the last one
     variables <- ncol(data) - 1
@@ -110,12 +126,14 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
     for(variable in 1:variables) {
         distanceMatrix <- distance(as.data.frame(data[, variable]), distanceMethod, nominal)
         for(i in 1:iterations) {
-            print(sprintf("Running iteration %s for variable %s...", i, variable))
+            if(quiet == FALSE) {
+                print(sprintf("Running iteration %s for variable %s...", i, variable))
+            }
             collectionVector <- traverse(data, distanceMatrix)
             result[variable, i] <- scatter(collectionVector)
         }
 
-        baselines <- c(baselines, baseline(data$class, baselineIterations))
+        baselines <- c(baselines, baseline(data[, (variables + 1)], baselineIterations))
     }
 
     means <- apply(result, 1, mean)
@@ -137,6 +155,7 @@ usecase.variable <- function(data, distanceMethod = "euclidean", iterations = 10
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
 #' @param baselineIterations Number of baseline iterations
+#' @param quiet A flag that controls whether messages are printed or not
 #' @return TBD
 #' @examples
 #' #TBD
@@ -146,34 +165,37 @@ usecase.class <- function(
     distanceMatrix,
     iterations          = 10,
     nominal             = c(),
-    baselineIterations  = 50) {
-
+    baselineIterations  = 50,
+    quiet = FALSE) {
+        
     classes <- as.numeric(unique(data[, ncol(data)]))
-    
-    # TODO: Any other ideas to handle this? This is due to fact that R starts it's indexing from 1 instead of
-    # zero and class is used also as an index in result matrix.
-    if(any(classes == 0))
-        classes <- classes + 1
+    if(any(classes < 0)) {
+        stop("Class labels cannot be negative.")
+    }
         
     ncols <- ncol(data) - 1
-
-    result <- matrix(nrow = length(classes), ncol = iterations)
+    result <- vector(mode = "numeric")  # TODO: Don't grow in a loop :)
     baselines <- vector(mode = "numeric")
-
-    for(class in classes) {
     
+    for(class in classes) {
+
         for(i in 1:iterations) {
-            print(sprintf("Running iteration %s for class %s...", i, class))
+            
+            if(quiet == FALSE) {
+                print(sprintf("Running iteration %s for class %s...", i, class))
+            }
+
             collectionVector <- as.numeric(traverse(data, distanceMatrix))
             collectionVector[collectionVector != class] <- (-1)
-            result[class, i] <- scatter(collectionVector)
+            result <- c(result, scatter(collectionVector))
         }
-
-        labels <- as.numeric(data$class)
-        labels[labels != class] <- (-1)
-        baselines <- c(baselines, baseline(labels, baselineIterations))
+        
+         labels <- as.numeric(data[, (ncols + 1)])
+         labels[labels != class] <- (-1)
+         baselines <- c(baselines, baseline(labels, baselineIterations))
     }
-
+    
+    result <- matrix(result, ncol = iterations, byrow = TRUE)
     means <- apply(result, 1, mean)
 
     return(list(
@@ -191,19 +213,28 @@ usecase.class <- function(
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
 #' @param baselineIterations Number of baseline iterations
+#' @param quiet A flag that controls whether messages are printed or not
 #' @return TBD
 #' @examples
 #' #TBD
 # ##
-usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
+usecase.single <- function(
+    data,
+    distanceMethod = "euclidean",
+    iterations = 10,
+    nominal = c(),
+    baselineIterations = 50,
+    quiet = FALSE) {
 
     ncols <- ncol(data) - 1
     collectionVector <- vector(length = nrow(data))
-    distanceMatrix <- distance(data[, 1:ncols], distanceMethod, nominal)
+    distanceMatrix <- distance(data[1:ncols], distanceMethod, nominal)
     values <- vector(length = iterations)
 
     for(i in 1:iterations) {
-        print(sprintf("Running iteration %s...", i))
+        if(quiet == FALSE) {
+            print(sprintf("Running iteration %s...", i))
+        }
         collectionVector <- traverse(data, distanceMatrix)
         values[i] <- scatter(collectionVector)
     }
@@ -226,25 +257,29 @@ usecase.single <- function(data, distanceMethod = "euclidean", iterations = 10, 
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
 #' @param baselineIterations Number of baseline iterations
+#' @param quiet A flag that controls whether messages are printed or not
 #' @return TBD
 # ##
-usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nominal = c(), baselineIterations = 50) {
+usecase.all <- function(
+    data,
+    distanceMethod = "euclidean",
+    iterations = 10,
+    nominal = c(),
+    baselineIterations = 50,
+    quiet = FALSE) {
 
-    variables <- ncol(data) - 1
     all <- list()
+    variables <- ncol(data) - 1
     result <- matrix(nrow = variables, ncol = iterations)
-    baselines <- vector(mode = "numeric", length = baselineIterations)
-    collectionVector <- vector(mode = "numeric", length = nrow(data))
 
+    # Run classwise analysis for each variable
     for(variable in 1:variables) {
-
-        distanceMatrix <- distance(as.data.frame(data[, variable]), distanceMethod, nominal)
-
-        for(i in 1:iterations) {
-            print(sprintf("Running iteration %s for variable %s...", i, variable))
-            result <- usecase.class(data, distanceMatrix, iterations, nominal, baselineIterations)
+        if(quiet == FALSE) {
+            print(sprintf("Running usecase.class for variable %s", variable))
         }
-
+        distanceMatrix <- distance(data[variable], distanceMethod, nominal)
+        result <- usecase.class(data, distanceMatrix, iterations, nominal, baselineIterations, TRUE)
+        all <- c(all, result)
     }
 
     return(all)
@@ -254,7 +289,8 @@ usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nom
 #' Distance function.
 #' 
 #' For euclidean and manhattan distances, it uses the `dist` function from
-#' base and for HEOM, it uses the code found in `heom.R`-file.
+#' base and for HEOM, it uses the code found in `heom.R`-file. Note, that 
+#' this function expects data to be without class-column!
 #'
 #' @param data The data
 #' @param distanceMethod Distance method; must be one of following:
@@ -263,12 +299,13 @@ usecase.all <- function(data, distanceMethod = "euclidean", iterations = 10, nom
 #' @return Returns a distance matrix.
 # ##
 distance <- function(
-    data,                           # Data frame
+    data,                               # Data frame
     distanceMethod  = "euclidean",      # Distance measure
     nominals        = NULL) {           # Which columns are nominal; used for HEOM
 
-    if(!is.data.frame(data))
+    if(!is.data.frame(data)) {
         stop("Data must be a data frame type.")
+    }
 
     result <- switch(
         distanceMethod,
@@ -288,12 +325,11 @@ distance <- function(
 #' Calculate raw Scatter value
 #'
 #' @param labels The set of labels found from data
-#' @param current The current class
 #' @return Returns a raw Scatter value 
 # ##
-scatter <- function(labels, current = NULL) {
+scatter <- function(labels) {
     changes <- numChanges(labels)
-    thmax <- maxChanges(labels, current)
+    thmax <- maxChanges(labels)
     return(changes / thmax)
 }
 
@@ -305,29 +341,24 @@ scatter <- function(labels, current = NULL) {
 #' counterclass together. This is like two-class situation.
 #'
 #' @param labels A set of labels found in dataset that is being processed.
-#' @param current Current class; others are counterclass together
 #' @return Returns maximum number of label changes within given set of labels.
 # ##
-maxChanges <- function(labels, current = NULL) {
+maxChanges <- function(labels) {
 
-    nmax <- NULL
+    nmax <- 0
     max <- NULL
     n <- length(labels)
     sizes <- table(labels)
 
-    if(is.null(current)) {
-        max <- max(sizes);
-        nmax <- length(as.vector(which(sizes == max)))
-    } else {
-        max <- sizes[[current]]
-    }
+    max <- max(sizes);
+    nmax <- length(as.vector(which(sizes == max)))
 
     if((nmax == 1) && (max > (n - max))) {
         thmax <- (2 * (n - max))
     } else {
         thmax <- (n - 1)
     }
-
+    
     return(thmax)
 }
 
@@ -344,8 +375,9 @@ numChanges <- function(collectionVector) {
     n <- length(collectionVector)
     changes <- 0
     for(i in 1:n) {
-        if((i < n) && (collectionVector[i] != collectionVector[i + 1]))
+        if((i < n) && (collectionVector[i] != collectionVector[i + 1])) {
             changes <- changes + 1
+        }
     }
     return(changes)
 }
@@ -378,9 +410,6 @@ traverse <- function(data, distanceMatrix) {
 
     # Random starting point
     currentIdx <- sample(1:nrows, size = 1)
-
-    # TODO: This seems to work now; but find out if this could be done just using
-    # apply and its friends.
     while(nrow(data[data$Visited == F, ]) > 0) {
 
         # No more cases to visit, so stop here.
@@ -393,18 +422,19 @@ traverse <- function(data, distanceMatrix) {
         lbls <- c(lbls, data[currentIdx, (ncols + 1)])
 
         # Also, set the current index visited
-        data[currentIdx, "Visited"] <- T
+        data[currentIdx, "Visited"] <- TRUE
 
-        minima <- min(distanceMatrix[currentIdx, ], na.rm = T)
+        minima <- min(distanceMatrix[currentIdx, ], na.rm = TRUE)
         minimas <- which(distanceMatrix[currentIdx, ] == minima)
-
+        
         distanceMatrix[currentIdx, ] <- NA
         distanceMatrix[, currentIdx] <- NA
 
         if(length(minimas) > 1) {
             nearest <- sample(minimas, size = 1)
+            nearest <- nearest[[1]]
         } else {
-            nearest <- minimas[1]
+            nearest <- minimas[[1]]
         }
 
         currentIdx <- nearest

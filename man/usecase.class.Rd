@@ -5,7 +5,7 @@
 \title{Usecase \code{class} runs the algorithm for each class separately.}
 \usage{
 usecase.class(data, distanceMatrix, iterations = 10, nominal = c(),
-  baselineIterations = 50)
+  baselineIterations = 50, quiet = FALSE)
 }
 \arguments{
 \item{data}{Data}
@@ -19,6 +19,8 @@ usecases as it doesn't take \code{distanceMethod} but
 \item{nominal}{Nominal attributes}
 
 \item{baselineIterations}{Number of baseline iterations}
+
+\item{quiet}{A flag that controls whether messages are printed or not}
 }
 \value{
 TBD

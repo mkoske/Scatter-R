@@ -5,7 +5,7 @@
 \title{Usecase `all` runs the \code{classes} for all variables separately}
 \usage{
 usecase.all(data, distanceMethod = "euclidean", iterations = 10,
-  nominal = c(), baselineIterations = 50)
+  nominal = c(), baselineIterations = 50, quiet = FALSE)
 }
 \arguments{
 \item{data}{Data}
@@ -17,6 +17,8 @@ usecase.all(data, distanceMethod = "euclidean", iterations = 10,
 \item{nominal}{Nominal attributes}
 
 \item{baselineIterations}{Number of baseline iterations}
+
+\item{quiet}{A flag that controls whether messages are printed or not}
 }
 \value{
 TBD
