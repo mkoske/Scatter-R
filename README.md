@@ -82,7 +82,7 @@ Now all GUI dependencies are installed and GUI itself can be installed by issuin
 install.packages("https://github.com/jmpaon/ScatterR-gui/releases/download/0.9/ScatterRGui_0.9.tar.gz", repos = NULL, method = "libcurl")
 ```
 
-After installation is complete, you can load and run the GUI by issuing commands `load(ScatterRGui)` and `ScatterR.gui()`.
+After installation is complete, you can load and run the GUI by issuing commands `library(ScatterRGui)` and `ScatterR.gui()`.
 
 You might get some version warning when installing or running GUI, but if everything works, you can dismiss those. Otherwise, please open an [issue](https://github.com/jmpaon/ScatterR-gui/issues) at Github.
 
