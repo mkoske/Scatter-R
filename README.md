@@ -53,7 +53,7 @@ After the `run` is completed, it prints out some information about the results. 
 
 ### GUI for ScatterR
 
-This package is not currently in CRAN repositories, so it's installation is not as simple as it could be. Also, it's further development idea to find out how to simplify the installation process of the GUI.
+This package is not currently in CRAN repositories and there's some other issues too, so it's installation is not as simple as it could be. Also, it's further development idea to find out how to simplify the installation process of the GUI.
 
 We have separated GUI from ScatterR package and those who needs or wants GUI, can install it as a separate package. The GUI and these same instructions can be found [here](https://github.com/jmpaon/scatterr-gui). 
 
@@ -62,13 +62,14 @@ Our GUI is written using gWidgets2 and GTK, so you need to ensure those are inst
 Issue following command to install all other GUI dependencies but GTK-package itself.
 
 ```R
-install.packages("gWidgets2RGtk2")
+install.packages("RGtk2", depen = T)
+library(RGtk2)
 ```
 
-Then issue following command to install GTK-dependency.
+When you issue `library(RGtk2)`-command, you get an error and prompt to install GTK-library. Click OK to install the GTK-bundle. After that, restart R console and issue following commands.
 
 ```R
-install.packages("http://ftp.gnome.org/pub/gnome/binaries/win64/gtk+/2.22/gtk+-bundle_2.22.1-20101229_win64.zip") 
+install.packages("gWidgets2RGtk2")
 ```
 
 Now all GUI dependencies are installed and GUI itself can be installed by issuing following command.
