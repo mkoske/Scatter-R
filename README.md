@@ -19,13 +19,13 @@ Follow these instructions to install Scatter-project. If you know, what you're d
 These installation instructions are tested with Windows 8 and Windows 10 operating systems using R versions 3.2.2 and 3.2.3.
 
 ### ScatterR-package
- 
+
 Follow these steps to install the Scatter-R package, which contains the algorithm itself and command line interface to it. Installation of the GUI package is described later.
 
 The name of the package is ScatterR even though the repository and project name has dash in it. This is because R doesn't allow dashes in the name of the package.
 
 Go to the [Releases](https://github.com/Tommytronic/Scatter-R/releases) page of the project and find out, which is the most recent release. Under the heading "Downloads" you will find source archives and at least one archive, which name ends with `_release`. Copy it's URL to clipboard since you will need it.
- 
+
 Install the package using following commands.
 
 > Note, that the URL may vary depending on the release. In general, the package name ends with `_release`.
@@ -35,7 +35,7 @@ Install the package using following commands.
 Install the package by issuing following command in R console.
 
 ```R
-install.packages("https://github.com/Tommytronic/Scatter-R/releases/download/v0.9/ScatterR_0.9_release.tar.gz", repos = NULL, method = "libcurl")
+install.packages("https://github.com/Tommytronic/Scatter-R/releases/download/v1.0/ScatterR_1.0_release.tar.gz", repos = NULL, method = "libcurl")
 ```
 
 #### Test the installation
@@ -59,7 +59,7 @@ After the `run` is completed, it prints out some information about the results. 
 
 This package is not currently in CRAN repositories and there's some other issues too, so it's installation is not as simple as it could be. Also, it's further development idea to find out how to simplify the installation process of the GUI.
 
-We have separated GUI from ScatterR package and those who needs or wants GUI, can install it as a separate package. The GUI and these same instructions can be found [here](https://github.com/jmpaon/scatterr-gui). 
+We have separated GUI from ScatterR package and those who needs or wants GUI, can install it as a separate package. The GUI and these same instructions can be found [here](https://github.com/jmpaon/scatterr-gui).
 
 Our GUI is written using gWidgets2 and GTK, so you need to ensure those are installed too.
 
