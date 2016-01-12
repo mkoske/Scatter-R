@@ -18,7 +18,7 @@ Scatter value is also used to calculate *separation power*, which is the differe
  
 Follow these steps to install the Scatter-R package, which contains the algorithm itself and command line interface to it. Installation of the GUI package is described later.
 
-The name of the package is ScatterR since the R doesn't support dashes in the name of the package.
+The name of the package is ScatterR even though the repository and project name has dash in it. This is because R doesn't allow dashes in the name of the package.
 
 Go to the [Releases](https://github.com/Tommytronic/Scatter-R/releases) page of the project and find out, which is the most recent release. Under the heading "Downloads" you will find source archives and at least one archive, which name ends with `_release`. Copy it's URL to clipboard since you will need it.
  
