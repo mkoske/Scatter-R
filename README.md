@@ -42,7 +42,7 @@ Issue following commands.
 
 ```R
 library(ScatterR)
-run(iri)s
+run(iris)
 ```
 
 The `library`-command loads and attaches the ScatterR package to the search path and it's ready to be used.
@@ -79,6 +79,8 @@ install.packages("https://github.com/jmpaon/ScatterR-gui/releases/download/0.9/S
 ```
 
 After installation is complete, you can load and run the GUI by issuing commands `load(ScatterRGui)` and `ScatterR.gui()`.
+
+You might get some version warning when installing or running GUI, but if everything works, you can dismiss those. Otherwise, please open an [issue](https://github.com/jmpaon/ScatterR-gui/issues) at Github.
 
 ## Usage
 
