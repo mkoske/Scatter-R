@@ -30,7 +30,7 @@ Install the package using following commands.
 
 Install the package by issuing following command in R console.
 
-```
+```R
 install.packages("https://github.com/Tommytronic/Scatter-R/releases/download/v0.9/ScatterR_0.9_release.tar.gz", repos = NULL, method = "libcurl")
 ```
 
