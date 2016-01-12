@@ -68,7 +68,9 @@ install.packages("RGtk2", depen = T)
 library(RGtk2)
 ```
 
-When you issue `library(RGtk2)`-command, you get an error and prompt to install GTK-library. Click OK to install the GTK-bundle. After that, restart R console and issue following commands. [5]
+When you issue `install.packages("RGtk2", depen = T)`-command, you will be prompted for repository to use. Choose a location close to you and click OK.
+
+After you issue `library(RGtk2)`-command, you get an error and prompt to install GTK-library. Click OK to install the GTK-bundle. After that, restart R console and issue following commands. [5]
 
 ```R
 install.packages("gWidgets2RGtk2")
