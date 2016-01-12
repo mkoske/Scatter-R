@@ -14,6 +14,8 @@ Scatter value is also used to calculate *separation power*, which is the differe
 
 ## Installation
 
+Follow these instructions to install Scatter-project. If you know, what you're doing, you can choose the installation method of your liking.
+
 ### ScatterR-package
  
 Follow these steps to install the Scatter-R package, which contains the algorithm itself and command line interface to it. Installation of the GUI package is described later.
