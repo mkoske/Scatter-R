@@ -16,7 +16,7 @@ Scatter value is also used to calculate *separation power*, which is the differe
 
 ### ScatterR-package
  
-This package is not currently in CRAN repositories, so it's installation is not as simple as it could be. Follow these steps to install the Scatter-R package, which contains the algorithm itself and command line interface to it. Installation of the GUI package is described.
+Follow these steps to install the Scatter-R package, which contains the algorithm itself and command line interface to it. Installation of the GUI package is described later.
 
 The name of the package is ScatterR since the R doesn't support dashes in the name of the package.
 
@@ -42,7 +42,7 @@ Issue following commands.
 
 ```R
 library(ScatterR)
-run(iris)
+run(iri)s
 ```
 
 The `library`-command loads and attaches the ScatterR package to the search path and it's ready to be used.
@@ -53,9 +53,31 @@ After the `run` is completed, it prints out some information about the results. 
 
 ### GUI for ScatterR
 
-Not everyone needs or wants GUI. We have separated GUI from this package and those who needs or wants it, can install it as a separate package. The GUI and these same instructions can be found [here](https://github.com/jmpaon/scatterr-gui). 
+This package is not currently in CRAN repositories, so it's installation is not as simple as it could be. Also, it's further development idea to find out how to simplify the installation process of the GUI.
+
+We have separated GUI from ScatterR package and those who needs or wants GUI, can install it as a separate package. The GUI and these same instructions can be found [here](https://github.com/jmpaon/scatterr-gui). 
 
 Our GUI is written using gWidgets2 and GTK, so you need to ensure those are installed too.
+
+Issue following command to install all other GUI dependencies but GTK-package itself.
+
+```R
+install.packages("gWidgets2RGtk2")
+```
+
+Then issue following command to install GTK-dependency.
+
+```R
+install.packages("http://ftp.gnome.org/pub/gnome/binaries/win64/gtk+/2.22/gtk+-bundle_2.22.1-20101229_win64.zip") 
+```
+
+Now all GUI dependencies are installed and GUI itself can be installed by issuing following command.
+
+```R
+install.packages("https://github.com/jmpaon/ScatterR-gui/releases/download/0.9/ScatterRGui_0.9.tar.gz", repos = NULL, method = "libcurl")
+```
+
+After installation is complete, you can load and run the GUI by issuing commands `load(ScatterRGui)` and `ScatterR.gui()`.
 
 ## Usage
 
