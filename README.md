@@ -68,7 +68,7 @@ install.packages("RGtk2", depen = T)
 library(RGtk2)
 ```
 
-When you issue `library(RGtk2)`-command, you get an error and prompt to install GTK-library. Click OK to install the GTK-bundle. After that, restart R console and issue following commands.
+When you issue `library(RGtk2)`-command, you get an error and prompt to install GTK-library. Click OK to install the GTK-bundle. After that, restart R console and issue following commands. [5]
 
 ```R
 install.packages("gWidgets2RGtk2")
@@ -150,3 +150,5 @@ Further reading and references
 [3] TBD:
 
 [4] Juhola, M., & Grönfors, T. (2014). Variable Importance Evaluation for Machine Learning Tasks. In Encyclopedia of Information Science and Technology, Third Edition (pp. 306–313). IGI Global. http://doi.org/10.4018/978-1-4666-5888-2.ch029
+
+[5] Sebastian Kopf. Github. Retrieved 12.01.2016. Available at https://gist.github.com/sebkopf/9405675
