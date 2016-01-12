@@ -1,10 +1,8 @@
-Scatter-R
-=========
+# Scatter-R
 
 Scatter-R is an implementation of Scatter-algorithm in [R](https://r-project.org).
 
-Description
------------
+## Description
 
 This is an overview of the project. You can find more information about the algorithm from the papers listed in "References and further reading" -section. Detailed description about this project can be found from the project [wiki](https://github.com/Tommytronic/Scatter-R/wiki).
 
@@ -14,13 +12,52 @@ It works simply by traversing the dataset from a randomly chosen starting case t
 
 Scatter value is also used to calculate *separation power*, which is the difference between random situation, i.e. the labels of the current dataset is randomly distributed, and the current situation. The equation for separation power is `F = z - s`, where `z` is the scatter value for random situation.[1]
 
-Installation
-------------
+## Installation
 
-TBD
+### ScatterR-package
+ 
+This package is not currently in CRAN repositories, so it's installation is not as simple as it could be. Follow these steps to install the Scatter-R package, which contains the algorithm itself and command line interface to it. Installation of the GUI package is described.
 
-Usage
------
+The name of the package is ScatterR since the R doesn't support dashes in the name of the package.
+
+Go to the [Releases](https://github.com/Tommytronic/Scatter-R/releases) page of the project and find out, which is the most recent release. Under the heading "Downloads" you will find source archives and at least one archive, which name ends with `_release`. Copy it's URL to clipboard since you will need it.
+ 
+Install the package using following commands.
+
+> Note, that the URL may vary depending on the release. In general, the package name ends with `_release`.
+
+#### Install the package.
+
+Install the package by issuing following command in R console.
+
+```
+install.packages("https://github.com/Tommytronic/Scatter-R/releases/download/v0.9/ScatterR_0.9_release.tar.gz", repos = NULL, method = "libcurl")
+```
+
+#### Test the installation
+
+After the installation has completed without errors, it's time to test the installation.
+
+Issue following commands.
+
+```R
+library(ScatterR)
+run(iris)
+```
+
+The `library`-command loads and attaches the ScatterR package to the search path and it's ready to be used.
+
+The `run`-command runs the usecase `single` for the whole iris dataset. The iris dataset is part of R and you don't need to get and install it.
+
+After the `run` is completed, it prints out some information about the results. More information about these on Usage-section.
+
+### GUI for ScatterR
+
+Not everyone needs or wants GUI. We have separated GUI from this package and those who needs or wants it, can install it as a separate package. The GUI and these same instructions can be found [here](https://github.com/jmpaon/scatterr-gui). 
+
+Our GUI is written using gWidgets2 and GTK, so you need to ensure those are installed too.
+
+## Usage
 
 The main entry point to algorithm is `run()`-function. It aggregates all the steps needed to calculate different values. It's signature is the following.
 
