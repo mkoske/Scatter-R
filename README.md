@@ -137,13 +137,13 @@ This runs the algorithm 10 iterations and 50 iterations for baseline. It outputs
 
 Please read the articles below to understand how to interpret these values.
 
-Things to note
---------------
+The results vary since the randomness of choosing starting points etc., but you should get results, that are between `0.06` and `0.08` for mean and for baseline around `0.65`.
 
-There exists also GUI for this projecet. Check out [GUI for Scatter-R](https://github.com/jmpaon/scatterr-gui). If you wish to use the GUI, please install this (Scatter-R) before installing GUI.
+## Things to note
 
-Further reading and references
-------------------------------
+TBD
+
+## Further reading and references
 
 [1] Juhola, M., & Siermala, M. (2012). A scatter method for data and variable importance evaluation. Integrated Computer-Aided Engineering, 19 (2), 137–149. http://doi.org/10.3233/ICA-2011-0385
 
