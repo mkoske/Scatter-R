@@ -15,6 +15,7 @@
 #'
 #' @param data The data to calculate the distance matrix from
 #' @return Returns a distance matrix
+#' @export
 # ##
 heom <- function(data) {
 
