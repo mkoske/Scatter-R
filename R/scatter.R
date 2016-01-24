@@ -71,7 +71,7 @@ run <- function(
         data <- data[columns]
 
     # Move classlabel column to last.
-    data[, classlabel] <- class_labels
+    data[, (ncol(data) + 1)] <- class_labels
 
     result <- NULL
     if(usecase == "single") {
