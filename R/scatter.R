@@ -25,7 +25,7 @@
 #' @param baselineIterations A number of iteration for baseline calculation
 #' @param classes List of class included in the calculation
 #' @param columns List of indices or names of columns included in the
-#'        calculation 
+#'        calculation
 #' @param nominals List of indices or names of those columns that are nominal;
 #'        not in use at the moment
 #' @param quiet A flag that controls whether messages are printed or not
@@ -38,16 +38,16 @@
 #' run(iris, classlabel = 5, distanceMethod = "manhattan", usecase = "classes", iterations = 30)
 # ##
 run <- function(
-    data,                           
-    classlabel = NULL,             
-    distanceMethod  = "euclidean",  
-    usecase     = "single",         
-    iterations  = 10,               
-    baselineIterations = 50,        
-    classes     = NULL,             
-    columns     = NULL,             
+    data,
+    classlabel = NULL,
+    distanceMethod  = "euclidean",
+    usecase     = "single",
+    iterations  = 10,
+    baselineIterations = 50,
+    classes     = NULL,
+    columns     = NULL,
     nominals    = NULL,
-    quiet       = FALSE) {           
+    quiet       = FALSE) {
 
     if(!is.data.frame(data))
         stop("Input data must be a data frame.")
@@ -58,8 +58,8 @@ run <- function(
     # If no classlabel was provided, assume it's the last column
     if(is.null(classlabel))
         classlabel <- ncol(data)
-        
-    # Ensure numeric classlabel 
+
+    # Ensure numeric classlabel
     if(!is.numeric(classlabel)) {
         classlabel <- which(names(data) == classlabel)
     }
@@ -115,11 +115,11 @@ usecase.variable <- function(
 
     # -1 for class column; it's the last one
     variables <- ncol(data) - 1
-    
-    # Result matrix; rows are variables and columns are iterations, i.e. 
+
+    # Result matrix; rows are variables and columns are iterations, i.e.
     # `result[i, j]` contains scatter value for variable `i` on iteration `j`.
     result <- matrix(nrow = variables, ncol = iterations)
-    
+
     baselines <- vector(mode = "numeric")
     collectionVector <- vector(mode = "numeric", length = nrow(data))
 
@@ -138,6 +138,9 @@ usecase.variable <- function(
 
     means <- apply(result, 1, mean)
 
+    rowlabels <- names(data)
+    rownames(result) <- rowlabels[1:nrow(result)]
+
     return(list(
         values    = result,
         means     = means,
@@ -150,7 +153,7 @@ usecase.variable <- function(
 #'
 #' @param data Data
 #' @param distanceMatrix A distance matrix. This is different than other
-#'        usecases as it doesn't take \code{distanceMethod} but 
+#'        usecases as it doesn't take \code{distanceMethod} but
 #'        \code{distanceMatrix}.
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
@@ -167,20 +170,20 @@ usecase.class <- function(
     nominal             = c(),
     baselineIterations  = 50,
     quiet = FALSE) {
-        
+
     classes <- as.numeric(unique(data[, ncol(data)]))
     if(any(classes < 0)) {
         stop("Class labels cannot be negative.")
     }
-        
+
     ncols <- ncol(data) - 1
     result <- vector(mode = "numeric")  # TODO: Don't grow in a loop :)
     baselines <- vector(mode = "numeric")
-    
+
     for(class in classes) {
 
         for(i in 1:iterations) {
-            
+
             if(quiet == FALSE) {
                 print(sprintf("Running iteration %s for class %s...", i, class))
             }
@@ -189,12 +192,12 @@ usecase.class <- function(
             collectionVector[collectionVector != class] <- (-1)
             result <- c(result, scatter(collectionVector))
         }
-        
+
          labels <- as.numeric(data[, (ncols + 1)])
          labels[labels != class] <- (-1)
          baselines <- c(baselines, baseline(labels, baselineIterations))
     }
-    
+
     result <- matrix(result, ncol = iterations, byrow = TRUE)
     means <- apply(result, 1, mean)
 
@@ -287,9 +290,9 @@ usecase.all <- function(
 
 # ##
 #' Distance function.
-#' 
+#'
 #' For euclidean and manhattan distances, it uses the `dist` function from
-#' base and for HEOM, it uses the code found in `heom.R`-file. Note, that 
+#' base and for HEOM, it uses the code found in `heom.R`-file. Note, that
 #' this function expects data to be without class-column!
 #'
 #' @param data The data
@@ -325,7 +328,7 @@ distance <- function(
 #' Calculate raw Scatter value
 #'
 #' @param labels The set of labels found from data
-#' @return Returns a raw Scatter value 
+#' @return Returns a raw Scatter value
 # ##
 scatter <- function(labels) {
     changes <- numChanges(labels)
@@ -358,16 +361,16 @@ maxChanges <- function(labels) {
     } else {
         thmax <- (n - 1)
     }
-    
+
     return(thmax)
 }
 
-# ## 
+# ##
 #' Calculate the number of label changes
 #'
 #' If current and next label are not the same, then counter is incremented by
 #' one.
-#' 
+#'
 #' @param collectionVector A collection vector produced by \code{traverse}.
 #' @return The number of changes in the collection vector
 # ##
@@ -403,7 +406,7 @@ traverse <- function(data, distanceMatrix) {
     # Add column to track visited; important to do it here, NOT before counting
     # the number of columns (see above).
     data$Visited = F
-    
+
     # Set the diagonal to NA to ignore it when finding nearest neighbour. Diagonal
     # means the distance between the case itself.
     diag(distanceMatrix) <- NA
@@ -426,7 +429,7 @@ traverse <- function(data, distanceMatrix) {
 
         minima <- min(distanceMatrix[currentIdx, ], na.rm = TRUE)
         minimas <- which(distanceMatrix[currentIdx, ] == minima)
-        
+
         distanceMatrix[currentIdx, ] <- NA
         distanceMatrix[, currentIdx] <- NA
 
