@@ -201,6 +201,9 @@ usecase.class <- function(
     result <- matrix(result, ncol = iterations, byrow = TRUE)
     means <- apply(result, 1, mean)
 
+    rowlabels <- unique(data[, ncol(data)])
+    rownames(result) <- rowlabels[1:nrow(result)]
+
     return(list(
         values    = result,
         means     = means,
