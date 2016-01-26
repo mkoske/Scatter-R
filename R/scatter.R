@@ -52,6 +52,7 @@ run <- function(
     if(!is.data.frame(data))
         stop("Input data must be a data frame.")
 
+    # Include only selected classes
     if(length(classes) > 0)
         data <- data[data[, classlabel] %in% classes, , drop = FALSE]
 
@@ -64,6 +65,7 @@ run <- function(
         classlabel <- which(names(data) == classlabel)
     }
 
+    # Save class labels to append those at the end of data frame later
     class_labels <- data[, classlabel]
     data[, classlabel] <- NULL
 
@@ -74,6 +76,8 @@ run <- function(
     data[, (ncol(data) + 1)] <- class_labels
 
     result <- NULL
+
+    # Select proper usecase. Exact case-sensitive match is used here.
     if(usecase == "single") {
         result <- usecase.single(data, distanceMethod, iterations, nominals, baselineIterations, quiet)
     } else if(usecase == "classes") {
@@ -123,7 +127,10 @@ usecase.variable <- function(
     baselines <- vector(mode = "numeric")
     collectionVector <- vector(mode = "numeric", length = nrow(data))
 
+    # Iterate over all variables
     for(variable in 1:variables) {
+
+        # In variables usecase, only one variable is used at the time to calculate proximity matrix
         distanceMatrix <- distance(as.data.frame(data[, variable]), distanceMethod, nominal)
         for(i in 1:iterations) {
             if(quiet == FALSE) {
@@ -154,7 +161,8 @@ usecase.variable <- function(
 #' @param data Data
 #' @param distanceMatrix A distance matrix. This is different than other
 #'        usecases as it doesn't take \code{distanceMethod} but
-#'        \code{distanceMatrix}.
+#'        \code{distanceMatrix}. This is because the usecase.class is reused
+#'        in usecase.all.
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
 #' @param baselineIterations Number of baseline iterations
@@ -171,15 +179,18 @@ usecase.class <- function(
     baselineIterations  = 50,
     quiet = FALSE) {
 
+    # Pick up all unique classes that the data contains
     classes <- as.numeric(unique(data[, ncol(data)]))
     if(any(classes < 0)) {
         stop("Class labels cannot be negative.")
     }
 
     ncols <- ncol(data) - 1
-    result <- vector(mode = "numeric")  # TODO: Don't grow in a loop :)
+    # TODO: Don't grow in a loop :)
+    result <- vector(mode = "numeric")
     baselines <- vector(mode = "numeric")
 
+    # TODO: does this for loop maintain it's order?
     for(class in classes) {
 
         for(i in 1:iterations) {
@@ -198,9 +209,14 @@ usecase.class <- function(
          baselines <- c(baselines, baseline(labels, baselineIterations))
     }
 
+    # The result is stored in the vector above to avoid indexing issues. Then, at last
+    # it's converted to matrix form as in other usecases
     result <- matrix(result, ncol = iterations, byrow = TRUE)
     means <- apply(result, 1, mean)
 
+    # This is to add row labels to result matrix. It's easier to see which class got which
+    # numbers when there's labels attached. Though the scatter algorithm doesn't change any
+    # order of data, at least to my knowledge.
     rowlabels <- unique(data[, ncol(data)])
     rownames(result) <- rowlabels[1:nrow(result)]
 
@@ -241,6 +257,8 @@ usecase.single <- function(
         if(quiet == FALSE) {
             print(sprintf("Running iteration %s...", i))
         }
+        # This usecase returns also a collection vector. It's always the last one
+        # since it gets overwritten on every iteration.
         collectionVector <- traverse(data, distanceMatrix)
         values[i] <- scatter(collectionVector)
     }
@@ -274,16 +292,25 @@ usecase.all <- function(
     baselineIterations = 50,
     quiet = FALSE) {
 
+    # This is the container for all results
     all <- list()
     variables <- ncol(data) - 1
     result <- matrix(nrow = variables, ncol = iterations)
 
-    # Run classwise analysis for each variable
+    # Run classwise analysis for each variable, i.e. loop over all variables and run
+    # usecase classes for each.
     for(variable in 1:variables) {
         if(quiet == FALSE) {
             print(sprintf("Running usecase.class for variable %s", variable))
         }
+
+        # New distance matrix for each variable
         distanceMatrix <- distance(data[variable], distanceMethod, nominal)
+
+        # Using quiet = TRUE here to reduce output. If it's FALSE, then it will produce
+        # variables * iterations (e.g. 8 variables * 10 iterations = 80lines) lines of output messages.
+        # TODO: Think about adding additional flag to control the quietness of this usecase.all and
+        # usecase.class separately. Would someone need it?
         result <- usecase.class(data, distanceMatrix, iterations, nominal, baselineIterations, TRUE)
         all <- c(all, result)
     }
@@ -292,7 +319,8 @@ usecase.all <- function(
 }
 
 # ##
-#' Distance function.
+#' Distance function wrapper for selecting between euclidean, manhattan
+#' and HEOM.
 #'
 #' For euclidean and manhattan distances, it uses the `dist` function from
 #' base and for HEOM, it uses the code found in `heom.R`-file. Note, that
@@ -307,7 +335,7 @@ usecase.all <- function(
 distance <- function(
     data,                               # Data frame
     distanceMethod  = "euclidean",      # Distance measure
-    nominals        = NULL) {           # Which columns are nominal; used for HEOM
+    nominals        = NULL) {           # Which columns are nominal; not in use at the moment
 
     if(!is.data.frame(data)) {
         stop("Data must be a data frame type.")
@@ -334,8 +362,14 @@ distance <- function(
 #' @return Returns a raw Scatter value
 # ##
 scatter <- function(labels) {
+
+    # Calculate the number of actual changes
     changes <- numChanges(labels)
+
+    # Calculate the theoretical maximum number of changes
     thmax <- maxChanges(labels)
+
+    # Scatter value is the proportion of previous
     return(changes / thmax)
 }
 
@@ -359,6 +393,8 @@ maxChanges <- function(labels) {
     max <- max(sizes);
     nmax <- length(as.vector(which(sizes == max)))
 
+    # Choose the theoretical maximum. See References and further reading from
+    # README.md to learn about theory of this.
     if((nmax == 1) && (max > (n - max))) {
         thmax <- (2 * (n - max))
     } else {
@@ -416,9 +452,12 @@ traverse <- function(data, distanceMatrix) {
 
     # Random starting point
     currentIdx <- sample(1:nrows, size = 1)
+
+    # Loop until all cases are visited
     while(nrow(data[data$Visited == F, ]) > 0) {
 
-        # No more cases to visit, so stop here.
+        # No more cases to visit, so stop here and record the class label of the last
+        # case.
         if(all(is.na(distanceMatrix))) {
             lbls <- c(lbls, data[currentIdx, (ncols + 1)])
             break
@@ -431,18 +470,25 @@ traverse <- function(data, distanceMatrix) {
         data[currentIdx, "Visited"] <- TRUE
 
         minima <- min(distanceMatrix[currentIdx, ], na.rm = TRUE)
+
+        # The min-function returns only one minima, so need to search for others.
+        # This is needed since we need to randomly select one of those minimas to
+        # be the next case.
         minimas <- which(distanceMatrix[currentIdx, ] == minima)
 
+        # Mark current cases row and column as NA's to avoid being picked again.
         distanceMatrix[currentIdx, ] <- NA
         distanceMatrix[, currentIdx] <- NA
 
         if(length(minimas) > 1) {
+            # As stated above, pick randomly one if there's more than one minima.
             nearest <- sample(minimas, size = 1)
             nearest <- nearest[[1]]
         } else {
             nearest <- minimas[[1]]
         }
 
+        # The nearest case is the next current case
         currentIdx <- nearest
     }
 
@@ -454,6 +500,7 @@ traverse <- function(data, distanceMatrix) {
 #'
 #' Computes a statistical baseline running the algorithm multiple times and
 #' calculating the mean of those runs.
+#'
 #' @param labels Vector of all labels contained in the dataset
 #' @param iterations Number of baseline iterations
 #' @return Returns mean of iteration
@@ -464,6 +511,9 @@ baseline <- function(labels, iterations = 50) {
     n <- length(labels)
     values <- vector(mode = "numeric", length = iterations)
     for(i in 1:iterations) {
+
+        # Baseline is a scatter value of random situation. So this is to shuffle
+        # or generate random list of classlabels and calculate scatter for it.
         sample <- sample(labels, size = n)
         values[i] <- scatter(sample)
     }
@@ -474,12 +524,12 @@ baseline <- function(labels, iterations = 50) {
 # ##
 #' Calculates separation power
 #'
+# TODO: Is this function really needed?
+#'
 #' @param z Baseline
 #' @param s Raw Scatter value
 #' @return Returns the difference between baseline and raw scatter value.
-# TODO: Is this really needed?
 # ##
 spower <- function(z, s) {
-
     return(z - s)
 }
