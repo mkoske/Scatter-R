@@ -81,7 +81,7 @@ install.packages("gWidgets2RGtk2")
 Now all GUI dependencies are installed and GUI itself can be installed by issuing following command.
 
 ```R
-install.packages("https://github.com/jmpaon/ScatterR-gui/releases/download/v1.0/ScatterRGui_1.0_release.tar.gz", repos = NULL, method = "libcurl")
+install.packages("https://github.com/jmpaon/ScatterR-gui/releases/download/v1.1/ScatterRGui_1.1_release.tar.gz", repos = NULL, method = "libcurl")
 ```
 
 After installation is complete, you can load and run the GUI by issuing commands `library(ScatterRGui)` and `ScatterR.gui()`.
