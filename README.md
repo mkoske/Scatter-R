@@ -16,7 +16,7 @@ Scatter value is also used to calculate *separation power*, which is the differe
 
 Follow these instructions to install Scatter-project. If you know, what you're doing, you can choose the installation method of your liking.
 
-These installation instructions are tested with Windows 8 and Windows 10 operating systems using R versions 3.2.2 and 3.2.3.
+These installation instructions were tested with Windows 8 and Windows 10 operating systems using R versions 3.2.2 and 3.2.3.
 
 ### ScatterR-package
 
