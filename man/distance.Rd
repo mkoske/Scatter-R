@@ -19,7 +19,7 @@ Returns a distance matrix.
 }
 \description{
 For euclidean and manhattan distances, it uses the `dist` function from
-base and for HEOM, it uses the code found in `heom.R`-file. Note, that 
+base and for HEOM, it uses the code found in `heom.R`-file. Note, that
 this function expects data to be without class-column!
 }
 
