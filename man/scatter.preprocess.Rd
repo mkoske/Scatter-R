@@ -13,9 +13,9 @@ scatter.preprocess(df, classvar, included.attributes = NULL,
 
 \item{classvar}{Name or index of the column containing the class label}
 
-\item{included.attributes}{Names or indices of columns/attributes to be included in the processed dataframe (columns that are not in included attributes are stripped)}
+\item{included.attributes}{Names or indices of columns/attributes to be included in the processed dataframe (columns that are not in included attributes are stripped; if not given, by default all are included)}
 
-\item{included.classes}{Names or indices of classes to be included in the processed dataframe (rows where class label is not in included classes are stripped)}
+\item{included.classes}{Names or indices of classes to be included in the processed dataframe (rows where class label is not in included classes are stripped; if not given, by default all are included)}
 
 \item{binarized}{Names or indices of nominal attributes/columns to be binarized in the preprocessing}
 

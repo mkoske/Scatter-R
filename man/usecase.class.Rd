@@ -12,7 +12,8 @@ usecase.class(data, distanceMatrix, iterations = 10, nominal = c(),
 
 \item{distanceMatrix}{A distance matrix. This is different than other
 usecases as it doesn't take \code{distanceMethod} but
-\code{distanceMatrix}.}
+\code{distanceMatrix}. This is because the usecase.class is reused
+in usecase.all.}
 
 \item{iterations}{Number of iterations}
 

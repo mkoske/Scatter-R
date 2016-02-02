@@ -2,7 +2,8 @@
 % Please edit documentation in R/scatter.R
 \name{distance}
 \alias{distance}
-\title{Distance function.}
+\title{Distance function wrapper for selecting between euclidean, manhattan
+and HEOM.}
 \usage{
 distance(data, distanceMethod = "euclidean", nominals = NULL)
 }
