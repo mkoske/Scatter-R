@@ -22,6 +22,7 @@ heom <- function(data) {
     if(!is.data.frame(data))
         data <- as.data.frame(data)
 
+        print(nrow(data))
     # Find out which columns are factor type
     factors <- sapply(data, is.factor)
 
@@ -30,7 +31,7 @@ heom <- function(data) {
 
     # Calculate the ranges of numeric variables; it's needed to calculate the distance
     # for numeric variables.
-    ranges <- apply(data[, numerics], 2, max, na.rm = T) - apply(data[, numerics], 2, min, na.rm = T)
+    ranges <- apply(data[numerics], 2, max, na.rm = T) - apply(data[numerics], 2, min, na.rm = T)
 
     # Convert to numeric whole data
     # TODO: Why?
