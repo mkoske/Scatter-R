@@ -19,9 +19,8 @@
 # ##
 heom <- function(data) {
 
-    # This removes the class label from the data; it's not used here
-    ncols <- ncol(data) - 1
-    data <- data[, 1:ncols]
+    if(!is.data.frame(data))
+        data <- as.data.frame(data)
 
     # Find out which columns are factor type
     factors <- sapply(data, is.factor)

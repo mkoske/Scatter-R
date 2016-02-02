@@ -131,7 +131,7 @@ usecase.variable <- function(
     for(variable in 1:variables) {
 
         # In variables usecase, only one variable is used at the time to calculate proximity matrix
-        distanceMatrix <- distance(as.data.frame(data[, variable]), distanceMethod, nominal)
+        distanceMatrix <- distance(data[variable], distanceMethod, nominal)
         for(i in 1:iterations) {
             if(quiet == FALSE) {
                 print(sprintf("Running iteration %s for variable %s...", i, variable))
