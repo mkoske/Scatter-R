@@ -22,7 +22,6 @@ heom <- function(data) {
     if(!is.data.frame(data))
         data <- as.data.frame(data)
 
-        print(nrow(data))
     # Find out which columns are factor type
     factors <- sapply(data, is.factor)
 
