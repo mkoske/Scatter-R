@@ -2,6 +2,8 @@
 
 Scatter-R is an implementation of Scatter-algorithm in [R](https://r-project.org).
 
+> NOTE: If you encounter any errors or problems, please open an issue.
+
 ## Description
 
 This is an overview of the project. You can find more information about the algorithm from the papers listed in "References and further reading" -section. Detailed description about this project can be found from the project [wiki](https://github.com/Tommytronic/Scatter-R/wiki).
