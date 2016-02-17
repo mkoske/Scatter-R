@@ -296,6 +296,7 @@ usecase.all <- function(
     all <- list()
     variables <- ncol(data) - 1
     result <- matrix(nrow = variables, ncol = iterations)
+    varnames <- names(data)
 
     # Run classwise analysis for each variable, i.e. loop over all variables and run
     # usecase classes for each.
@@ -312,7 +313,7 @@ usecase.all <- function(
         # TODO: Think about adding additional flag to control the quietness of this usecase.all and
         # usecase.class separately. Would someone need it?
         result <- usecase.class(data, distanceMatrix, iterations, nominal, baselineIterations, TRUE)
-        all <- c(all, result)
+        all[[varnames[variable]]] <- result
     }
 
     return(all)
