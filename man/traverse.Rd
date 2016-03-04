@@ -4,7 +4,7 @@
 \alias{traverse}
 \title{Generate collection vector}
 \usage{
-traverse(data, distanceMatrix)
+traverse(data, dm, seed = FALSE)
 }
 \arguments{
 \item{data}{The data}

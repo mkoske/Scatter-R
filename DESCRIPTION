@@ -1,8 +1,8 @@
 Package: ScatterR
 Type: Package
 Title: An implementation of scatter-algorithm in R
-Version: 1.3
-Date: 2016-02-17
+Version: 1.4
+Date: 2016-03-04
 Author: Tommi Tuominen, Juha Panula-Ontto, Miika Koskela
 Maintainer: Miika Koskela <Koskela.Miika.S@student.uta.fi>
 Description: At the moment, see README for more information.
