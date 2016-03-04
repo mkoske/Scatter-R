@@ -435,54 +435,43 @@ numChanges <- function(collectionVector) {
 #' @param distanceMatrix The distance matrix calculated from \code{data}
 #' @return Returns the vector of labels
 # ##
-traverse <- function(data, distanceMatrix) {
+traverse <- function(data, dm, seed=FALSE) {
 
     # Assume last column is class label column, so ignore it. That's why - 1.
-    ncols <- ncol(data) - 1
-    nrows <- nrow(data)
+    p <- ncol(data)
+    n <- nrow(data)
 
-    lbls <- vector(mode = "character")
+    indices <- vector(mode = "numeric", length=n)
 
-    # Add column to track visited; important to do it here, NOT before counting
-    # the number of columns (see above).
-    data$Visited = F
+    if(seed == TRUE)
+        set.seed(1)
 
-    # Set the diagonal to NA to ignore it when finding nearest neighbour. Diagonal
-    # means the distance between the case itself.
-    diag(distanceMatrix) <- NA
+    current <- sample(1:n, size = 1)
+    labels <- data[, p]
+    count <- 0
 
-    # Random starting point
-    currentIdx <- sample(1:nrows, size = 1)
 
-    # Loop until all cases are visited
-    while(nrow(data[data$Visited == F, ]) > 0) {
+        # Loop until all cases are visited
+    while(count <= n) {
 
-        # No more cases to visit, so stop here and record the class label of the last
-        # case.
-        if(all(is.na(distanceMatrix))) {
-            lbls <- c(lbls, data[currentIdx, (ncols + 1)])
+        count <- count + 1
+        if(count >= n) {
+            indices[count] <- labels[current]
             break
         }
 
         # Save the label of the current index
-        lbls <- c(lbls, data[currentIdx, (ncols + 1)])
+        indices[count] <- current
 
-        # Also, set the current index visited
-        data[currentIdx, "Visited"] <- TRUE
-
-        minima <- min(distanceMatrix[currentIdx, ], na.rm = TRUE)
-
-        # The min-function returns only one minima, so need to search for others.
-        # This is needed since we need to randomly select one of those minimas to
-        # be the next case.
-        minimas <- which(distanceMatrix[currentIdx, ] == minima)
-
-        # Mark current cases row and column as NA's to avoid being picked again.
-        distanceMatrix[currentIdx, ] <- NA
-        distanceMatrix[, currentIdx] <- NA
+        row <- dm[current, ]
+        minima <- min(row[-c(indices)])
+        minimas <- which(row == minima)
 
         if(length(minimas) > 1) {
-            # As stated above, pick randomly one if there's more than one minima.
+
+            if(seed == TRUE)
+                set.seed(1)
+
             nearest <- sample(minimas, size = 1)
             nearest <- nearest[[1]]
         } else {
@@ -490,10 +479,10 @@ traverse <- function(data, distanceMatrix) {
         }
 
         # The nearest case is the next current case
-        currentIdx <- nearest
+        current <- nearest
     }
 
-    return(lbls)
+    labels[order(indices)]
 }
 
 # ##
