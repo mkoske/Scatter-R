@@ -450,13 +450,12 @@ traverse <- function(data, dm, seed=FALSE) {
     labels <- data[, p]
     count <- 0
 
-
-        # Loop until all cases are visited
+    # Loop until all cases are visited
     while(count <= n) {
 
         count <- count + 1
         if(count >= n) {
-            indices[count] <- labels[current]
+            indices[count] <- current
             break
         }
 
@@ -466,7 +465,7 @@ traverse <- function(data, dm, seed=FALSE) {
         row <- dm[current, ]
         minima <- min(row[-c(indices)])
         minimas <- which(row == minima)
-
+        minimas <- minimas[!(minimas %in% indices)]
         if(length(minimas) > 1) {
 
             if(seed == TRUE)
@@ -482,7 +481,10 @@ traverse <- function(data, dm, seed=FALSE) {
         current <- nearest
     }
 
-    labels[order(indices)]
+
+
+    labels[indices]
+
 }
 
 # ##
