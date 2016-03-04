@@ -2,8 +2,6 @@
 
 Scatter-R is an implementation of Scatter-algorithm in [R](https://r-project.org).
 
-> NOTE: If you encounter any errors or problems, please open an issue.
-
 ## Description
 
 This is an overview of the project. You can find more information about the algorithm from the papers listed in "References and further reading" -section. Detailed description about this project can be found from the project [wiki](https://github.com/Tommytronic/Scatter-R/wiki).
@@ -37,7 +35,7 @@ Install the package using following commands.
 Install the package by issuing following command in R console.
 
 ```R
-install.packages("https://github.com/Tommytronic/Scatter-R/releases/download/v1.3/ScatterR_1.3_release.tar.gz", repos = NULL, method = "libcurl")
+install.packages("https://github.com/Tommytronic/Scatter-R/releases/download/v1.4/ScatterR_1.4_release.tar.gz", repos = NULL, method = "libcurl")
 ```
 
 #### Test the installation
