@@ -332,6 +332,7 @@ usecase.all <- function(
 #'        \code{euclidean}, \code{manhattan} or \code{heom}
 #' @param nominals Nominal attributes; not in use at the moment
 #' @return Returns a distance matrix.
+#' @export
 # ##
 distance <- function(
     data,                               # Data frame
@@ -347,6 +348,8 @@ distance <- function(
         euclidean = as.matrix(dist(data, method = "euclidean")),
         manhattan = as.matrix(dist(data, method = "manhattan")),
         heom      = as.matrix(heom(data)),
+        cosine    = as.matrix(cosine(data)),
+        binary    = as.matrix(dist(data, method = "binary")),
         c()
         )
 
