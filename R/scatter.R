@@ -416,6 +416,7 @@ maxChanges <- function(labels) {
 #'
 #' @param collectionVector A collection vector produced by \code{traverse}.
 #' @return The number of changes in the collection vector
+#' @export
 # ##
 numChanges <- function(collectionVector) {
     n <- length(collectionVector)

@@ -3,5 +3,6 @@
 export(cosine)
 export(distance)
 export(heom)
+export(numChanges)
 export(run)
 export(scatter.preprocess)
