@@ -90,7 +90,7 @@ You might get some version warning when installing or running GUI, but if everyt
 
 ## Usage
 
-The main entry point to algorithm is `run()`-function. It aggregates all the steps needed to calculate different values. It's signature is the following.
+The main entry point to algorithm is `run()`-function. It aggregates all the steps needed to calculate various values. It's signature is as follows.
 
 ```R
 run <- function(
@@ -105,19 +105,19 @@ run <- function(
     nominals    = NULL)
 ```
 
-**data** is a `dataframe`, from which user wishes to calculate Scatter etc. values from. It must be `dataframe`.
+**data** is a `data.frame` containing the data.
 
-**classlabel** is the index of the column, which contains the class label.
+**classlabel** is the index of the column, which contains the class label. If the class label column is the last one, this can be omitted.
 
-**distanceMethod** is the method to calculate the distance matrix, which is used to traverse the dataset in nearest neighbour -sense. Currently there is euclidean, manhattan and heom available. The heom method is currently very slow, so don't use it if you're in hurry.
+**distanceMethod** is the method to calculate the distance matrix. It is used to traverse the dataset in *nearest neighbor* -sense. Currently, there is Euclidean, Manhattan and HEOM distances available. The HEOM method is currently very slow. Use the names of these distances in lower-case, i.e. "euclidean" for Euclidean distance.
 
-**usecase** is parameter, which indicates, if the Scatter value should be calculated for whole dataset, for each class separately or for each variable separately, or all, which means that the classwise scatter is calculated for each variable. Possible values for this parameter is `single`, `classes`, `variables` or `all`. These strings are matched exactly.
+**usecase** is an indicator whether the Scatter value should be calculated for (1) whole dataset, (2) for each class separately or (3) for each variable separately, or (4) all. Value "all" which means that the classwise scatter is calculated for each variable. Possible values for this parameter is `single`, `classes`, `variables` or `all`. These strings are matched exactly.
 
-**iterations** controls the number of iterationns the Scatter calculation runs. Since the starting point is selected randomly, the algorithm must be run multiple times. This is separate from the baseline iteartions.
+**iterations** is the number of iterations the Scatter calculation runs. Since the starting point is selected randomly, the algorithm must be run multiple times. This is different from the number of baseline iteartions.
 
-**baselineIterations:** This controls the number of baseline iterations.
+**baselineIterations** is the number of baseline iterations.
 
-**classes** and **columns** parameters are used to select which classes and / or variables are used in calculations.
+**classes** and **columns** are used to select which classes and / or variables are used in calculations.
 
 **nominal** is not used at the moment.
 
@@ -127,9 +127,7 @@ In simplest case, using for example popular Iris [3] dataset, the command needed
 > run(iris, classlabel = 5)
 ```
 
-> If the class label column is the last one, classlabel-parameter can be omitted.
-
-This runs the algorithm 10 iterations and 50 iterations for baseline. It outputs the following values (plus the information, that is currently running etc).
+This runs the algorithm 10 iterations and 50 iterations for baseline (see the signature of the function for default values). It outputs the following values (plus the information, about what currently running etc).
 
 - Scatter values for all iterations
 - Mean of above values
