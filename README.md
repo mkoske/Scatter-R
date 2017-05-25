@@ -1,6 +1,6 @@
 # Scatter-R
 
-Scatter-R is an implementation of Scatter-algorithm in [R](https://r-project.org).
+Scatter-R is an implementation of Scatter-algorithm in [R](https://r-project.org). It is an algorithm to evaluate variables and dataset learnability for machine learning.
 
 ## Description
 
