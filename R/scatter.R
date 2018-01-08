@@ -65,32 +65,57 @@ run <- function(
         classlabel <- which(names(data) == classlabel)
     }
 
-    # Save class labels to append those at the end of data frame later
     class_labels <- data[, classlabel]
     data[, classlabel] <- NULL
 
-    if(length(columns) > 0)
+    if (length(columns) > 0)
         data <- data[columns]
 
-    # Move classlabel column to last.
     data[, (ncol(data) + 1)] <- class_labels
 
     result <- NULL
-
-    # Select proper usecase. Exact case-sensitive match is used here.
     if (usecase == "single") {
-        result <- usecase.single(data, distance_method, iterations, nominals, baseline_iterations, quiet)
+        result <- usecase.single(
+            data,
+            distance_method,
+            iterations,
+            nominals,
+            baseline_iterations,
+            quiet
+        )
     } else if (usecase == "classes") {
         # TODO: Any way to ensure classlabel is correct subscript?
         ncols <- ncol(data) - 1
         distance_matrix <- distance(data[1:ncols], distance_method, nominals)
-        result <- usecase.class(data, distance_matrix, iterations, nominals, baseline_iterations, quiet)
-    } else if(usecase == "variables") {
-        result <- usecase.variable(data, distance_method, iterations, nominals, baseline_iterations, quiet)
-    } else if(usecase == "all") {
-        result <- usecase.all(data, distance_method, iterations, nominals, baseline_iterations, quiet)
+        result <- usecase.class(
+            data,
+            distance_matrix,
+            iterations,
+            nominals,
+            baseline_iterations,
+            quiet
+        )
+    } else if (usecase == "variables") {
+        result <- usecase.variable(
+            data,
+            distance_method,
+            iterations,
+            nominals,
+            baseline_iterations,
+            quiet
+        )
+    } else if (usecase == "all") {
+        result <- usecase.all(
+            data,
+            distance_method,
+            iterations,
+            nominals,
+            baseline_iterations,
+            quiet
+        )
     } else {
-        stop("Unknown usecase. Must be one of following: single, classes, variables or all.")
+        stop("Unknown usecase. Must be one of following: " +
+             "single, classes, variables or all.")
     }
 
     return(result)
@@ -120,22 +145,15 @@ usecase.variable <- function(
     # -1 for class column; it's the last one
     variables <- ncol(data) - 1
 
-    # Result matrix; rows are variables and columns are iterations, i.e.
-    # `result[i, j]` contains scatter value for variable `i` on iteration `j`.
     result <- matrix(nrow = variables, ncol = iterations)
 
     baselines <- vector(mode = "numeric")
     collection_vector <- vector(mode = "numeric", length = nrow(data))
 
-    # Iterate over all variables
-    for(variable in 1:variables) {
+    for (variable in 1:variables) {
 
-        # In variables usecase, only one variable is used at the time to calculate proximity matrix
         distance_matrix <- distance(data[variable], distance_method, nominal)
-        for(i in 1:iterations) {
-            if(quiet == FALSE) {
-                print(sprintf("Running iteration %s for variable %s...", i, variable))
-            }
+        for (i in 1:iterations) {
             collection_vector <- traverse(data, distance_matrix)
             result[variable, i] <- scatter(collection_vector)
         }
@@ -181,7 +199,7 @@ usecase.class <- function(
 
     # Pick up all unique classes that the data contains
     classes <- as.numeric(unique(data[, ncol(data)]))
-    if(any(classes < 0)) {
+    if (any(classes < 0)) {
         stop("Class labels cannot be negative.")
     }
 
@@ -191,11 +209,11 @@ usecase.class <- function(
     baselines <- vector(mode = "numeric")
 
     # TODO: does this for loop maintain it's order?
-    for(class in classes) {
+    for (class in classes) {
 
-        for(i in 1:iterations) {
+        for (i in 1:iterations) {
 
-            if(quiet == FALSE) {
+            if (quiet == FALSE) {
                 print(sprintf("Running iteration %s for class %s...", i, class))
             }
 
@@ -254,8 +272,8 @@ usecase.single <- function(
     distance_matrix <- distance(data[1:ncols], distance_method, nominal)
     values <- vector(length = iterations)
 
-    for(i in 1:iterations) {
-        if(quiet == FALSE) {
+    for (i in 1:iterations) {
+        if (quiet == FALSE) {
             print(sprintf("Running iteration %s...", i))
         }
         # This usecase returns also a collection vector. It's always the last one
@@ -300,21 +318,31 @@ usecase.all <- function(
     result <- matrix(nrow = variables, ncol = iterations)
     varnames <- names(data)
 
-    # Run classwise analysis for each variable, i.e. loop over all variables and run
-    # usecase classes for each.
-    for(variable in 1:variables) {
-        if(quiet == FALSE) {
+    # Run classwise analysis for each variable, i.e. loop over all variables and
+    # run usecase classes for each.
+    for (variable in 1:variables) {
+        if (quiet == FALSE) {
             print(sprintf("Running usecase.class for variable %s", variable))
         }
 
         # New distance matrix for each variable
         distance_matrix <- distance(data[variable], distance_method, nominal)
 
-        # Using quiet = TRUE here to reduce output. If it's FALSE, then it will produce
-        # variables * iterations (e.g. 8 variables * 10 iterations = 80lines) lines of output messages.
-        # TODO: Think about adding additional flag to control the quietness of this usecase.all and
-        # usecase.class separately. Would someone need it?
-        result <- usecase.class(data, distance_matrix, iterations, nominal, baseline_iterations, TRUE)
+        # Using quiet = TRUE here to reduce output. If it's FALSE, then it will
+        # produce variables * iterations (e.g. 8 variables * 10 iterations = 80
+        # lines) lines of output messages.
+        #
+        # TODO: Think about adding additional flag to control the quietness of
+        # this usecase.all and usecase.class separately. Would someone need it?
+        result <- usecase.class(
+            data,
+            distance_matrix,
+            iterations,
+            nominal,
+            baseline_iterations,
+            TRUE
+        )
+
         all[[varnames[variable]]] <- result
     }
 
@@ -373,10 +401,10 @@ distance <- function(
 scatter <- function(labels) {
 
     # Calculate the number of actual changes
-    changes <- numChanges(labels)
+    changes <- n_changes(labels)
 
     # Calculate the theoretical maximum number of changes
-    thmax <- maxChanges(labels)
+    thmax <- max_changes(labels)
 
     # Scatter value is the proportion of previous
     return(changes / thmax)
@@ -392,7 +420,7 @@ scatter <- function(labels) {
 #' @param labels A set of labels found in dataset that is being processed.
 #' @return Returns maximum number of label changes within given set of labels.
 # ##
-maxChanges <- function(labels) {
+max_changes <- function(labels) {
 
     nmax <- 0
     max <- NULL
@@ -404,7 +432,7 @@ maxChanges <- function(labels) {
 
     # Choose the theoretical maximum. See References and further reading from
     # README.md to learn about theory of this.
-    if((nmax == 1) && (max > (n - max))) {
+    if ((nmax == 1) && (max > (n - max))) {
         thmax <- (2 * (n - max))
     } else {
         thmax <- (n - 1)
@@ -423,11 +451,11 @@ maxChanges <- function(labels) {
 #' @return The number of changes in the collection vector
 #' @export
 # ##
-numChanges <- function(collection_vector) {
+n_changes <- function(collection_vector) {
     n <- length(collection_vector)
     changes <- 0
-    for(i in 1:n) {
-        if((i < n) && (collection_vector[i] != collection_vector[i + 1])) {
+    for (s in 1:n) {
+        if ((i < n) && (collection_vector[i] != collection_vector[i + 1])) {
             changes <- changes + 1
         }
     }
@@ -450,34 +478,32 @@ traverse <- function(data, dm, seed=FALSE) {
     p <- ncol(data)
     n <- nrow(data)
 
-    indices <- vector(mode = "numeric", length=n)
+    indices <- vector(mode = "numeric", length = n)
 
-    if(seed == TRUE)
+    if (seed == TRUE)
         set.seed(1)
 
     current <- sample(1:n, size = 1)
     labels <- data[, p]
     count <- 0
 
-    # Loop until all cases are visited
-    while(count <= n) {
+    while (count <= n) {
 
         count <- count + 1
-        if(count >= n) {
+        if (count >= n) {
             indices[count] <- current
             break
         }
 
-        # Save the label of the current index
         indices[count] <- current
 
         row <- dm[current, ]
         minima <- min(row[-c(indices)])
         minimas <- which(row == minima)
         minimas <- minimas[!(minimas %in% indices)]
-        if(length(minimas) > 1) {
+        if (length(minimas) > 1) {
 
-            if(seed == TRUE)
+            if (seed == TRUE)
                 set.seed(1)
 
             nearest <- sample(minimas, size = 1)
@@ -486,14 +512,10 @@ traverse <- function(data, dm, seed=FALSE) {
             nearest <- minimas[[1]]
         }
 
-        # The nearest case is the next current case
         current <- nearest
     }
 
-
-
     labels[indices]
-
 }
 
 # ##
@@ -508,13 +530,9 @@ traverse <- function(data, dm, seed=FALSE) {
 # ##
 baseline <- function(labels, iterations = 50) {
 
-    print(sprintf("Calculating baseline with %s iterations...", iterations))
     n <- length(labels)
     values <- vector(mode = "numeric", length = iterations)
-    for(i in 1:iterations) {
-
-        # Baseline is a scatter value of random situation. So this is to shuffle
-        # or generate random list of classlabels and calculate scatter for it.
+    for ( i in 1:iterations) {
         sample <- sample(labels, size = n)
         values[i] <- scatter(sample)
     }
