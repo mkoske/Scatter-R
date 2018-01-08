@@ -57,36 +57,7 @@ After the `run` is completed, it prints out some information about the results. 
 
 ### GUI for ScatterR
 
-This package is not currently in CRAN repositories and there's some other issues too, so it's installation is not as simple as it could be. Also, it's further development idea to find out how to simplify the installation process of the GUI.
-
-We have separated GUI from ScatterR package and those who needs or wants GUI, can install it as a separate package. The GUI and these same instructions can be found [here](https://github.com/jmpaon/scatterr-gui).
-
-Our GUI is written using gWidgets2 and GTK, so you need to ensure those are installed too.
-
-Issue following command to install all other GUI dependencies but GTK-package itself.
-
-```R
-install.packages("RGtk2", depen = T)
-library(RGtk2)
-```
-
-When you issue `install.packages("RGtk2", depen = T)`-command, you will be prompted for repository to use. Choose a location close to you and click OK.
-
-After you issue `library(RGtk2)`-command, you get an error and prompt to install GTK-library. Click OK to install the GTK-bundle. After that, restart R console and issue following commands. [5]
-
-```R
-install.packages("gWidgets2RGtk2")
-```
-
-Now all GUI dependencies are installed and GUI itself can be installed by issuing following command.
-
-```R
-install.packages("https://github.com/jmpaon/ScatterR-gui/releases/download/v1.1/ScatterRGui_1.1_release.tar.gz", repos = NULL, method = "libcurl")
-```
-
-After installation is complete, you can load and run the GUI by issuing commands `library(ScatterRGui)` and `ScatterR.gui()`.
-
-You might get some version warning when installing or running GUI, but if everything works, you can dismiss those. Otherwise, please open an [issue](https://github.com/jmpaon/ScatterR-gui/issues) at Github.
+If you wish to use GUI, see the original project [here](https://github.com/Tommytronic/Scatter-R)
 
 ## Usage
 
@@ -119,7 +90,7 @@ run <- function(
 
 **classes** and **columns** are used to select which classes and / or variables are used in calculations.
 
-**nominal** is not used at the moment.
+**nominal** is not used at the moment (to be removed).
 
 In simplest case, using for example popular Iris [3] dataset, the command needed to run the algorithm, is following (assuming the package is already loaded).
 
@@ -138,10 +109,6 @@ This runs the algorithm 10 iterations and 50 iterations for baseline (see the si
 Please read the articles below to understand how to interpret these values.
 
 The results vary since the randomness of choosing starting points etc., but you should get results, that are between `0.06` and `0.08` for mean and for baseline around `0.65`.
-
-## Things to note
-
-TBD
 
 ## Further reading and references
 
