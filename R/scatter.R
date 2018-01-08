@@ -17,7 +17,7 @@
 #' @param data A data frame to process
 #' @param classlabel Column name or index for class label; if none provided,
 #'        last column is assumed
-#' @param distanceMethod Distance method to use; must be one of following:
+#' @param distance_method Distance method to use; must be one of following:
 #'        \code{euclidean}, \code{manhattan} or \code{heom}.
 #' @param usecase A usecase to select; must be one of following: \code{single},
 #'        \code{classes}, \code{variables} or \code{all}
@@ -35,33 +35,33 @@
 #' @examples
 #' run(iris)
 #' run(iris, classlabel = 5, usecase = "single")
-#' run(iris, classlabel = 5, distanceMethod = "manhattan", usecase = "classes", iterations = 30)
+#' run(iris, classlabel = 5, distance_method = "manhattan", usecase = "classes", iterations = 30)
 # ##
 run <- function(
     data,
-    classlabel = NULL,
-    distanceMethod  = "euclidean",
-    usecase     = "single",
-    iterations  = 10,
-    baselineIterations = 50,
-    classes     = NULL,
-    columns     = NULL,
-    nominals    = NULL,
-    quiet       = FALSE) {
+    classlabel          = NULL,
+    distance_method      = "euclidean",
+    usecase             = "single",
+    iterations          = 10,
+    baselineIterations  = 50,
+    classes             = NULL,
+    columns             = NULL,
+    nominals            = NULL,
+    quiet               = FALSE) {
 
-    if(!is.data.frame(data))
+    if (!is.data.frame(data))
         stop("Input data must be a data frame.")
 
     # Include only selected classes
-    if(length(classes) > 0)
+    if (length(classes) > 0)
         data <- data[data[, classlabel] %in% classes, , drop = FALSE]
 
     # If no classlabel was provided, assume it's the last column
-    if(is.null(classlabel))
+    if (is.null(classlabel))
         classlabel <- ncol(data)
 
     # Ensure numeric classlabel
-    if(!is.numeric(classlabel)) {
+    if (!is.numeric(classlabel)) {
         classlabel <- which(names(data) == classlabel)
     }
 
@@ -78,17 +78,17 @@ run <- function(
     result <- NULL
 
     # Select proper usecase. Exact case-sensitive match is used here.
-    if(usecase == "single") {
-        result <- usecase.single(data, distanceMethod, iterations, nominals, baselineIterations, quiet)
-    } else if(usecase == "classes") {
+    if (usecase == "single") {
+        result <- usecase.single(data, distance_method, iterations, nominals, baselineIterations, quiet)
+    } else if (usecase == "classes") {
         # TODO: Any way to ensure classlabel is correct subscript?
         ncols <- ncol(data) - 1
-        distanceMatrix = distance(data[1:ncols], distanceMethod, nominals)
-        result <- usecase.class(data, distanceMatrix, iterations, nominals, baselineIterations, quiet)
+        distance_matrix <- distance(data[1:ncols], distance_method, nominals)
+        result <- usecase.class(data, distance_matrix, iterations, nominals, baselineIterations, quiet)
     } else if(usecase == "variables") {
-        result <- usecase.variable(data, distanceMethod, iterations, nominals, baselineIterations, quiet)
+        result <- usecase.variable(data, distance_method, iterations, nominals, baselineIterations, quiet)
     } else if(usecase == "all") {
-        result <- usecase.all(data, distanceMethod, iterations, nominals, baselineIterations, quiet)
+        result <- usecase.all(data, distance_method, iterations, nominals, baselineIterations, quiet)
     } else {
         stop("Unknown usecase. Must be one of following: single, classes, variables or all.")
     }
@@ -100,7 +100,7 @@ run <- function(
 #' Usecase \code{variable} runs the algorithm for each variable separately.
 #'
 #' @param data Data
-#' @param distanceMethod Distance method
+#' @param distance_method Distance method
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
 #' @param baselineIterations Number of baseline iterations
@@ -111,7 +111,7 @@ run <- function(
 # ##
 usecase.variable <- function(
     data,
-    distanceMethod = "euclidean",
+    distance_method = "euclidean",
     iterations = 10,
     nominal = c(),
     baselineIterations = 50,
@@ -131,12 +131,12 @@ usecase.variable <- function(
     for(variable in 1:variables) {
 
         # In variables usecase, only one variable is used at the time to calculate proximity matrix
-        distanceMatrix <- distance(data[variable], distanceMethod, nominal)
+        distance_matrix <- distance(data[variable], distance_method, nominal)
         for(i in 1:iterations) {
             if(quiet == FALSE) {
                 print(sprintf("Running iteration %s for variable %s...", i, variable))
             }
-            collectionVector <- traverse(data, distanceMatrix)
+            collectionVector <- traverse(data, distance_matrix)
             result[variable, i] <- scatter(collectionVector)
         }
 
@@ -159,9 +159,9 @@ usecase.variable <- function(
 #' Usecase \code{class} runs the algorithm for each class separately.
 #'
 #' @param data Data
-#' @param distanceMatrix A distance matrix. This is different than other
-#'        usecases as it doesn't take \code{distanceMethod} but
-#'        \code{distanceMatrix}. This is because the usecase.class is reused
+#' @param distance_matrix A distance matrix. This is different than other
+#'        usecases as it doesn't take \code{distance_method} but
+#'        \code{distance_matrix}. This is because the usecase.class is reused
 #'        in usecase.all.
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
@@ -173,7 +173,7 @@ usecase.variable <- function(
 # ##
 usecase.class <- function(
     data,
-    distanceMatrix,
+    distance_matrix,
     iterations          = 10,
     nominal             = c(),
     baselineIterations  = 50,
@@ -199,7 +199,7 @@ usecase.class <- function(
                 print(sprintf("Running iteration %s for class %s...", i, class))
             }
 
-            collectionVector <- as.numeric(traverse(data, distanceMatrix))
+            collectionVector <- as.numeric(traverse(data, distance_matrix))
             collectionVector[collectionVector != class] <- (-1)
             result <- c(result, scatter(collectionVector))
         }
@@ -231,7 +231,7 @@ usecase.class <- function(
 #' Usecase `single`. This runs scatter algorithm for the whole dataset.
 #'
 #' @param data Data
-#' @param distanceMethod Distance method
+#' @param distance_method Distance method
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
 #' @param baselineIterations Number of baseline iterations
@@ -242,7 +242,7 @@ usecase.class <- function(
 # ##
 usecase.single <- function(
     data,
-    distanceMethod = "euclidean",
+    distance_method = "euclidean",
     iterations = 10,
     nominal = c(),
     baselineIterations = 50,
@@ -250,7 +250,7 @@ usecase.single <- function(
 
     ncols <- ncol(data) - 1
     collectionVector <- vector(length = nrow(data))
-    distanceMatrix <- distance(data[1:ncols], distanceMethod, nominal)
+    distance_matrix <- distance(data[1:ncols], distance_method, nominal)
     values <- vector(length = iterations)
 
     for(i in 1:iterations) {
@@ -259,7 +259,7 @@ usecase.single <- function(
         }
         # This usecase returns also a collection vector. It's always the last one
         # since it gets overwritten on every iteration.
-        collectionVector <- traverse(data, distanceMatrix)
+        collectionVector <- traverse(data, distance_matrix)
         values[i] <- scatter(collectionVector)
     }
 
@@ -277,7 +277,7 @@ usecase.single <- function(
 #' Usecase `all` runs the \code{classes} for all variables separately
 #'
 #' @param data Data
-#' @param distanceMethod Distance method
+#' @param distance_method Distance method
 #' @param iterations Number of iterations
 #' @param nominal Nominal attributes
 #' @param baselineIterations Number of baseline iterations
@@ -286,7 +286,7 @@ usecase.single <- function(
 # ##
 usecase.all <- function(
     data,
-    distanceMethod = "euclidean",
+    distance_method = "euclidean",
     iterations = 10,
     nominal = c(),
     baselineIterations = 50,
@@ -306,13 +306,13 @@ usecase.all <- function(
         }
 
         # New distance matrix for each variable
-        distanceMatrix <- distance(data[variable], distanceMethod, nominal)
+        distance_matrix <- distance(data[variable], distance_method, nominal)
 
         # Using quiet = TRUE here to reduce output. If it's FALSE, then it will produce
         # variables * iterations (e.g. 8 variables * 10 iterations = 80lines) lines of output messages.
         # TODO: Think about adding additional flag to control the quietness of this usecase.all and
         # usecase.class separately. Would someone need it?
-        result <- usecase.class(data, distanceMatrix, iterations, nominal, baselineIterations, TRUE)
+        result <- usecase.class(data, distance_matrix, iterations, nominal, baselineIterations, TRUE)
         all[[varnames[variable]]] <- result
     }
 
@@ -328,7 +328,7 @@ usecase.all <- function(
 #' this function expects data to be without class-column!
 #'
 #' @param data The data
-#' @param distanceMethod Distance method; must be one of following:
+#' @param distance_method Distance method; must be one of following:
 #'        \code{euclidean}, \code{manhattan} or \code{heom}
 #' @param nominals Nominal attributes; not in use at the moment
 #' @return Returns a distance matrix.
@@ -336,7 +336,7 @@ usecase.all <- function(
 # ##
 distance <- function(
     data,                               # Data frame
-    distanceMethod  = "euclidean",      # Distance measure
+    distance_method  = "euclidean",      # Distance measure
     nominals        = NULL) {           # Which columns are nominal; not in use at the moment
 
     if(!is.data.frame(data)) {
@@ -344,7 +344,7 @@ distance <- function(
     }
 
     result <- switch(
-        distanceMethod,
+        distance_method,
         euclidean = as.matrix(dist(data, method = "euclidean")),
         manhattan = as.matrix(dist(data, method = "manhattan")),
         heom      = as.matrix(heom(data)),
@@ -354,7 +354,7 @@ distance <- function(
         )
 
     if(is.null(result))
-        stop("Invalid distanceMethod. Must be 'euclidean', 'manhattan' or 'heom'.")
+        stop("Invalid distance_method. Must be 'euclidean', 'manhattan' or 'heom'.")
 
     return(result)
 }
@@ -436,7 +436,7 @@ numChanges <- function(collectionVector) {
 #' as we go.
 #'
 #' @param data The data
-#' @param distanceMatrix The distance matrix calculated from \code{data}
+#' @param distance_matrix The distance matrix calculated from \code{data}
 #' @return Returns the vector of labels
 # ##
 traverse <- function(data, dm, seed=FALSE) {
