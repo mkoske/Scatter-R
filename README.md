@@ -4,11 +4,11 @@ Scatter-R is an implementation of Scatter-algorithm in [R](https://r-project.org
 
 ## Description
 
-This is an overview of the project. You can find more information about the algorithm from the papers listed in "References and further reading" -section. Detailed description about this project can be found from the project [wiki](https://github.com/Tommytronic/Scatter-R/wiki).
+This is an overview of the software. You can find more information about the algorithm from the papers listed in "References and further reading" -section.
 
-Scatter is an algorithm useful to determine if the dataset or parts of it has such information that can be successfully used for classification and class prediction. [1] It can also used in dimensionality reduction as shown by Saarikoski et al. in [2].
+Scatter is an algorithm useful for determining if the dataset or parts of it has such information that can be successfully used for classification. [1] It can also used in dimensionality reduction (See e.g. Saarikoski et al. [2]).
 
-It works simply by traversing the dataset from a randomly chosen starting case to always closest neighbour recording the class label. In this way a *collection vector* is produced and the *label change count* is calculated from the collection vector. Then, scatter value is calculated as a proportion of the label changes `v` and theoretical maximum number of label changes `w`, thus the equation for Scatter value `S = v / w`. [1]
+It works simply by traversing the dataset from a randomly chosen starting point to the closest neighbour and recording the class label. In this way a *collection vector* is produced and the *label change count* is calculated from the collection vector. Then, scatter value is calculated as a proportion of the label changes `v` and theoretical maximum number of label changes `w`, thus the equation for Scatter value `S = v / w`. [1]
 
 Scatter value is also used to calculate *separation power*, which is the difference between random situation, i.e. the labels of the current dataset is randomly distributed, and the current situation. The equation for separation power is `F = z - s`, where `z` is the scatter value for random situation.[1]
 
@@ -16,23 +16,11 @@ Scatter value is also used to calculate *separation power*, which is the differe
 
 Follow these instructions to install Scatter-project. If you know, what you're doing, you can choose the installation method of your liking.
 
-These installation instructions were tested with Windows 8 and Windows 10 operating systems using R versions 3.2.2 and 3.2.3.
-
 ### ScatterR-package
 
-Follow these steps to install the Scatter-R package, which contains the algorithm itself and command line interface to it. Installation of the GUI package is described later.
+Follow these steps to install the Scatter-R package. The name of the package is ScatterR even though the repository and project name has dash in it. This is because R doesn't allow dashes in the name of the package.
 
-The name of the package is ScatterR even though the repository and project name has dash in it. This is because R doesn't allow dashes in the name of the package.
-
-Go to the [Releases](https://github.com/Tommytronic/Scatter-R/releases) page of the project and find out, which is the most recent release. Under the heading "Downloads" you will find source archives and at least one archive, which name ends with `_release`. Copy it's URL to clipboard since you will need it.
-
-Install the package using following commands.
-
-> Note, that the URL may vary depending on the release. In general, the package name ends with `_release`.
-
-#### Install the package.
-
-Install the package by issuing following command in R console.
+Go to the "Releases"-section and download latest release. Then, install the package using following command in R-console.
 
 ```R
 install.packages("https://github.com/Tommytronic/Scatter-R/releases/download/v1.4/ScatterR_1.4_release.tar.gz", repos = NULL, method = "libcurl")
@@ -40,18 +28,14 @@ install.packages("https://github.com/Tommytronic/Scatter-R/releases/download/v1.
 
 #### Test the installation
 
-After the installation has completed without errors, it's time to test the installation.
-
-Issue following commands.
+Test the installation using following commands.
 
 ```R
 library(ScatterR)
 run(iris)
 ```
 
-The `library`-command loads and attaches the ScatterR package to the search path and it's ready to be used.
-
-The `run`-command runs the usecase `single` for the whole iris dataset. The iris dataset is part of R and you don't need to get and install it.
+The above example runs the usecase `single` for the whole iris dataset. The iris dataset is part of R and you don't need to get it elsewhere.
 
 After the `run` is completed, it prints out some information about the results. More information about these on Usage-section.
 
