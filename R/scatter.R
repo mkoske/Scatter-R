@@ -242,11 +242,12 @@ usecase.class <- function(
 # ##
 usecase.single <- function(
     data,
-    distance_method = "euclidean",
-    iterations = 10,
-    nominal = c(),
+    distance_method     = "euclidean",
+    iterations          = 10,
+    nominal             = c(),
     baseline_iterations = 50,
-    quiet = FALSE) {
+    quiet               = FALSE
+) {
 
     ncols <- ncol(data) - 1
     collection_vector <- vector(length = nrow(data))
@@ -266,10 +267,10 @@ usecase.single <- function(
     baseline <- baseline(collection_vector, baseline_iterations)
 
     return(list(
-        values      = values,
-        means       = (sum(values) / iterations),
-        baselines   = baseline,
-        collection_vector = collection_vector
+        values              = values,
+        means               = (sum(values) / iterations),
+        baselines           = baseline,
+        collection_vector   = collection_vector
         ))
 }
 
@@ -286,11 +287,12 @@ usecase.single <- function(
 # ##
 usecase.all <- function(
     data,
-    distance_method = "euclidean",
-    iterations = 10,
-    nominal = c(),
+    distance_method     = "euclidean",
+    iterations          = 10,
+    nominal             = c(),
     baseline_iterations = 50,
-    quiet = FALSE) {
+    quiet               = FALSE
+) {
 
     # This is the container for all results
     all <- list()
@@ -335,11 +337,12 @@ usecase.all <- function(
 #' @export
 # ##
 distance <- function(
-    data,                               # Data frame
-    distance_method  = "euclidean",      # Distance measure
-    nominals        = NULL) {           # Which columns are nominal; not in use at the moment
+    data,
+    distance_method = "euclidean",
+    nominals        = NULL
+) {
 
-    if(!is.data.frame(data)) {
+    if (!is.data.frame(data)) {
         stop("Data must be a data frame type.")
     }
 
@@ -353,8 +356,10 @@ distance <- function(
         c()
         )
 
-    if(is.null(result))
-        stop("Invalid distance_method. Must be 'euclidean', 'manhattan' or 'heom'.")
+    if (is.null(result)) {
+        stop("Invalid distance_method." +
+             " Must be 'euclidean', 'manhattan' or 'heom'.")
+    }
 
     return(result)
 }
