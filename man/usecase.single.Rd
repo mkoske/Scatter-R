@@ -5,7 +5,7 @@
 \title{Usecase `single`. This runs scatter algorithm for the whole dataset.}
 \usage{
 usecase.single(data, distance_method = "euclidean", iterations = 10,
-  nominal = c(), baseline_iterations = 50, quiet = FALSE)
+  nominal = c(), baseline_iterations = 50)
 }
 \arguments{
 \item{data}{Data}
