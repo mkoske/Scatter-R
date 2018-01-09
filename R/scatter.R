@@ -401,7 +401,7 @@ max_changes <- function(labels) {
 n_changes <- function(collection_vector) {
     n <- length(collection_vector)
     changes <- 0
-    for (s in 1:n) {
+    for (i in 1:n) {
         if ((i < n) && (collection_vector[i] != collection_vector[i + 1])) {
             changes <- changes + 1
         }
