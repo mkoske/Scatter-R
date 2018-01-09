@@ -6,7 +6,7 @@
 \usage{
 run(data, classlabel = NULL, distance_method = "euclidean",
   usecase = "single", iterations = 10, baseline_iterations = 50,
-  classes = NULL, columns = NULL, nominals = NULL, quiet = FALSE)
+  classes = NULL, columns = NULL)
 }
 \arguments{
 \item{data}{A data frame to process}
@@ -28,11 +28,6 @@ last column is assumed}
 
 \item{columns}{List of indices or names of columns included in the
 calculation}
-
-\item{nominals}{List of indices or names of those columns that are nominal;
-not in use at the moment}
-
-\item{quiet}{A flag that controls whether messages are printed or not}
 }
 \value{
 This returns whatever \code{usecase.*}-functions return, since this
@@ -56,5 +51,5 @@ scatter algorithm on every variable and finally, usecase \code{all} runs
 \examples{
 run(iris)
 run(iris, classlabel = 5, usecase = "single")
-run(iris, classlabel = 5, distance_method = "manhattan", usecase = "classes", iterations = 30)
+run(iris, classlabel = 5, distance_method = "manhattan", usecase = "classes")
 }

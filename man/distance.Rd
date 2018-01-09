@@ -5,15 +5,13 @@
 \title{Distance function wrapper for selecting between euclidean, manhattan
 and HEOM.}
 \usage{
-distance(data, distance_method = "euclidean", nominals = NULL)
+distance(data, distance_method = "euclidean")
 }
 \arguments{
 \item{data}{The data}
 
 \item{distance_method}{Distance method; must be one of following:
 \code{euclidean}, \code{manhattan} or \code{heom}}
-
-\item{nominals}{Nominal attributes; not in use at the moment}
 }
 \value{
 Returns a distance matrix.

@@ -4,8 +4,8 @@
 \alias{usecase.class}
 \title{Usecase \code{class} runs the algorithm for each class separately.}
 \usage{
-usecase.class(data, distance_matrix, iterations = 10, nominal = c(),
-  baseline_iterations = 50, quiet = FALSE)
+usecase.class(data, distance_matrix, iterations = 10,
+  baseline_iterations = 50)
 }
 \arguments{
 \item{data}{Data}
@@ -17,11 +17,9 @@ in usecase.all.}
 
 \item{iterations}{Number of iterations}
 
-\item{nominal}{Nominal attributes}
-
 \item{baseline_iterations}{Number of baseline iterations}
 
-\item{quiet}{A flag that controls whether messages are printed or not}
+\item{A}{flag that controls whether messages are printed or not}
 }
 \value{
 TBD
