@@ -26,28 +26,24 @@
 #' @param classes List of class included in the calculation
 #' @param columns List of indices or names of columns included in the
 #'        calculation
-#' @param nominals List of indices or names of those columns that are nominal;
-#'        not in use at the moment
-#' @param quiet A flag that controls whether messages are printed or not
 #' @return This returns whatever \code{usecase.*}-functions return, since this
 #'         function is only a wrapper to usecases.
 #' @export
 #' @examples
 #' run(iris)
 #' run(iris, classlabel = 5, usecase = "single")
-#' run(iris, classlabel = 5, distance_method = "manhattan", usecase = "classes", iterations = 30)
+#' run(iris, classlabel = 5, distance_method = "manhattan", usecase = "classes")
 # ##
 run <- function(
     data,
     classlabel          = NULL,
-    distance_method      = "euclidean",
+    distance_method     = "euclidean",
     usecase             = "single",
     iterations          = 10,
-    baseline_iterations  = 50,
+    baseline_iterations = 50,
     classes             = NULL,
-    columns             = NULL,
-    nominals            = NULL,
-    quiet               = FALSE) {
+    columns             = NULL
+) {
 
     if (!is.data.frame(data))
         stop("Input data must be a data frame.")
@@ -79,39 +75,31 @@ run <- function(
             data,
             distance_method,
             iterations,
-            nominals,
-            baseline_iterations,
-            quiet
+            baseline_iterations
         )
     } else if (usecase == "classes") {
         # TODO: Any way to ensure classlabel is correct subscript?
         ncols <- ncol(data) - 1
-        distance_matrix <- distance(data[1:ncols], distance_method, nominals)
+        distance_matrix <- distance(data[1:ncols], distance_method)
         result <- usecase.class(
             data,
             distance_matrix,
             iterations,
-            nominals,
-            baseline_iterations,
-            quiet
+            baseline_iterations
         )
     } else if (usecase == "variables") {
         result <- usecase.variable(
             data,
             distance_method,
             iterations,
-            nominals,
-            baseline_iterations,
-            quiet
+            baseline_iterations
         )
     } else if (usecase == "all") {
         result <- usecase.all(
             data,
             distance_method,
             iterations,
-            nominals,
-            baseline_iterations,
-            quiet
+            baseline_iterations
         )
     } else {
         stop("Unknown usecase. Must be one of following: " +
@@ -127,9 +115,7 @@ run <- function(
 #' @param data Data
 #' @param distance_method Distance method
 #' @param iterations Number of iterations
-#' @param nominal Nominal attributes
 #' @param baseline_iterations Number of baseline iterations
-#' @param quiet A flag that controls whether messages are printed or not
 #' @return TBD
 #' @examples
 #' #TBD
@@ -138,21 +124,17 @@ usecase.variable <- function(
     data,
     distance_method = "euclidean",
     iterations = 10,
-    nominal = c(),
-    baseline_iterations = 50,
-    quiet = FALSE) {
+    baseline_iterations = 50
+) {
 
-    # -1 for class column; it's the last one
     variables <- ncol(data) - 1
-
     result <- matrix(nrow = variables, ncol = iterations)
-
     baselines <- vector(mode = "numeric")
     collection_vector <- vector(mode = "numeric", length = nrow(data))
 
     for (variable in 1:variables) {
 
-        distance_matrix <- distance(data[variable], distance_method, nominal)
+        distance_matrix <- distance(data[variable], distance_method)
         for (i in 1:iterations) {
             collection_vector <- traverse(data, distance_matrix)
             result[variable, i] <- scatter(collection_vector)
@@ -182,9 +164,8 @@ usecase.variable <- function(
 #'        \code{distance_matrix}. This is because the usecase.class is reused
 #'        in usecase.all.
 #' @param iterations Number of iterations
-#' @param nominal Nominal attributes
 #' @param baseline_iterations Number of baseline iterations
-#' @param quiet A flag that controls whether messages are printed or not
+#' @param  A flag that controls whether messages are printed or not
 #' @return TBD
 #' @examples
 #' #TBD
@@ -193,9 +174,8 @@ usecase.class <- function(
     data,
     distance_matrix,
     iterations          = 10,
-    nominal             = c(),
-    baseline_iterations  = 50,
-    quiet = FALSE) {
+    baseline_iterations  = 50
+) {
 
     # Pick up all unique classes that the data contains
     classes <- as.numeric(unique(data[, ncol(data)]))
@@ -212,11 +192,6 @@ usecase.class <- function(
     for (class in classes) {
 
         for (i in 1:iterations) {
-
-            if (quiet == FALSE) {
-                print(sprintf("Running iteration %s for class %s...", i, class))
-            }
-
             collection_vector <- as.numeric(traverse(data, distance_matrix))
             collection_vector[collection_vector != class] <- (-1)
             result <- c(result, scatter(collection_vector))
@@ -251,9 +226,7 @@ usecase.class <- function(
 #' @param data Data
 #' @param distance_method Distance method
 #' @param iterations Number of iterations
-#' @param nominal Nominal attributes
 #' @param baseline_iterations Number of baseline iterations
-#' @param quiet A flag that controls whether messages are printed or not
 #' @return TBD
 #' @examples
 #' #TBD
@@ -262,19 +235,15 @@ usecase.single <- function(
     data,
     distance_method     = "euclidean",
     iterations          = 10,
-    nominal             = c(),
     baseline_iterations = 50
 ) {
 
     ncols <- ncol(data) - 1
     collection_vector <- vector(length = nrow(data))
-    distance_matrix <- distance(data[1:ncols], distance_method, nominal)
+    distance_matrix <- distance(data[1:ncols], distance_method)
     values <- vector(length = iterations)
 
     for (i in 1:iterations) {
-
-        # This usecase returns also a collection vector. It's always the last one
-        # since it gets overwritten on every iteration.
         collection_vector <- traverse(data, distance_matrix)
         values[i] <- scatter(collection_vector)
     }
@@ -295,18 +264,14 @@ usecase.single <- function(
 #' @param data Data
 #' @param distance_method Distance method
 #' @param iterations Number of iterations
-#' @param nominal Nominal attributes
 #' @param baseline_iterations Number of baseline iterations
-#' @param quiet A flag that controls whether messages are printed or not
 #' @return TBD
 # ##
 usecase.all <- function(
     data,
     distance_method     = "euclidean",
     iterations          = 10,
-    nominal             = c(),
-    baseline_iterations = 50,
-    quiet               = FALSE
+    baseline_iterations = 50
 ) {
 
     # This is the container for all results
@@ -318,26 +283,13 @@ usecase.all <- function(
     # Run classwise analysis for each variable, i.e. loop over all variables and
     # run usecase classes for each.
     for (variable in 1:variables) {
-        if (quiet == FALSE) {
-            print(sprintf("Running usecase.class for variable %s", variable))
-        }
 
-        # New distance matrix for each variable
-        distance_matrix <- distance(data[variable], distance_method, nominal)
-
-        # Using quiet = TRUE here to reduce output. If it's FALSE, then it will
-        # produce variables * iterations (e.g. 8 variables * 10 iterations = 80
-        # lines) lines of output messages.
-        #
-        # TODO: Think about adding additional flag to control the quietness of
-        # this usecase.all and usecase.class separately. Would someone need it?
+        distance_matrix <- distance(data[variable], distance_method)
         result <- usecase.class(
             data,
             distance_matrix,
             iterations,
-            nominal,
-            baseline_iterations,
-            TRUE
+            baseline_iterations
         )
 
         all[[varnames[variable]]] <- result
@@ -357,14 +309,12 @@ usecase.all <- function(
 #' @param data The data
 #' @param distance_method Distance method; must be one of following:
 #'        \code{euclidean}, \code{manhattan} or \code{heom}
-#' @param nominals Nominal attributes; not in use at the moment
 #' @return Returns a distance matrix.
 #' @export
 # ##
 distance <- function(
     data,
-    distance_method = "euclidean",
-    nominals        = NULL
+    distance_method = "euclidean"
 ) {
 
     if (!is.data.frame(data)) {
