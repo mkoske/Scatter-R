@@ -7,11 +7,11 @@
 traverse(labels, distance_matrix, seed = FALSE)
 }
 \arguments{
+\item{labels}{The class labels}
+
+\item{distance_matrix}{The distance matrix calculated from \code{data}}
+
 \item{seed}{Seed for randomzing starting point}
-
-\item{data}{The data}
-
-\item{dm}{The distance matrix calculated from \code{data}}
 }
 \value{
 Returns the vector of labels

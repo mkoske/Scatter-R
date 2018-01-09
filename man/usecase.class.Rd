@@ -18,8 +18,6 @@ in usecase.all.}
 \item{iterations}{Number of iterations}
 
 \item{baseline_iterations}{Number of baseline iterations}
-
-\item{A}{flag that controls whether messages are printed or not}
 }
 \value{
 TBD

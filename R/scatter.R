@@ -135,7 +135,7 @@ usecase.variable <- function(
 
         distance_matrix <- distance(data[variable], distance_method)
         for (i in 1:iterations) {
-            collection_vector <- traverse(data, distance_matrix)
+            collection_vector <- traverse(data[, ncol(data)], distance_matrix)
             result[variable, i] <- scatter(collection_vector)
         }
 
@@ -164,7 +164,6 @@ usecase.variable <- function(
 #'        in usecase.all.
 #' @param iterations Number of iterations
 #' @param baseline_iterations Number of baseline iterations
-#' @param  A flag that controls whether messages are printed or not
 #' @return TBD
 #' @examples
 #' #TBD
@@ -173,7 +172,7 @@ usecase.class <- function(
     data,
     distance_matrix,
     iterations          = 10,
-    baseline_iterations  = 50
+    baseline_iterations = 50
 ) {
 
     # Pick up all unique classes that the data contains
@@ -183,15 +182,13 @@ usecase.class <- function(
     }
 
     ncols <- ncol(data) - 1
-    # TODO: Don't grow in a loop :)
     result <- vector(mode = "numeric")
     baselines <- vector(mode = "numeric")
 
-    # TODO: does this for loop maintain it's order?
     for (class in classes) {
 
         for (i in 1:iterations) {
-            collection_vector <- as.numeric(traverse(data, distance_matrix))
+            collection_vector <- as.numeric(traverse(data[, ncol(data)], distance_matrix))
             collection_vector[collection_vector != class] <- (-1)
             result <- c(result, scatter(collection_vector))
         }
@@ -201,14 +198,14 @@ usecase.class <- function(
          baselines <- c(baselines, baseline(labels, baseline_iterations))
     }
 
-    # The result is stored in the vector above to avoid indexing issues. Then, at last
-    # it's converted to matrix form as in other usecases
+    # The result is stored in the vector above to avoid indexing issues. Then,
+    # at last it's converted to matrix form as in other usecases
     result <- matrix(result, ncol = iterations, byrow = TRUE)
     means <- apply(result, 1, mean)
 
-    # This is to add row labels to result matrix. It's easier to see which class got which
-    # numbers when there's labels attached. Though the scatter algorithm doesn't change any
-    # order of data, at least to my knowledge.
+    # This is to add row labels to result matrix. It's easier to see which class
+    # got which numbers when there's labels attached. Though the scatter
+    # algorithm doesn't change any order of data, at least to my knowledge.
     rowlabels <- unique(data[, ncol(data)])
     rownames(result) <- rowlabels[1:nrow(result)]
 
@@ -415,8 +412,8 @@ n_changes <- function(collection_vector) {
 #' Traverse the dataset using nearest neighbour method, recording label changes
 #' as we go.
 #'
-#' @param data The data
-#' @param dm The distance matrix calculated from \code{data}
+#' @param labels The class labels
+#' @param distance_matrix The distance matrix calculated from \code{data}
 #' @param seed Seed for randomzing starting point
 #' @return Returns the vector of labels
 # ##
