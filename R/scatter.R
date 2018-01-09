@@ -263,8 +263,7 @@ usecase.single <- function(
     distance_method     = "euclidean",
     iterations          = 10,
     nominal             = c(),
-    baseline_iterations = 50,
-    quiet               = FALSE
+    baseline_iterations = 50
 ) {
 
     ncols <- ncol(data) - 1
@@ -273,9 +272,7 @@ usecase.single <- function(
     values <- vector(length = iterations)
 
     for (i in 1:iterations) {
-        if (quiet == FALSE) {
-            print(sprintf("Running iteration %s...", i))
-        }
+
         # This usecase returns also a collection vector. It's always the last one
         # since it gets overwritten on every iteration.
         collection_vector <- traverse(data, distance_matrix)
