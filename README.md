@@ -14,17 +14,7 @@ Scatter value is also used to calculate *separation power*, which is the differe
 
 ## Installation
 
-Follow these instructions to install Scatter-project. If you know, what you're doing, you can choose the installation method of your liking.
-
-### ScatterR-package
-
-Follow these steps to install the Scatter-R package. The name of the package is ScatterR even though the repository and project name has dash in it. This is because R doesn't allow dashes in the name of the package.
-
-Go to the "Releases"-section and download latest release. Then, install the package using following command in R-console.
-
-```R
-install.packages("https://github.com/Tommytronic/Scatter-R/releases/download/v1.4/ScatterR_1.4_release.tar.gz", repos = NULL, method = "libcurl")
-```
+Follow these instructions to install Scatter-project. If you know, what you're doing, you can choose the installation method of your liking, e.g. using `devtools::install_github("mkoske/scatter-r")`.
 
 #### Test the installation
 

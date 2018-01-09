@@ -308,6 +308,7 @@ usecase.all <- function(
 #'        \code{euclidean}, \code{manhattan} or \code{heom}
 #' @return Returns a distance matrix.
 #' @export
+#' @importFrom("stats", "dist")
 # ##
 distance <- function(
     data,
