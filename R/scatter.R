@@ -78,7 +78,6 @@ run <- function(
             baseline_iterations
         )
     } else if (usecase == "classes") {
-        # TODO: Any way to ensure classlabel is correct subscript?
         ncols <- ncol(data) - 1
         distance_matrix <- distance(data[1:ncols], distance_method)
         result <- usecase.class(
@@ -416,45 +415,40 @@ n_changes <- function(collection_vector) {
 #' as we go.
 #'
 #' @param data The data
-#' @param distance_matrix The distance matrix calculated from \code{data}
+#' @param dm The distance matrix calculated from \code{data}
+#' @param seed
 #' @return Returns the vector of labels
 # ##
-traverse <- function(data, dm, seed=FALSE) {
+traverse <- function(labels, distance_matrix, seed=FALSE) {
 
-    # Assume last column is class label column, so ignore it. That's why - 1.
-    p <- ncol(data)
-    n <- nrow(data)
-
+    n <- length(labels)
     indices <- vector(mode = "numeric", length = n)
 
-    if (seed == TRUE)
+    if (seed == TRUE) {
         set.seed(1)
+    }
 
-    current <- sample(1:n, size = 1)
-    labels <- data[, p]
     count <- 0
+    current <- sample(1:n, size = 1)
 
     while (count <= n) {
 
         count <- count + 1
-        if (count >= n) {
-            indices[count] <- current
+        indices[count] <- current
+        if (count == n) {
             break
         }
 
-        indices[count] <- current
-
-        row <- dm[current, ]
+        row <- distance_matrix[current, ]
         minima <- min(row[-c(indices)])
         minimas <- which(row == minima)
         minimas <- minimas[!(minimas %in% indices)]
         if (length(minimas) > 1) {
+            if (seed == TRUE) {
+                set.seed(3)
+            }
 
-            if (seed == TRUE)
-                set.seed(1)
-
-            nearest <- sample(minimas, size = 1)
-            nearest <- nearest[[1]]
+            nearest <- sample(minimas, size = 1)[[1]]
         } else {
             nearest <- minimas[[1]]
         }
