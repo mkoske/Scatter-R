@@ -3,8 +3,7 @@ Type: Package
 Title: An Implementation of Scatter Algorithm in R
 Version: 1.5.1
 Date: 2018-07-01
-Authors@R: c(person("Miika", "Koskela", role=c("aut"),
-                    email="miika.s.koskela@gmail.com"))
+Author: Miika Koskela
 Maintainer: Miika Koskela <miika.s.koskela@gmail.com>
 Description: A useful tool to evaluate machine learnability of a data set and to
     evaluate variable importance in the dataset.
