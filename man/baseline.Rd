@@ -18,4 +18,3 @@ Returns mean of iteration
 Computes a statistical baseline running the algorithm multiple times and
 calculating the mean of those runs.
 }
-

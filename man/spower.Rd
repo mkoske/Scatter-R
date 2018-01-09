@@ -17,4 +17,3 @@ Returns the difference between baseline and raw scatter value.
 \description{
 Calculates separation power
 }
-

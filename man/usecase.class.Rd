@@ -4,22 +4,22 @@
 \alias{usecase.class}
 \title{Usecase \code{class} runs the algorithm for each class separately.}
 \usage{
-usecase.class(data, distanceMatrix, iterations = 10, nominal = c(),
-  baselineIterations = 50, quiet = FALSE)
+usecase.class(data, distance_matrix, iterations = 10, nominal = c(),
+  baseline_iterations = 50, quiet = FALSE)
 }
 \arguments{
 \item{data}{Data}
 
-\item{distanceMatrix}{A distance matrix. This is different than other
-usecases as it doesn't take \code{distanceMethod} but
-\code{distanceMatrix}. This is because the usecase.class is reused
+\item{distance_matrix}{A distance matrix. This is different than other
+usecases as it doesn't take \code{distance_method} but
+\code{distance_matrix}. This is because the usecase.class is reused
 in usecase.all.}
 
 \item{iterations}{Number of iterations}
 
 \item{nominal}{Nominal attributes}
 
-\item{baselineIterations}{Number of baseline iterations}
+\item{baseline_iterations}{Number of baseline iterations}
 
 \item{quiet}{A flag that controls whether messages are printed or not}
 }
@@ -32,4 +32,3 @@ Usecase \code{class} runs the algorithm for each class separately.
 \examples{
 #TBD
 }
-

@@ -9,7 +9,7 @@ traverse(data, dm, seed = FALSE)
 \arguments{
 \item{data}{The data}
 
-\item{distanceMatrix}{The distance matrix calculated from \code{data}}
+\item{distance_matrix}{The distance matrix calculated from \code{data}}
 }
 \value{
 Returns the vector of labels
@@ -18,4 +18,3 @@ Returns the vector of labels
 Traverse the dataset using nearest neighbour method, recording label changes
 as we go.
 }
-

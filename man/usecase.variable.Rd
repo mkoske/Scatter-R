@@ -4,19 +4,19 @@
 \alias{usecase.variable}
 \title{Usecase \code{variable} runs the algorithm for each variable separately.}
 \usage{
-usecase.variable(data, distanceMethod = "euclidean", iterations = 10,
-  nominal = c(), baselineIterations = 50, quiet = FALSE)
+usecase.variable(data, distance_method = "euclidean", iterations = 10,
+  nominal = c(), baseline_iterations = 50, quiet = FALSE)
 }
 \arguments{
 \item{data}{Data}
 
-\item{distanceMethod}{Distance method}
+\item{distance_method}{Distance method}
 
 \item{iterations}{Number of iterations}
 
 \item{nominal}{Nominal attributes}
 
-\item{baselineIterations}{Number of baseline iterations}
+\item{baseline_iterations}{Number of baseline iterations}
 
 \item{quiet}{A flag that controls whether messages are printed or not}
 }
@@ -29,4 +29,3 @@ Usecase \code{variable} runs the algorithm for each variable separately.
 \examples{
 #TBD
 }
-

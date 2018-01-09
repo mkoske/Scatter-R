@@ -3,5 +3,5 @@
 export(cosine)
 export(distance)
 export(heom)
-export(numChanges)
+export(n_changes)
 export(run)

@@ -15,4 +15,3 @@ Returns a raw Scatter value
 \description{
 Calculate raw Scatter value
 }
-

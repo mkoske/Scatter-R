@@ -4,8 +4,8 @@
 \alias{run}
 \title{Function \code{run} is main entry point to Scatter-algorithm.}
 \usage{
-run(data, classlabel = NULL, distanceMethod = "euclidean",
-  usecase = "single", iterations = 10, baselineIterations = 50,
+run(data, classlabel = NULL, distance_method = "euclidean",
+  usecase = "single", iterations = 10, baseline_iterations = 50,
   classes = NULL, columns = NULL, nominals = NULL, quiet = FALSE)
 }
 \arguments{
@@ -14,7 +14,7 @@ run(data, classlabel = NULL, distanceMethod = "euclidean",
 \item{classlabel}{Column name or index for class label; if none provided,
 last column is assumed}
 
-\item{distanceMethod}{Distance method to use; must be one of following:
+\item{distance_method}{Distance method to use; must be one of following:
 \code{euclidean}, \code{manhattan} or \code{heom}.}
 
 \item{usecase}{A usecase to select; must be one of following: \code{single},
@@ -22,7 +22,7 @@ last column is assumed}
 
 \item{iterations}{A number of iterations for Scatter-algorithm}
 
-\item{baselineIterations}{A number of iteration for baseline calculation}
+\item{baseline_iterations}{A number of iteration for baseline calculation}
 
 \item{classes}{List of class included in the calculation}
 
@@ -56,6 +56,5 @@ scatter algorithm on every variable and finally, usecase \code{all} runs
 \examples{
 run(iris)
 run(iris, classlabel = 5, usecase = "single")
-run(iris, classlabel = 5, distanceMethod = "manhattan", usecase = "classes", iterations = 30)
+run(iris, classlabel = 5, distance_method = "manhattan", usecase = "classes", iterations = 30)
 }
-

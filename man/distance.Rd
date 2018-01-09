@@ -5,12 +5,12 @@
 \title{Distance function wrapper for selecting between euclidean, manhattan
 and HEOM.}
 \usage{
-distance(data, distanceMethod = "euclidean", nominals = NULL)
+distance(data, distance_method = "euclidean", nominals = NULL)
 }
 \arguments{
 \item{data}{The data}
 
-\item{distanceMethod}{Distance method; must be one of following:
+\item{distance_method}{Distance method; must be one of following:
 \code{euclidean}, \code{manhattan} or \code{heom}}
 
 \item{nominals}{Nominal attributes; not in use at the moment}
@@ -23,4 +23,3 @@ For euclidean and manhattan distances, it uses the `dist` function from
 base and for HEOM, it uses the code found in `heom.R`-file. Note, that
 this function expects data to be without class-column!
 }
-

@@ -2,17 +2,16 @@
 % Please edit documentation in R/cosine.R
 \name{cosine}
 \alias{cosine}
-\title{An implementation of cosine measure.}
+\title{An implementation of cosine.}
 \usage{
 cosine(data)
 }
 \arguments{
-\item{Data}{frame}
+\item{data}{The Data frame}
 }
 \value{
 Distance matrix
 }
 \description{
-An implementation of cosine measure.
+An implementation of cosine.
 }
-

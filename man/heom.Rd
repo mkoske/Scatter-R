@@ -26,4 +26,3 @@ For further reading, see [1].
 Distance Functions.” Journal of Artificial Intelligence Research 6: 1–34.
 doi:10.1613/jair.346.
 }
-
