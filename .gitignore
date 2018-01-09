@@ -8,3 +8,4 @@
 Read-and-delete-me
 .Rbuildignore
 ..Rcheck
+test.R

@@ -417,7 +417,7 @@ n_changes <- function(collection_vector) {
 #'
 #' @param data The data
 #' @param dm The distance matrix calculated from \code{data}
-#' @param seed
+#' @param seed Seed for randomzing starting point
 #' @return Returns the vector of labels
 # ##
 traverse <- function(labels, distance_matrix, seed=FALSE) {

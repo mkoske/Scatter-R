@@ -4,12 +4,14 @@
 \alias{traverse}
 \title{Generate collection vector}
 \usage{
-traverse(data, dm, seed = FALSE)
+traverse(labels, distance_matrix, seed = FALSE)
 }
 \arguments{
+\item{seed}{Seed for randomzing starting point}
+
 \item{data}{The data}
 
-\item{distance_matrix}{The distance matrix calculated from \code{data}}
+\item{dm}{The distance matrix calculated from \code{data}}
 }
 \value{
 Returns the vector of labels
