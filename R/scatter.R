@@ -242,7 +242,7 @@ usecase.single <- function(
     distance_matrix <- distance(data[1:ncols], distance_method)
     values <- vector(length = iterations)
 
-    labels <- data[, ncols(data)]
+    labels <- data[, ncol(data)]
     for (i in 1:iterations) {
         collection_vector <- traverse(labels, distance_matrix)
         values[i] <- scatter(collection_vector)
